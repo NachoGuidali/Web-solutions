@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero aligm-items-stretch">
+    <div class="hero-principal d-flex flex-row justify-content-evenly align-items-center">
+        <div class="hero-imagen d-flex flex-column">
+            <img class="img-hero img-fluid" src="static/imagenes/LOGO.bmp" alt="Imagen de Pagina">
+            <h3>Impulsando la excelencia tecnologica</h3>
+            <div class="hero-botones d-flex flex-row justify-content-evenly">
+                <a href="/servicios#software"><button type="button" class="btn btn-primary btn-lg">Software</button></a>
+                <a href="/servicios#hardware"><button type="button" class="btn btn-secondary btn-lg">Hardware</button></a>  
+            </div>
+        </div>
+        <div class="hero-texto">
+            
+            <h1>La Tecnologia a tu alcance</h1>
+            <span>Desarrollo web, consultoria, manejo de datos, mantenimiento de Hardware y más!</span>
+
+        </div>
+    </div>
+
+
+</section>
+<!-- CONTACTO -->
+<section id="contacto" class="contacto seccion-oscura">
+    <div class="container">
+      <div class="container text-center rectangulo d-flex justify-content-evenly">
+        <div class="row">
+          <div class="col-12 col-md-4 seccion-titulo">
+            ¡hablemos!
+          </div>
+          <div class="col-12 col-md-4 descripcion">
+            Contactanos para iniciar tu proyecto juntos
+          </div>
+          <div class="botones-contacto col-12 col-md-4 d-flex flex-row ">
+            <a href="mailto:nachog.akd@hotmail.com">
+              <button type="button">  
+                Contacto 
+                <i class="bi bi-envelope-check-fill"></i>
+              </button>
+            </a>
+            <a href="https://api.whatsapp.com/send/?phone=5491163589975" target="_blank">
+                <button type="button">  
+                    Contacto 
+                    <i class="bi bi-whatsapp"></i>
+                </button>
+            </a>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+ {% endblock%} 

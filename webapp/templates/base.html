@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--los tres metadatos de abajo son opcionales-->
+    <meta name="author" content="Ignacio Guidali">
+    <meta name="description" content="Somos una empresa compuesta por un grupo de desarrolladores y tecnicos especializada en soluciones tecnologicas de Software y Hardware">
+    <meta name="keywords" content="HTML, CSS, JAVASCRIPT, REACT, PYTHON, WEB SOLUTIONS, HARDWARE, SOFTWARE">
+    <title>Web Solutions</title>
+    <!--favicon-->
+    <link rel="icon" type="image/x-icon" href="static/imagenes/LOGO.bmp">
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <!-- FONTS -->
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    
+</head>
+<body> 
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-md bg-body-tertiary">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-toggler" aria-controls="navbar-toggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+          <div class="collapse navbar-collapse" id="navbar-toggler">
+            <a class="navbar-brand" href="#hero">
+                <img class="img-nav" src="static/imagenes/LOGO.bmp" width="70" alt="Imagen de Pagina">
+            </a>
+            <ul class="navbar-nav d-flex justify-content-center align-items-center">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Inicio   </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'about' %}">Sobre Nosotros</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link " href="{% url 'servicios' %}">Servicios</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link " href="/#contacto ">Contacto</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+{% block content %} 
+{% endblock %}
+    
+  <!-- FOOTER -->
+      <footer class="seccion-oscura d-flex flex-column align-items-center justify-content-center">
+        
+        <p class="footer-texto text-center">Creando y progresando todos los dias. <br>Creemos un proyecto juntos</p>
+        <div class="iconos-redes d-flex flex-wrap align-items-center justify-content-center">
+          <a href="https://twitter.com/nachoguidali" target="_blank" rel="noopener noreferrer"><i class="bi bi-twitter"></i></a>
+          <a href="https://instagram.com/nachoguidali" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
+          <a href="https://linkedin.com/in/guidaliignacio/" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
+          <a href="https://github.com/nachoguidali" target="_blank" rel="noopener noreferrer"><i class="bi bi-github"></i></a>
+          <a href="mailto:nachog.akd@hotmail.com" target="_blank" rel="noopener noreferrer"><i class="bi bi-envelope"></i></a>
+        </div>
+        <div class="derechos">Creado por Nacho Guidali (2023) &#169;</div>
+      </footer>
+
+    <div id="particles-js"></div>
+    <script src="static/particles.min.js"></script>
+    <script>
+        particlesJS(
+            {
+  "particles": {
+    "number": {
+      "value": 57,
+      "density": {
+        "enable": true,
+        "value_area": 800
+      }
+    },
+    "color": {
+      "value": "#ffffff"
+    },
+    "shape": {
+      "type": "circle",
+      "stroke": {
+        "width": 0,
+        "color": "#000000"
+      },
+      "polygon": {
+        "nb_sides": 5
+      },
+      "image": {
+        "src": "img/github.svg",
+        "width": 100,
+        "height": 100
+      }
+    },
+    "opacity": {
+      "value": 0.5,
+      "random": false,
+      "anim": {
+        "enable": false,
+        "speed": 1,
+        "opacity_min": 0.1,
+        "sync": false
+      }
+    },
+    "size": {
+      "value": 3,
+      "random": true,
+      "anim": {
+        "enable": false,
+        "speed": 40,
+        "size_min": 0.1,
+        "sync": false
+      }
+    },
+    "line_linked": {
+      "enable": true,
+      "distance": 150,
+      "color": "#ffffff",
+      "opacity": 0.4,
+      "width": 1
+    },
+    "move": {
+      "enable": true,
+      "speed": 4.610236182596568,
+      "direction": "none",
+      "random": false,
+      "straight": false,
+      "out_mode": "out",
+      "bounce": false,
+      "attract": {
+        "enable": false,
+        "rotateX": 600,
+        "rotateY": 1200
+      }
+    }
+  },
+  "interactivity": {
+    "detect_on": "canvas",
+    "events": {
+      "onhover": {
+        "enable": true,
+        "mode": "grab"
+      },
+      "onclick": {
+        "enable": true,
+        "mode": "push"
+      },
+      "resize": true
+    },
+    "modes": {
+      "grab": {
+        "distance": 231.44200550588337,
+        "line_linked": {
+          "opacity": 1
+        }
+      },
+      "bubble": {
+        "distance": 400,
+        "size": 40,
+        "duration": 2,
+        "opacity": 8,
+        "speed": 3
+      },
+      "repulse": {
+        "distance": 200,
+        "duration": 0.4
+      },
+      "push": {
+        "particles_nb": 4
+      },
+      "remove": {
+        "particles_nb": 2
+      }
+    }
+  },
+  "retina_detect": true
+} 
+        )
+    </script>
+<!--este es el boostrap de javascript-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>     
+</body>
+</html>

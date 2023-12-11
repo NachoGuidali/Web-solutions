@@ -289,7 +289,31 @@ footer{
 }
 
 
-
+@media screen and (max-width: 425px){
+    .nav-item a {
+        font-size: 32px;
+    }
+    .hero-botones button{
+        font-size: 32px;
+    }
+    .hero-texto{
+        transform: scale(1.15);
+    }
+    .botones-contacto button{
+        transform: scale(1.15);
+        font-size: 20px;
+    }
+    .contacto .seccion-titulo{
+        font-size: 52px;
+    }
+    .contacto .descripcion{
+        font-size: 30px;
+    }
+    .iconos-redes a{
+        width: 80px;
+        height: 80px;
+    }
+}
 @media screen and (max-width: 767px){
     .navbar-brand{
         display: none !important;

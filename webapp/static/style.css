@@ -147,7 +147,9 @@
     animation: typing 4s steps(40, end);
 }
 .hero h3{
-    margin-inline: auto;
+    text-align: center !important;
+    margin-inline: auto !important;
+    
 }
 
 
@@ -332,6 +334,8 @@ footer{
         display: none !important;
     }
     h3 {
+        text-align: center !important;
+        margin-inline: auto !important;
         font-size: 300%;
     }
     .navbar-toggler{
@@ -366,6 +370,13 @@ footer{
     .navbar ul{
         margin-inline: auto !important;
     }
+    .iconos-redes a{
+        width: 80px;
+        height: 80px;
+    }
+    .hero-botones button{
+        transform: scale(1.15);
+    }
 }    
 
 @media screen and (max-width: 980px){
@@ -380,6 +391,7 @@ footer{
         flex-direction: column !important;
     }
     .hero-imagen h3{
+        text-align: center !important;
         margin-inline: auto !important;
     }
     .contacto{

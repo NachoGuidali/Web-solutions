@@ -146,6 +146,11 @@
     overflow: hidden;
     animation: typing 4s steps(40, end);
 }
+.hero h3{
+    margin-inline: auto;
+}
+
+
 @keyframes typing {
     from {
       width: 0;

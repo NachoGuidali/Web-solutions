@@ -19,7 +19,9 @@
     color: white !important;
     font-size: large;
 }
-
+.navbar ul{
+    font-size: 32px;
+}
 /* SERVICIOS */
 .hardware{
     margin-top: 15rem !important;
@@ -128,6 +130,7 @@
 .img-hero {
     opacity: 0.8;
     border-radius: 80%;
+    margin-bottom: 40px;
 }
 .hero-texto{
     align-items: center;
@@ -288,8 +291,12 @@ footer{
 
 }
 
+@media screen and (max-width: 975px) {
+    
+    
+}
 
-@media screen and (max-width: 425px){
+/* @media screen and (max-width: 850px){
     .nav-item a {
         font-size: 32px;
     }
@@ -313,8 +320,9 @@ footer{
         width: 80px;
         height: 80px;
     }
-}
-@media screen and (max-width: 767px){
+} */
+@media screen and (max-width: 860px){
+    
     .navbar-brand{
         display: none !important;
     }
@@ -337,11 +345,27 @@ footer{
         font-weight: bolder !important;
         font-size: 20px !important;
     }
-}    
-
-@media screen and (max-width: 768px){
+    .hero{
+        margin-inline: 3rem;
+    }
     body{
         min-width: 100vh;
+    }
+    .img-hero{
+        max-width: 250px;
+        max-width: 250px;
+        text-align: center;
+        margin-inline: auto;
+    }
+    
+    .navbar ul{
+        margin-inline: auto !important;
+    }
+}    
+
+@media screen and (max-width: 980px){
+    body{
+        min-width: 100vh !important;
     }
     .container {
         max-width: 720px !important;
@@ -353,7 +377,12 @@ footer{
     .hero-imagen h3{
         margin-inline: auto !important;
     }
-    
+    .contacto{
+        min-width: 100vh;
+    }
+    footer{
+        min-width: 100vh;
+    }
 }
 
 @media screen and (max-width: 1400px){

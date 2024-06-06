@@ -122,7 +122,7 @@
     transition: box-shadow 0.3s, transform 0.3s;
 }
 .card:hover{
-    background-color: rgba(27, 27, 50, 0.568) !important;
+    background-color: rgba(27, 27, 50, 0.7) !important;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
     transform: scale(1.05);
     

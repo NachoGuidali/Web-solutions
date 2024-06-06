@@ -52,6 +52,11 @@
 .servicios .columna{
     background-color: rgba(245, 245, 245, 0.062);
 }
+
+.servicios-software{
+    justify-content: center;
+}
+
 .experiencia {
     padding: 40px 40px 60px 40px;
 }

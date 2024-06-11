@@ -389,6 +389,9 @@ footer{
     .hero-botones button{
         transform: scale(1.15);
     }
+    .container-fluid{
+        padding-right: 0px !important;
+    }
 }    
 
 @media screen and (max-width: 980px){
@@ -437,6 +440,6 @@ footer{
 }
 @media screen and (max-width: 1440px){
     .about{
-        margin-inline: 5rem !important;
+        margin-inline: 1rem !important;
     }
 }

@@ -318,10 +318,6 @@ footer{
 
 }
 
-@media screen and (max-width: 975px) {
-    
-    
-}
 
 /* @media screen and (max-width: 850px){
     .nav-item a {
@@ -356,7 +352,7 @@ footer{
     h3 {
         text-align: center !important;
         margin-inline: auto !important;
-        font-size: 300%;
+        font-size: 200%;
     }
     .navbar-toggler{
         display: flex;
@@ -377,11 +373,7 @@ footer{
     .hero{
         margin-inline: 3rem;
     }
-    body{
-        min-width: 100vh;
-    }
     .img-hero{
-        max-width: 250px;
         max-width: 250px;
         text-align: center;
         margin-inline: auto;
@@ -401,7 +393,7 @@ footer{
 
 @media screen and (max-width: 980px){
     body{
-        min-width: 100vh !important;
+        min-width: 100% !important;
     }
     .container {
         max-width: 720px !important;
@@ -415,10 +407,10 @@ footer{
         margin-inline: auto !important;
     }
     .contacto{
-        min-width: 100vh;
+        min-width: 100%;
     }
     footer{
-        min-width: 100vh;
+        min-width: 100%;
     }
 }
 
@@ -429,16 +421,18 @@ footer{
         flex-direction: column !important;
     }
     .hero-principal{
-        right: 0;
-        left: 0;
+
         display: flex !important;
         flex-direction: column !important;
-        min-width: 100vh !important;
+        max-width: 100% !important;
         align-items: center !important;
     }
     .hero-imagen{
         justify-content: center !important;
         margin-bottom: 5rem !important;
+    }
+    .hero-texto{
+        font-size: 8px;
     }
 }
 @media screen and (max-width: 1440px){

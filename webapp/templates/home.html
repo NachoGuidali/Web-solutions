@@ -1,54 +1,153 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="hero aligm-items-stretch">
-    <div class="hero-principal d-flex flex-row justify-content-evenly align-items-center">
-        <div class="hero-imagen d-flex flex-column">
-            <img class="img-hero img-fluid" src="static/imagenes/1.png" alt="Imagen de Pagina">
-            <h3>Impulsando la excelencia tecnologica</h3>
-            <div class="hero-botones d-flex flex-row justify-content-evenly">
-                <a href="/servicios#software"><button type="button" class="btn btn-primary btn-lg">Software</button></a>
-                <a href="/servicios#hardware"><button type="button" class="btn btn-secondary btn-lg">Hardware</button></a>  
-            </div>
-        </div>
-        <div class="hero-texto">
-            
-            <h1>La Tecnologia a tu alcance</h1>
-            <span>Desarrollo web, consultoria, manejo de datos, mantenimiento de Hardware y más!</span>
-
-        </div>
+<!-- Hero -->
+  <section class="pt-32 pb-20 bg-[url('static/imagenes/banner2.png')] bg-cover bg-center bg-no-repeat">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col-reverse md:flex-row items-center gap-8">
+      <div class="md:w-1/2 fade-in">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-center md:text-left">La Tecnología a tu alcance
+        </h1>
+        <p
+          class="writing text-green-100 mb-4 text-[10px] sm:text-xs md:text-lg lg:text-xl max-w-[95vw] overflow-hidden whitespace-nowrap tracking-tight">
+          Desarrollo web, consultoría, manejo de datos, mantenimiento de Hardware y más!
+        </p>
+      </div>
+      <div class="md:w-1/2 fade-in">
+        <img alt="Logo SupReg Solutions completo" class="mx-auto w-3/4 rounded-full" src="static/imagenes/logo-completo.png" />
+      </div>
     </div>
+  </section>
 
 
-</section>
-<!-- CONTACTO -->
-<section id="contacto" class="contacto seccion-oscura">
-    <div class="container">
-      <div class="container text-center rectangulo d-flex justify-content-evenly">
-        <div class="row">
-          <div class="col-12 col-md-4 seccion-titulo">
-            ¡hablemos!
-          </div>
-          <div class="col-12 col-md-4 descripcion">
-            Contactanos para iniciar tu proyecto juntos
-          </div>
-          <div class="botones-contacto col-12 col-md-4 d-flex flex-row ">
-            <a href="mailto:contacto@supregsolutions.com">
-              <button type="button">  
-                Contacto 
-                <i class="bi bi-envelope-check-fill"></i>
-              </button>
-            </a>
-            <a href="https://api.whatsapp.com/send/?phone=5491163589975" target="_blank">
-                <button type="button">  
-                    Contacto 
-                    <i class="bi bi-whatsapp"></i>
-                </button>
-            </a>
-
-          </div>
-
+    <!-- SLIDER -->
+  <div class="slider-container">
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><img src="static/imagenes/sf.png" class="h-16 object-contain mx-4" alt="Logo sur Finanzas"></div>
+        <div class="swiper-slide"><img src="static/imagenes/arg.png" class="h-16 object-contain mx-4" alt="Logo Argentina traduce">
         </div>
+        <div class="swiper-slide"><img src="static/imagenes/roisa.png" class="h-16 object-contain mx-4" alt="Logo grupo roisa"></div>
+        <div class="swiper-slide"><img src="static/imagenes/distri.png" class="h-16 object-contain mx-4" alt="Logo distridelsur"></div>
+        <div class="swiper-slide"><img src="static/imagenes/momentos.png" class="h-16 object-contain mx-4" alt="logo momentos dorados">
+        </div>
+        <div class="swiper-slide"><img src="static/imagenes/astra.png" class="h-16 object-contain mx-4" alt="logo astra"></div>
+        <div class="swiper-slide"><img src="static/imagenes/sf.png" class="h-16 object-contain mx-4" alt="Logo sur Finanzas"></div>
+        <div class="swiper-slide"><img src="static/imagenes/arg.png" class="h-16 object-contain mx-4" alt="Logo Argentina traduce">
+        </div>
+        <div class="swiper-slide"><img src="static/imagenes/roisa.png" class="h-16 object-contain mx-4" alt="Logo grupo roisa"></div>
+        <div class="swiper-slide"><img src="static/imagenes/distri.png" class="h-16 object-contain mx-4" alt="Logo distridelsur"></div>
+        <div class="swiper-slide"><img src="static/imagenes/momentos.png" class="h-16 object-contain mx-4" alt="logo momentos dorados">
+        </div>
+        <div class="swiper-slide"><img src="static/imagenes/astra.png" class="h-16 object-contain mx-4" alt="logo astra"></div>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Slider de monedas -->
+  <!-- <section class=" text-center py-8 overflow-hidden">
+  
+  <div class="relative w-full overflow-hidden">
+    <div class="flex scroll-loop gap-6 whitespace-nowrap">
+      
+      <div class="flex gap-6">
+        <span class="inline-block bg-green-800 px-6 py-3 rounded-full">Distribuidora Del Sur</span>
+        <span class="inline-block bg-yellow-800 px-6 py-3 rounded-full">Sur Finanzas</span>
+        <span class="inline-block bg-purple-800 px-6 py-3 rounded-full">Argentina Traduce</span>
+        <span class="inline-block bg-blue-800 px-6 py-3 rounded-full">ROI S.A</span>
+        <span class="inline-block bg-orange-800 px-6 py-3 rounded-full">Astra Outsourcing</span>
+        <span class="inline-block bg-gray-800 px-6 py-3 rounded-full">Pequeñas Maravillas</span>
+      </div>
+      <div class="flex gap-6">
+        <span class="inline-block bg-green-800 px-6 py-3 rounded-full">Distribuidora Del Sur</span>
+        <span class="inline-block bg-yellow-800 px-6 py-3 rounded-full">Sur Finanzas</span>
+        <span class="inline-block bg-purple-800 px-6 py-3 rounded-full">Argentina Traduce</span>
+        <span class="inline-block bg-blue-800 px-6 py-3 rounded-full">ROI S.A</span>
+        <span class="inline-block bg-orange-800 px-6 py-3 rounded-full">Astra Outsourcing</span>
+        <span class="inline-block bg-gray-800 px-6 py-3 rounded-full">Pequeñas Maravillas</span>
+      </div>
+    </div>
+  </div>
+</section> -->
+  <!-- Promo -->
+  <section class="py-20 bg-gradient-to-br from-purple-800 to-indigo-900 fade-in">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">Tecnología Superior y Regular para todo tipo de usuarios</h2>
+      <p class="mb-6 text-lg text-white/80">Impulsamos tu crecimiento con tecnología pensada para acompañarte en cada
+        etapa </p>
+      <button class="bg-white text-black px-6 py-2 rounded-full font-semibold"><a
+          href="https://www.instagram.com/supregsolutions" target="_blank">Conocenos</a></button>
+    </div>
+  </section>
+  <div class="relative z-10 w-full h-[2px] bg-gradient-to-r from-transparent via-white/30 to-transparent my-16"></div>
+  <!-- Sección nueva con 2 imágenes -->
+  <section class="py-5 fade-in">
+    <div class="max-w-6xl mx-auto px-6 bg-gradient-to-br from-indigo-800 via-black to-indigo-800 rounded-3xl p-10">
+      <h3 class="text-2xl md:text-3xl font-bold text-center mb-10">¿Por qué nos eligen?</h3>
+      <div class="grid md:grid-cols-2 gap-8">
+        <p alt="Ejemplo 1" class="text-center rounded-2xl shadow-md"> <strong>Porque no solo resolvemos.</strong> <br />
+          Escuchamos, entendemos y pensamos con vos.</p>
+        <p alt="Ejemplo 2" class="text-center rounded-2xl shadow-md">Creamos <strong>soluciones que acompañan el
+            crecimiento real</strong> de tu negocio. <br />
+          La tecnología es el medio. Lo importante es que funcione para vos </p>
+      </div>
+    </div>
+  </section>
+  <!-- <section class="my-10 px-4 md:px-16 fade-in">
+  <div class="bg-gradient-to-br from-purple-800 via-black to-gray-900 rounded-2xl p-6 text-white max-w-5xl mx-auto">
+    <h2 class="text-2xl font-bold mb-4">Nuestra Vision</h2>
+    <p class="mb-4">creemos en combinar tecnología y un enfoque cercano para transformar tu negocio.</p>
+    <img src="tecno2.gif" alt="Demo gif" class="w-full rounded-xl shadow-lg" />
+  </div>
+  </section> -->
+  <section class="my-10 px-4 md:px-16 fade-in">
+    <div
+      class="bg-gradient-to-br from-purple-900 via-black to-gray-900 rounded-2xl p-6 text-white max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-6">
+      <!-- Texto -->
+      <div class="md:w-1/2">
+        <h2 class="text-2xl font-bold mb-2">Nuestra Vision</h2>
+        <p class="text-lg">creemos en combinar tecnología y un enfoque cercano para transformar tu negocio.</p>
+      </div>
+      <!-- GIF -->
+      <div class="md:w-1/2">
+        <img alt="Gif informativo" class="w-3/4 md:w-full mx-auto rounded-xl shadow-lg" src="static/imagenes/sinfondo.gif">
+        </img>
+      </div>
+    </div>
+  </section>
+  <div class="relative z-10 w-full h-[2px] bg-gradient-to-r from-transparent via-white/30 to-transparent my-16"></div>
+  <!-- Sección nueva con 1 imagen y texto -->
+  <section class="py-5 fade-in">
+    <div class="max-w-4xl mx-auto px-6 bg-gradient-to-br from-indigo-800 via-black to-indigo-800 rounded-3xl p-10">
+      <div class="flex flex-col md:flex-row items-center gap-6">
+        <img alt="Ejemplo" class="rounded-xl shadow-md w-full md:w-1/2" src="static/imagenes/soporte.jpg">
+        <div class="md:w-1/2 text-center">
+          <h4 class="text-2xl font-bold mb-4">Estamos para ayudarte</h4>
+          <p class="text-white/80">Ofrecemos el servicio de Soporte Tecnico constante, ya sea en proyectos desarrollados
+            por nosotros como tambien en desarrollos externos.</p>
+        </div>
+        </img>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- Sección nueva de texto puro -->
+  <section class="py-20 fade-in" id="contacto">
+    <div
+      class="max-w-3xl mx-auto px-6 bg-gradient-to-br from-purple-800 via-black to-purple-800 rounded-3xl p-10 text-center">
+      <h4 class="text-2xl font-bold mb-4">Contactanos</h4>
+      <div class="iconos-redes">
+        <div class="icono"><a aria-label="true" class="" href="mailto:contacto@supregsolutions.com" target="_blank"><i
+              class="fa fa-envelope text-3xl"></i></a></div>
+        <div class="icono"><a aria-label="Facebook" class="" href="http://api.whatsapp.com/send/?phone=5491163589975"
+            target="_blank"><i class="fab fa-whatsapp text-3xl"></i></a></div>
+        <div class="icono"><a aria-label="LinkedIn" class="" href="https://www.linkedin.com/company/supreg-solutions"
+            target="_blank"><i class="fab fa-linkedin-in text-3xl"></i></a></div>
+        <div class="icono"><a aria-label="LinkedIn" class="" href="https://www.instagram.com/supregsolutions"
+            target="_blank"><i class="fa-brands fa-instagram text-3xl"></i></a></div>
       </div>
     </div>
   </section>

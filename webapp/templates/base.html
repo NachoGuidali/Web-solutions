@@ -1,190 +1,134 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <!--los tres metadatos de abajo son opcionales-->
-    <meta name="author" content="Ignacio Guidali">
-    <meta name="description" content="Somos una empresa compuesta por un grupo de desarrolladores y tecnicos especializada en soluciones tecnologicas de Software y Hardware">
-    <meta name="keywords" content="HTML, CSS, JAVASCRIPT, REACT, PYTHON, WEB SOLUTIONS, HARDWARE, SOFTWARE">
-    <title>Web Solutions</title>
-    <!--favicon-->
-    <link rel="icon" type="image/x-icon" href="static/imagenes/logob4bm.bmp">
-    <!-- Styles -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-    <!-- FONTS -->
-    <!-- google fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    
-    
-</head>
-<body> 
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-md bg-body-tertiary">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-toggler" aria-controls="navbar-toggler" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-          <div class="collapse navbar-collapse" id="navbar-toggler">
-            <a class="navbar-brand" href="#hero">
-                <img class="img-nav" src="static/imagenes/1.png" width="150" height="150" alt="Imagen de Pagina">
-            </a>
-            <ul class="navbar-nav d-flex justify-content-center align-items-center">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Inicio   </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}">Nosotros</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link " href="{% url 'servicios' %}">Servicios</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link " href="/#contacto ">Contacto</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-    </nav>
-{% block content %} 
-{% endblock %}
-    
-  <!-- FOOTER -->
-      <footer class="seccion-oscura d-flex flex-column align-items-center justify-content-center">
-        
-        <p class="footer-texto text-center">Tecnologia Superior y Regular. <br>Para todo tipo de usuarios</p>
-        <div class="iconos-redes d-flex flex-wrap align-items-center justify-content-center">
-          <!-- <a href="https://twitter.com/nachoguidali" target="_blank" rel="noopener noreferrer"><i class="bi bi-twitter"></i></a> -->
-          <a href="https://instagram.com/supregsolutions" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
-          <a href="https://www.linkedin.com/company/supreg-solutions" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
-          <!-- <a href="https://github.com/nachoguidali" target="_blank" rel="noopener noreferrer"><i class="bi bi-github"></i></a> -->
-          <a href="mailto:contacto@supregsolutions.com" target="_blank" rel="noopener noreferrer"><i class="bi bi-envelope"></i></a>
-        </div>
-        <div class="derechos">Copyright &#169; 2024 SupReg Solutions. Todos los derechos reservados.</div>
-      </footer>
 
-    <div id="particles-js"></div>
-    <script src="static/particles.min.js"></script>
-    <script>
-        particlesJS(
-            {
-  "particles": {
-    "number": {
-      "value": 57,
-      "density": {
-        "enable": true,
-        "value_area": 800
-      }
-    },
-    "color": {
-      "value": "#ffffff"
-    },
-    "shape": {
-      "type": "circle",
-      "stroke": {
-        "width": 0,
-        "color": "#000000"
-      },
-      "polygon": {
-        "nb_sides": 5
-      },
-      "image": {
-        "src": "img/github.svg",
-        "width": 100,
-        "height": 100
-      }
-    },
-    "opacity": {
-      "value": 0.5,
-      "random": false,
-      "anim": {
-        "enable": false,
-        "speed": 1,
-        "opacity_min": 0.1,
-        "sync": false
-      }
-    },
-    "size": {
-      "value": 3,
-      "random": true,
-      "anim": {
-        "enable": false,
-        "speed": 40,
-        "size_min": 0.1,
-        "sync": false
-      }
-    },
-    "line_linked": {
-      "enable": true,
-      "distance": 150,
-      "color": "#ffffff",
-      "opacity": 0.4,
-      "width": 1
-    },
-    "move": {
-      "enable": true,
-      "speed": 4.610236182596568,
-      "direction": "none",
-      "random": false,
-      "straight": false,
-      "out_mode": "out",
-      "bounce": false,
-      "attract": {
-        "enable": false,
-        "rotateX": 600,
-        "rotateY": 1200
-      }
-    }
-  },
-  "interactivity": {
-    "detect_on": "canvas",
-    "events": {
-      "onhover": {
-        "enable": true,
-        "mode": "grab"
-      },
-      "onclick": {
-        "enable": true,
-        "mode": "push"
-      },
-      "resize": true
-    },
-    "modes": {
-      "grab": {
-        "distance": 231.44200550588337,
-        "line_linked": {
-          "opacity": 1
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <!-- Título SEO optimizado -->
+  <title>SupReg Solutions | Desarrollo Web, Automatizaciones e Integraciones IT</title>
+  <!-- Open Graph -->
+  <meta content="SupReg Solutions | Soluciones IT a Medida" property="og:title" />
+  <meta content="Automatización, desarrollo web, soporte técnico y más." property="og:description" />
+  <meta content="https://www.supregsolutions.com/logo-og.jpg" property="og:image" />
+  <meta content="https://www.supregsolutions.com/" property="og:url" />
+  <meta content="website" property="og:type" />
+  <link href="favicon.ico" rel="icon" type="image/x-icon" />
+  <!-- Meta descripción -->
+  <meta
+    content="Soluciones tecnológicas a medida: desarrollo web, automatización, soporte y consultoría IT para empresas. SupReg Solutions impulsa tu negocio con tecnología."
+    name="description" />
+  <!-- Meta palabras clave (opcional) -->
+  <meta
+    content="desarrollo web, automatización, consultoría IT, soporte técnico, soluciones tecnológicas, SupReg Solutions"
+    name="keywords" />
+  <!-- Meta autor -->
+  <meta content="SupReg Solutions" name="author" />
+  <!--favicon-->
+  <link rel="icon" type="image/x-icon" href="static/imagenes/logob4bm.bmp">
+   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  </link>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+
+</head>
+
+<body class="bg-black text-white font-sans">
+  <!-- Navbar -->
+  <header class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-7xl px-4">
+    <div
+      class="bg-black/30 text-white px-4 md:px-10 py-2 rounded-full shadow-lg flex items-center justify-between border border-white/20">
+      <!-- Logo -->
+      <div class="flex items-center gap-2">
+        <img alt="Logo SupReg Solutions" class="h-6" src="static/imagenes/logosinfondo.png" />
+        <span class="font-bold text-sm md:text-base">SupReg Solutions</span>
+      </div>
+      <!-- Navegación desktop -->
+      <nav class="hidden md:flex gap-6 text-sm font-medium">
+        <a class="hover:text-indigo-400 transition" href="{% url 'home' %}">Inicio</a>
+        <a class="hover:text-indigo-400 transition" href="{% url 'servicios' %}">Servicios</a>
+        <a class="hover:text-indigo-400 transition" href="{% url 'about' %}">Nosotros</a>
+        <a class="hover:text-indigo-400 transition" href="/#contacto ">Contacto</a>
+      </nav>
+      <!-- Botón hamburguesa mobile -->
+      <button class="md:hidden text-2xl" id="menu-toggle">☰</button>
+    </div>
+    <!-- Menú móvil -->
+    <div
+      class="md:hidden hidden flex flex-col bg-black rounded-2xl px-6 py-4 mt-2 space-y-3 text-sm text-white shadow-lg"
+      id="mobile-menu">
+      <a class="hover:text-indigo-400" href="{% url 'home' %}">Inicio</a>
+      <a class="hover:text-indigo-400" href="{% url 'servicios' %}">Servicios</a>
+      <a class="hover:text-indigo-400" href="{% url 'about' %}">Nosotros</a>
+      <a class="hover:text-indigo-400" href="/#contacto ">Contacto</a>
+    </div>
+  </header>
+  {% block content %}
+  {% endblock %}
+
+<!-- Footer -->
+  <footer class="bottom-0 bg-black py-8 border-t border-white/10 mt-20 fade-in">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm">
+      <p>© 2025 SupReg Solutions. Todos los derechos reservados.</p>
+      <div class="flex gap-4 mt-4 md:mt-0">
+        <!-- <a href="#" class="hover:text-green-400">Privacidad</a>
+        <a href="#" class="hover:text-green-400">Términos</a>
+        <a href="#" class="hover:text-green-400">Contacto</a> -->
+      </div>
+    </div>
+  </footer>
+
+ <!-- Animaciones de scroll -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
         }
-      },
-      "bubble": {
-        "distance": 400,
-        "size": 40,
-        "duration": 2,
-        "opacity": 8,
-        "speed": 3
-      },
-      "repulse": {
-        "distance": 200,
-        "duration": 0.4
-      },
-      "push": {
-        "particles_nb": 4
-      },
-      "remove": {
-        "particles_nb": 2
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+  <script>
+    const toggleBtn = document.getElementById("menu-toggle");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    toggleBtn.addEventListener("click", () => {
+      if (mobileMenu.classList.contains("hidden")) {
+        mobileMenu.classList.remove("hidden");
+        // Forzar reflow para que se active la transición
+        void mobileMenu.offsetWidth;
+        mobileMenu.classList.remove("opacity-0", "scale-95");
+        mobileMenu.classList.add("opacity-100", "scale-100");
+      } else {
+        mobileMenu.classList.remove("opacity-100", "scale-100");
+        mobileMenu.classList.add("opacity-0", "scale-95");
+        // Esperar que termine la animación antes de ocultar
+        setTimeout(() => {
+          mobileMenu.classList.add("hidden");
+        }, 300); // duración debe coincidir con duration-300
       }
-    }
-  },
-  "retina_detect": true
-} 
-        )
-    </script>
-<!--este es el boostrap de javascript-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>     
+    });
+  </script>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const swiper = new Swiper('.swiper', {
+      slidesPerView: 6,
+      spaceBetween: 50,
+      loop: true,
+      speed: 3000, // velocidad constante
+      autoplay: {
+        delay: 0, // sin pausa
+        disableOnInteraction: false,
+      },
+      allowTouchMove: false, // evitar interrupción del flujo
+    });
+  </script>
 </body>
+
 </html>

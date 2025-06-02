@@ -72,34 +72,14 @@
   gap: 4rem;
 
 }
-
-
 .slider-container {
   margin: 1rem auto;
-  width: 70%;
-  overflow: hidden;
 }
 
-.swiper {
-  width: 100%;
-}
-
-.swiper-slide {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-}
-
-.swiper-slide img {
-  width: 80%;
-  height: auto;
-
-  object-fit: cover;
-}
-
-.swiper-wrapper {
-  align-items: center;
+@media (max-width: 768px) {
+  .swiper-slide img {
+    width: 100%;
+  }
 }
 
 .iconos-redes {

@@ -26,7 +26,7 @@
   <meta content="SupReg Solutions" name="author" />
   <!--favicon-->
   <link rel="icon" type="image/x-icon" href="static/imagenes/logob4bm.bmp">
-   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
@@ -68,7 +68,7 @@
   {% block content %}
   {% endblock %}
 
-<!-- Footer -->
+  <!-- Footer -->
   <footer class="bottom-0 bg-black py-8 border-t border-white/10 mt-20 fade-in">
     <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm">
       <p>© 2025 SupReg Solutions. Todos los derechos reservados.</p>
@@ -80,7 +80,7 @@
     </div>
   </footer>
 
- <!-- Animaciones de scroll -->
+  <!-- Animaciones de scroll -->
   <script>
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -118,17 +118,50 @@
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
     const swiper = new Swiper('.swiper', {
+  slidesPerView: 4,
+  spaceBetween: 10,
+  breakpoints: {
+    640: {
+      slidesPerView: 4,
+      spaceBetween: 20,
+    },
+    768: {
+      slidesPerView: 4,
+      spaceBetween: 30,
+    },
+    1024: {
       slidesPerView: 6,
-      spaceBetween: 50,
-      loop: true,
-      speed: 3000, // velocidad constante
-      autoplay: {
-        delay: 0, // sin pausa
-        disableOnInteraction: false,
-      },
-      allowTouchMove: false, // evitar interrupción del flujo
-    });
+      spaceBetween: 40,
+    },
+  },
+  loop: true,
+  autoplay: {
+    delay: 2000,
+  },
+});
+
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "SupReg Solutions",
+  "url": "https://www.supregsolutions.com",
+  "logo": "https://www.supregsolutions.com/logo-og.jpg",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+54-911-63589975",
+    "contactType": "customer support",
+    "areaServed": "AR",
+    "availableLanguage": ["Spanish"]
+  },
+  "sameAs": [
+    "https://www.instagram.com/supregsolutions",
+    "https://www.linkedin.com/company/supreg-solutions"
+  ]
+}
+</script>
+
 </body>
 
 </html>

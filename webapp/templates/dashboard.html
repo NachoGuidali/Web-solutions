@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="pt-28 px-4 max-w-7xl mx-auto">
+  <h1 class="text-3xl font-bold mb-6 text-indigo-400">Panel de Control SupReg</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow">
+      <h2 class="text-xl font-semibold mb-2">Clientes</h2>
+      <p class="text-3xl font-bold text-indigo-300">{{ total_clientes }}</p>
+    </div>
+
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow">
+      <h2 class="text-xl font-semibold mb-2">Proyectos Activos</h2>
+      <p class="text-3xl font-bold text-indigo-300">{{ proyectos_activos }}</p>
+    </div>
+
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow">
+      <h2 class="text-xl font-semibold mb-2">Total Facturado</h2>
+      <p class="text-3xl font-bold text-green-300">
+      <ul>
+        <li><strong>Pesos (ARS):</strong> ${{ total_facturado_ars }}</li>
+        <li><strong>Dólares (USD):</strong> U$D {{ total_facturado_usd }}</li>
+      </ul>
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-10 flex flex-wrap gap-4">
+    <a href="{% url 'clientes_list' %}"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Clientes</a>
+    <a href="{% url 'proyectos_list' %}"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Proyectos</a>
+    <a href="{% url 'admin:index' %}"
+      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Ir al Admin</a>
+    <a href="{% url 'dashboard' %}"
+      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Dashboard</a>
+    </div>
+</div>
+{% endblock %}

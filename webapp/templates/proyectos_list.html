@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pt-28 max-w-6xl mx-auto px-4">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-indigo-400">Proyectos</h1>
+    <a href="{% url 'nuevo_proyecto' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm shadow">+ Nuevo Proyecto</a>
+  </div>
+
+  <div class="space-y-4">
+    {% for proyecto in proyectos %}
+    <div class="bg-white/5 border border-white/10 rounded-lg p-4">
+      <div class="flex justify-between">
+        <div>
+          <h2 class="text-xl font-semibold">{{ proyecto.nombre }}</h2>
+          <p class="text-sm text-white/70">Cliente: {{ proyecto.cliente.nombre }}</p>
+          <p class="text-sm text-white/50">
+  Estado: {{ proyecto.get_estado_display }} |
+  Precio: {{ proyecto.simbolo_moneda }}{{ proyecto.precio }} |
+  Facturado: {{ proyecto.simbolo_moneda }}{{ proyecto.monto_cobrado }}
+</p>
+
+          {% if proyecto.observaciones %}
+            <p class="text-sm text-yellow-300 mt-2">📝 Observaciones: {{ proyecto.observaciones }}</p>
+          {% endif %}
+        </div>
+        <div class="flex items-center">
+          <a href="{% url 'editar_proyecto' proyecto.id %}" class="text-sm text-indigo-300 hover:text-indigo-400 px-3 py-1 border rounded border-indigo-400">Editar</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-white">No hay proyectos cargados aún.</p>
+    {% endfor %}
+  </div>
+  <div class="mt-10 flex flex-wrap gap-4">
+    <a href="{% url 'clientes_list' %}"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Clientes</a>
+    <a href="{% url 'proyectos_list' %}"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Proyectos</a>
+    <a href="{% url 'admin:index' %}"
+      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Ir al Admin</a>
+    <a href="{% url 'dashboard' %}"
+      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Dashboard</a>
+    </div>
+</div>
+{% endblock %}

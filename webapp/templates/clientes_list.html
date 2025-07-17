@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pt-28 max-w-6xl mx-auto px-4">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-indigo-400">Clientes</h1>
+    <a href="{% url 'nuevo_cliente' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm shadow">+ Nuevo Cliente</a>
+  </div>
+
+
+    {% for cliente in clientes %}
+    <div class="bg-white/5 border border-white/10 rounded-xl p-4 shadow">
+      <div class="flex justify-between items-center">
+        <div>
+          <h2 class="text-xl font-semibold text-white">{{ cliente.nombre }}</h2>
+          <p class="text-sm text-white/80">{{ cliente.email }} | {{ cliente.telefono }}</p>
+          {% if cliente.empresa %}
+          <p class="text-sm text-white/60">Empresa: {{ cliente.empresa }}</p>
+          {% endif %}
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-700 text-white capitalize">
+          {{ cliente.estado }}
+        </span>
+      </div>
+
+      {% if cliente.proyectos.all %}
+      <div class="mt-4">
+        <h3 class="text-sm font-bold text-white/70 mb-2">Proyectos:</h3>
+        <ul class="space-y-1">
+          {% for proyecto in cliente.proyectos.all %}
+          <li class="flex justify-between items-center bg-white/5 p-2 rounded">
+            <span>{{ proyecto.nombre }}</span>
+            <span class="text-xs font-medium px-2 py-1 rounded-full bg-gray-700 text-white capitalize">
+              {{ proyecto.estado|cut:"_" }}
+
+            </span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+    {% empty %}
+    <p class="text-white">No hay clientes aún.</p>
+    {% endfor %}
+  </div>
+  <div class="mt-10 flex flex-wrap gap-4">
+    <a href="{% url 'clientes_list' %}"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Clientes</a>
+    <a href="{% url 'proyectos_list' %}"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Proyectos</a>
+    <a href="{% url 'admin:index' %}"
+      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Ir al Admin</a>
+    <a href="{% url 'dashboard' %}"
+      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Dashboard</a>
+    </div>
+</div>
+{% endblock %}

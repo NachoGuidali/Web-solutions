@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-f$jo19ev_mhiew^nfumeule1ojsy+80#+pio0get=5!5wwh)10'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['nachogakd.pythonanywhere.com', '127.0.0.1', 'supregsolutions.com', 'www.supregsolutions.com']
 
@@ -131,5 +131,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://supregsolutions.com",
+    "https://www.supregsolutions.com", 
+]
 

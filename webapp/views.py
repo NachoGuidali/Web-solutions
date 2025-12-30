@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Cliente, Proyecto, Factura
+from django.contrib import messages
 from django.db import models
-from .forms import ProyectoForm, ClienteForm
+from django.db.models import Q
+from .forms import ProyectoForm, ClienteForm, FacturaForm
 
 # Create your views here.
 
@@ -79,3 +81,95 @@ def editar_proyecto(request, id):
     else:
         form = ProyectoForm(instance=proyecto)
     return render(request, 'editar_proyecto.html', {'form': form, 'proyecto': proyecto})
+
+
+@login_required
+def facturas_list(request):
+    """
+    Lista + filtros básicos (search, estado, moneda, proyecto).
+    """
+    qs = Factura.objects.select_related("proyecto").order_by("-fecha", "-id")
+
+    q = request.GET.get("q", "").strip()
+    estado = request.GET.get("estado", "").strip()
+    moneda = request.GET.get("moneda", "").strip()
+    proyecto_id = request.GET.get("proyecto", "").strip()
+
+    if q:
+        qs = qs.filter(
+            Q(proyecto__nombre__icontains=q)
+            | Q(metodo_pago__icontains=q)
+            | Q(observaciones__icontains=q)
+        )
+
+    if estado in ("pendiente", "cobrado"):
+        qs = qs.filter(estado=estado)
+
+    if moneda in ("ARS", "USD"):
+        qs = qs.filter(moneda=moneda)
+
+    if proyecto_id.isdigit():
+        qs = qs.filter(proyecto_id=int(proyecto_id))
+
+    context = {
+        "facturas": qs,
+        "filters": {"q": q, "estado": estado, "moneda": moneda, "proyecto": proyecto_id},
+    }
+    return render(request, "facturas_list.html", context)
+
+
+@login_required
+def factura_create(request):
+    if request.method == "POST":
+        form = FacturaForm(request.POST)
+        if form.is_valid():
+            factura = form.save()
+            messages.success(request, f"Factura creada (ID {factura.id}).")
+            return redirect("facturas_list")
+    else:
+        form = FacturaForm()
+
+    return render(request, "factura_form.html", {"form": form, "mode": "create"})
+
+
+@login_required
+def factura_update(request, pk):
+    factura = get_object_or_404(Factura, pk=pk)
+
+    if request.method == "POST":
+        form = FacturaForm(request.POST, instance=factura)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Factura actualizada.")
+            return redirect("facturas_list")
+    else:
+        form = FacturaForm(instance=factura)
+
+    return render(
+        request,
+        "factura_form.html",
+        {"form": form, "mode": "update", "factura": factura},
+    )
+
+
+@login_required
+def factura_delete(request, pk):
+    factura = get_object_or_404(Factura, pk=pk)
+
+    if request.method == "POST":
+        factura.delete()
+        messages.success(request, "Factura eliminada.")
+        return redirect("facturas_list")
+
+    return render(request, "factura_confirm_delete.html", {"factura": factura})
+
+
+@login_required
+def factura_mark_cobrada(request, pk):
+    factura = get_object_or_404(Factura, pk=pk)
+
+    if request.method == "POST":
+        factura.estado = "cobrado"
+        factura.save(update_fields=["estado"])
+        messages.success(request, "Factura marcada como cobrada.")
+    return redirect("facturas_list")

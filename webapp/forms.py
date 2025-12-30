@@ -20,4 +20,10 @@ class ClienteForm(forms.ModelForm):
 class FacturaForm(forms.ModelForm):
     class Meta:
         model = Factura
-        fields = ['monto', 'moneda', 'observaciones']
+        fields = ["proyecto","fecha","monto","moneda","estado","metodo_pago","observaciones"]
+        widgets = {
+            "fecha": forms.DateInput(attrs={"type": "date"}),
+            "monto": forms.NumberInput(attrs={"step": "0.01"}),
+            "metodo_pago": forms.TextInput(attrs={"placeholder": "Ej: Transferencia / Efectivo / MP"}),
+            "observaciones": forms.Textarea(attrs={"rows": 3}),
+        }

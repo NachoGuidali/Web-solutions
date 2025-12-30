@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="max-w-2xl mx-auto px-4 pt-32 fade-in">
+
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">Eliminar factura</h1>
+    <p class="text-white/70 mt-1">Esta acción no se puede deshacer.</p>
+  </div>
+
+  <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+    <div class="mb-4">
+      <p class="text-white/80">¿Seguro que querés eliminar esta factura?</p>
+      <p class="mt-2 text-white">
+        <span class="text-white/60">Factura:</span>
+        <span class="font-semibold">{{ factura }}</span>
+      </p>
+      <p class="text-white/60 text-sm mt-1">ID #{{ factura.id }} — {{ factura.fecha }}</p>
+    </div>
+
+    <form method="post" class="flex flex-col md:flex-row gap-3">
+      {% csrf_token %}
+      <button type="submit"
+              class="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 transition font-medium">
+        Sí, eliminar
+      </button>
+
+      <a href="{% url 'facturas_list' %}"
+         class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10">
+        Cancelar
+      </a>
+    </form>
+  </div>
+
+</section>
+
+{% endblock %}

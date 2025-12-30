@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="max-w-3xl mx-auto px-4 pt-32 fade-in">
+
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">
+      {% if mode == "create" %}Nueva factura{% else %}Editar factura #{{ factura.id }}{% endif %}
+    </h1>
+    <p class="text-white/70 mt-1">Completá los datos y guardá.</p>
+  </div>
+
+  <div class="bg-white/5 border border-white/10 rounded-2xl p-5 md:p-7">
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="bg-red-500/10 border border-red-500/20 text-red-200 rounded-xl p-3">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <!-- Render prolijo por campo -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <div>
+          <label class="text-sm text-white/70">Proyecto</label>
+          {{ form.proyecto }}
+          {% if form.proyecto.errors %}<p class="text-red-300 text-xs mt-1">{{ form.proyecto.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="text-sm text-white/70">Fecha</label>
+          {{ form.fecha }}
+          {% if form.fecha.errors %}<p class="text-red-300 text-xs mt-1">{{ form.fecha.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="text-sm text-white/70">Monto</label>
+          {{ form.monto }}
+          {% if form.monto.errors %}<p class="text-red-300 text-xs mt-1">{{ form.monto.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="text-sm text-white/70">Moneda</label>
+          {{ form.moneda }}
+          {% if form.moneda.errors %}<p class="text-red-300 text-xs mt-1">{{ form.moneda.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="text-sm text-white/70">Estado</label>
+          {{ form.estado }}
+          {% if form.estado.errors %}<p class="text-red-300 text-xs mt-1">{{ form.estado.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="text-sm text-white/70">Método de pago</label>
+          {{ form.metodo_pago }}
+          {% if form.metodo_pago.errors %}<p class="text-red-300 text-xs mt-1">{{ form.metodo_pago.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="text-sm text-white/70">Observaciones</label>
+          {{ form.observaciones }}
+          {% if form.observaciones.errors %}<p class="text-red-300 text-xs mt-1">{{ form.observaciones.errors|striptags }}</p>{% endif %}
+        </div>
+
+      </div>
+
+      <div class="flex flex-col md:flex-row gap-3 pt-2">
+        <button type="submit"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-medium">
+          <i class="fa-solid fa-floppy-disk"></i>
+          Guardar
+        </button>
+
+        <a href="{% url 'facturas_list' %}"
+           class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+
+</section>
+
+<!-- Tailwind classes para widgets del form (si Django no las trae) -->
+<style>
+  /* Esto hace que tus inputs/select/textarea del ModelForm calcen con tu UI */
+  form input, form select, form textarea{
+    width: 100%;
+    border-radius: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: #fff !important;
+    color: #000 !important;
+    outline: none;
+  }
+</style>
+
+{% endblock %}

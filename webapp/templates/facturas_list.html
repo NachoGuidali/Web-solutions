@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="max-w-7xl mx-auto px-4 pt-32 fade-in">
+
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-3xl font-bold">Facturas</h1>
+      <p class="text-white/70 mt-1">Gestioná facturas sin entrar al admin.</p>
+    </div>
+
+
+    <a href="{% url 'dashboard' %}"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">dashboard</a>
+    <a href="{% url 'factura_create' %}"
+       class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-medium">
+      <i class="fa-solid fa-plus"></i>
+      Nueva factura
+    </a>
+    
+  </div>
+
+  <!-- Filtros -->
+  <form method="get"
+        class="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-5 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div>
+        <label class="text-sm text-white/70">Buscar</label>
+        <input type="text" name="q" value="{{ filters.q }}"
+               placeholder="Proyecto / método / observaciones"
+               class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
+      </div>
+
+      <div>
+        <label class="text-sm text-white/70">Estado</label>
+        <select name="estado"
+                class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
+          <option value="">Todos</option>
+          <option value="pendiente" {% if filters.estado == "pendiente" %}selected{% endif %}>Pendiente</option>
+          <option value="cobrado" {% if filters.estado == "cobrado" %}selected{% endif %}>Cobrado</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-sm text-white/70">Moneda</label>
+        <select name="moneda"
+                class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
+          <option value="">Todas</option>
+          <option value="ARS" {% if filters.moneda == "ARS" %}selected{% endif %}>ARS</option>
+          <option value="USD" {% if filters.moneda == "USD" %}selected{% endif %}>USD</option>
+        </select>
+      </div>
+
+      <div class="flex items-end gap-2">
+        <button type="submit"
+                class="w-full rounded-xl px-4 py-2 bg-white/10 hover:bg-white/20 transition border border-white/10">
+          Filtrar
+        </button>
+        <a href="{% url 'facturas_list' %}"
+           class="rounded-xl px-4 py-2 bg-white/5 hover:bg-white/10 transition border border-white/10 whitespace-nowrap">
+          Reset
+        </a>
+      </div>
+    </div>
+  </form>
+
+  <!-- Tabla / Lista -->
+  <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-white/5 text-white/80">
+          <tr>
+            <th class="text-left px-4 py-3">ID</th>
+            <th class="text-left px-4 py-3">Proyecto</th>
+            <th class="text-left px-4 py-3">Fecha</th>
+            <th class="text-left px-4 py-3">Monto</th>
+            <th class="text-left px-4 py-3">Estado</th>
+            <th class="text-left px-4 py-3">Método</th>
+            <th class="text-right px-4 py-3">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-white/10">
+          {% for f in facturas %}
+          <tr class="hover:bg-white/5 transition">
+            <td class="px-4 py-3 text-white/80">#{{ f.id }}</td>
+            <td class="px-4 py-3 font-medium">{{ f.proyecto.nombre }}</td>
+            <td class="px-4 py-3 text-white/80">{{ f.fecha }}</td>
+            <td class="px-4 py-3">
+              <span class="text-white/80">{{ f.moneda }}</span>
+              <span class="font-semibold">{{ f.monto }}</span>
+            </td>
+            <td class="px-4 py-3">
+              {% if f.estado == "cobrado" %}
+                <span class="px-2 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  Cobrado
+                </span>
+              {% else %}
+                <span class="px-2 py-1 rounded-full text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  Pendiente
+                </span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3 text-white/80">{{ f.metodo_pago|default:"-" }}</td>
+
+            <td class="px-4 py-3">
+              <div class="flex justify-end gap-2">
+                <a href="{% url 'factura_update' f.id %}"
+                   class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10">
+                  Editar
+                </a>
+
+                <a href="{% url 'factura_delete' f.id %}"
+                   class="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 transition border border-red-500/20 text-red-200">
+                  Eliminar
+                </a>
+
+                {% if f.estado != "cobrado" %}
+                <form method="post" action="{% url 'factura_mark_cobrada' f.id %}">
+                  {% csrf_token %}
+                  <button type="submit"
+                          class="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 transition border border-emerald-500/20 text-emerald-200">
+                    Marcar cobrada
+                  </button>
+                </form>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="px-4 py-8 text-center text-white/60">
+              No hay facturas cargadas.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+
+{% endblock %}

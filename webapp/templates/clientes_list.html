@@ -5,7 +5,16 @@
     <h1 class="text-2xl font-bold text-indigo-400">Clientes</h1>
     <a href="{% url 'nuevo_cliente' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm shadow">+ Nuevo Cliente</a>
   </div>
-
+  <div class="mt-10 flex flex-wrap gap-4">
+    <a href="{% url 'clientes_list' %}"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Clientes</a>
+    <a href="{% url 'proyectos_list' %}"
+      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Proyectos</a>
+    <a href="{% url 'admin:index' %}"
+      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Ir al Admin</a>
+    <a href="{% url 'dashboard' %}"
+      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Dashboard</a>
+    </div>
 
     {% for cliente in clientes %}
     <div class="bg-white/5 border border-white/10 rounded-xl p-4 shadow">
@@ -43,15 +52,6 @@
     <p class="text-white">No hay clientes aún.</p>
     {% endfor %}
   </div>
-  <div class="mt-10 flex flex-wrap gap-4">
-    <a href="{% url 'clientes_list' %}"
-      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Clientes</a>
-    <a href="{% url 'proyectos_list' %}"
-      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Proyectos</a>
-    <a href="{% url 'admin:index' %}"
-      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Ir al Admin</a>
-    <a href="{% url 'dashboard' %}"
-      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Dashboard</a>
-    </div>
+  
 </div>
 {% endblock %}

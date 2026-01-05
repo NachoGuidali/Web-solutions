@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-3xl mx-auto px-4 pt-32 fade-in">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">{% if mode == "create" %}Nuevo Evento{% else %}Editar Evento{% endif %}</h1>
+    <p class="text-white/70 mt-1">Definí fecha y recordatorio.</p>
+  </div>
+
+  <form method="post" class="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
+    {% csrf_token %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="md:col-span-2">
+        <label class="text-sm text-white/70">Título</label>
+        {{ form.titulo }}
+      </div>
+
+      <div>
+        <label class="text-sm text-white/70">Tipo</label>
+        {{ form.tipo }}
+      </div>
+
+      <div>
+        <label class="text-sm text-white/70">Recordatorio (minutos antes)</label>
+        {{ form.recordatorio_minutos_antes }}
+      </div>
+
+      <div>
+        <label class="text-sm text-white/70">Cliente</label>
+        {{ form.cliente }}
+      </div>
+
+      <div>
+        <label class="text-sm text-white/70">Proyecto</label>
+        {{ form.proyecto }}
+      </div>
+
+      <div>
+        <label class="text-sm text-white/70">Inicio</label>
+        {{ form.inicio }}
+      </div>
+
+      <div>
+        <label class="text-sm text-white/70">Fin (opcional)</label>
+        {{ form.fin }}
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="text-sm text-white/70">Descripción</label>
+        {{ form.descripcion }}
+      </div>
+    </div>
+
+    <div class="flex gap-2">
+      <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-medium">
+        Guardar
+      </button>
+      <a href="{% url 'eventos_list' %}" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10">
+        Volver
+      </a>
+    </div>
+  </form>
+
+  <style>
+    input, select, textarea {
+      width: 100%;
+      border-radius: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: white;
+      color: black !important;
+    }
+  </style>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-xl mx-auto px-4 pt-32 fade-in">
+  <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+    <h1 class="text-2xl font-bold mb-2">Eliminar evento</h1>
+    <p class="text-white/70 mb-6">
+      ¿Seguro que querés eliminar <strong>{{ evento.titulo }}</strong>?
+    </p>
+
+    <form method="post" class="flex gap-2">
+      {% csrf_token %}
+      <button type="submit" class="px-4 py-2 rounded-xl bg-red-500/80 hover:bg-red-600 transition font-medium">
+        Sí, eliminar
+      </button>
+      <a href="{% url 'eventos_list' %}" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10">
+        Cancelar
+      </a>
+    </form>
+  </div>
+</section>
+{% endblock %}

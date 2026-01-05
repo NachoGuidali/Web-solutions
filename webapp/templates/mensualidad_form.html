@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-3xl mx-auto px-4 pt-32 fade-in">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold">
+      {% if mode == "create" %}Nueva Mensualidad{% else %}Editar Mensualidad{% endif %}
+    </h1>
+    <p class="text-white/70 mt-1">Configurá el vencimiento y recordatorio.</p>
+  </div>
+
+  <form method="post" class="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4">
+    {% csrf_token %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="text-sm text-white/70">Proyecto</label>
+        {{ form.proyecto }}
+      </div>
+      <div class="flex items-end gap-2">
+        <div class="w-full">
+          <label class="text-sm text-white/70">Activa</label>
+          {{ form.activa }}
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm text-white/70">Monto</label>
+        {{ form.monto }}
+      </div>
+      <div>
+        <label class="text-sm text-white/70">Moneda</label>
+        {{ form.moneda }}
+      </div>
+
+      <div>
+        <label class="text-sm text-white/70">Día de vencimiento (1-28)</label>
+        {{ form.dia_vencimiento }}
+      </div>
+      <div>
+        <label class="text-sm text-white/70">Recordar días antes</label>
+        {{ form.dias_antes_recordatorio }}
+      </div>
+    </div>
+
+    <div class="flex gap-2">
+      <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-medium">
+        Guardar
+      </button>
+      <a href="{% url 'mensualidades_list' %}" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10">
+        Volver
+      </a>
+    </div>
+  </form>
+
+  <style>
+    input, select {
+      width: 100%;
+      border-radius: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: white;
+      color: black !important;
+    }
+    input[type="checkbox"] { width: auto; }
+  </style>
+</section>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 pt-32 fade-in">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-3xl font-bold">Mensualidades</h1>
+      <p class="text-white/70 mt-1">Configurá proyectos con cobro mensual y vencimientos.</p>
+    </div>
+
+    <div class="flex gap-2">
+      <a href="{% url 'dashboard' %}" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Dashboard</a>
+      <a href="{% url 'mensualidad_create' %}" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm shadow">
+        + Nueva mensualidad
+      </a>
+    </div>
+  </div>
+
+  <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-white/5 text-white/80">
+          <tr>
+            <th class="text-left px-4 py-3">Proyecto</th>
+            <th class="text-left px-4 py-3">Cliente</th>
+            <th class="text-left px-4 py-3">Monto</th>
+            <th class="text-left px-4 py-3">Vence</th>
+            <th class="text-left px-4 py-3">Activa</th>
+            <th class="text-right px-4 py-3">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/10">
+          {% for m in mensualidades %}
+          <tr class="hover:bg-white/5 transition">
+            <td class="px-4 py-3 font-medium">{{ m.proyecto.nombre }}</td>
+            <td class="px-4 py-3 text-white/80">{{ m.proyecto.cliente.nombre }}</td>
+            <td class="px-4 py-3">{{ m.moneda }} <span class="font-semibold">{{ m.monto }}</span></td>
+            <td class="px-4 py-3 text-white/80">{{ m.proximo_vencimiento }}</td>
+            <td class="px-4 py-3">
+              {% if m.activa %}
+                <span class="px-2 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Sí</span>
+              {% else %}
+                <span class="px-2 py-1 rounded-full text-xs bg-red-500/20 text-red-200 border border-red-500/30">No</span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex justify-end gap-2">
+                <a href="{% url 'mensualidad_update' m.id %}"
+                   class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10">
+                  Editar
+                </a>
+                <a href="{% url 'mensualidad_delete' m.id %}"
+                   class="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 transition border border-red-500/20 text-red-200">
+                  Eliminar
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="px-4 py-8 text-center text-white/60">No hay mensualidades cargadas.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

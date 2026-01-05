@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-7xl mx-auto px-4 pt-32 fade-in">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-3xl font-bold">Agenda</h1>
+      <p class="text-white/70 mt-1">Meets, entregas, llamadas y recordatorios.</p>
+    </div>
+
+    <div class="flex gap-2">
+      <a href="{% url 'dashboard' %}" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Dashboard</a>
+      <a href="{% url 'evento_create' %}" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm shadow">
+        + Nuevo evento
+      </a>
+    </div>
+  </div>
+
+  <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-white/5 text-white/80">
+          <tr>
+            <th class="text-left px-4 py-3">Título</th>
+            <th class="text-left px-4 py-3">Tipo</th>
+            <th class="text-left px-4 py-3">Inicio</th>
+            <th class="text-left px-4 py-3">Cliente/Proyecto</th>
+            <th class="text-right px-4 py-3">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/10">
+          {% for e in eventos %}
+          <tr class="hover:bg-white/5 transition">
+            <td class="px-4 py-3 font-medium">{{ e.titulo }}</td>
+            <td class="px-4 py-3 text-white/80">{{ e.get_tipo_display }}</td>
+            <td class="px-4 py-3 text-white/80">{{ e.inicio }}</td>
+            <td class="px-4 py-3 text-white/80">
+              {% if e.cliente %}{{ e.cliente.nombre }}{% endif %}
+              {% if e.proyecto %} | {{ e.proyecto.nombre }}{% endif %}
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex justify-end gap-2">
+                <a href="{% url 'evento_update' e.id %}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10">
+                  Editar
+                </a>
+                <a href="{% url 'evento_delete' e.id %}" class="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 transition border border-red-500/20 text-red-200">
+                  Eliminar
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="px-4 py-8 text-center text-white/60">No hay eventos.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

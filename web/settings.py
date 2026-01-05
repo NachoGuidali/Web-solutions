@@ -138,3 +138,34 @@ CSRF_TRUSTED_ORIGINS = [
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "supregsolutions@gmail.com"
+EMAIL_HOST_PASSWORD = "jbmh qdbq hbdt sspn"
+DEFAULT_FROM_EMAIL = "SupReg CRM <supregsolutions@gmail.com>"
+
+# a quién le llegan los recordatorios internos
+CRM_ALERT_EMAILS = ["supregsolutions@gmail.com", "nachog.akd@hotmail.com"]
+TIME_ZONE = "America/Argentina/Buenos_Aires"
+USE_TZ = True
+
+
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/1"
+CELERY_TIMEZONE = "America/Argentina/Buenos_Aires"
+
+from celery.schedules import crontab
+CELERY_BEAT_SCHEDULE = {
+    "crm_mensualidades_diario_0900": {
+        "task": "webapp.tasks.enviar_recordatorios_mensualidades",
+        "schedule": crontab(hour=9, minute=0),
+    },
+    "crm_eventos_cada_5_min": {
+        "task": "webapp.tasks.enviar_recordatorios_eventos",
+        "schedule": crontab(minute="*/5"),
+    },
+}

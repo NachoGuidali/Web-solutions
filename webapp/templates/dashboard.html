@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <div class="pt-28 px-4 max-w-7xl mx-auto">
   <h1 class="text-3xl font-bold mb-6 text-indigo-400">Panel de Control SupReg</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
     <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow">
       <h2 class="text-xl font-semibold mb-2">Clientes</h2>
       <p class="text-3xl font-bold text-indigo-300">{{ total_clientes }}</p>
@@ -16,27 +15,81 @@
     </div>
 
     <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow">
+      <h2 class="text-xl font-semibold mb-2">Facturas Pendientes</h2>
+      <p class="text-3xl font-bold text-amber-300">{{ facturas_pendientes }}</p>
+    </div>
+
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow">
       <h2 class="text-xl font-semibold mb-2">Total Facturado</h2>
-      <p class="text-3xl font-bold text-green-300">
-      <ul>
-        <li><strong>Pesos (ARS):</strong> ${{ total_facturado_ars }}</li>
-        <li><strong>Dólares (USD):</strong> U$D {{ total_facturado_usd }}</li>
-      </ul>
-      </p>
+      <div class="text-white/80 mt-2 space-y-1">
+        <div><strong>ARS:</strong> ${{ total_facturado_ars }}</div>
+        <div><strong>USD:</strong> U$D {{ total_facturado_usd }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Vencimientos -->
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xl font-semibold">Vencimientos (14 días)</h2>
+        <a href="{% url 'mensualidades_list' %}" class="text-sm text-indigo-300 hover:text-indigo-400">Ver todas</a>
+      </div>
+
+      <div class="space-y-3">
+        {% for m in vencimientos %}
+          <div class="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-3">
+            <div>
+              <div class="font-semibold">{{ m.proyecto.nombre }}</div>
+              <div class="text-sm text-white/70">Cliente: {{ m.proyecto.cliente.nombre }}</div>
+              <div class="text-sm text-white/60">Vence: {{ m.proximo_vencimiento }} — {{ m.moneda }} {{ m.monto }}</div>
+            </div>
+            <a href="{% url 'mensualidad_update' m.id %}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10 text-sm">
+              Editar
+            </a>
+          </div>
+        {% empty %}
+          <div class="text-white/60">No hay vencimientos próximos.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Eventos -->
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xl font-semibold">Agenda (7 días)</h2>
+        <a href="{% url 'eventos_list' %}" class="text-sm text-indigo-300 hover:text-indigo-400">Ver agenda</a>
+      </div>
+
+      <div class="space-y-3">
+        {% for e in eventos %}
+          <div class="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-3">
+            <div>
+              <div class="font-semibold">{{ e.titulo }}</div>
+              <div class="text-sm text-white/70">{{ e.get_tipo_display }} — {{ e.inicio }}</div>
+              <div class="text-sm text-white/60">
+                {% if e.cliente %}Cliente: {{ e.cliente.nombre }}{% endif %}
+                {% if e.proyecto %} | Proyecto: {{ e.proyecto.nombre }}{% endif %}
+              </div>
+            </div>
+            <a href="{% url 'evento_update' e.id %}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10 text-sm">
+              Editar
+            </a>
+          </div>
+        {% empty %}
+          <div class="text-white/60">No hay eventos próximos.</div>
+        {% endfor %}
+      </div>
     </div>
   </div>
 
   <div class="mt-10 flex flex-wrap gap-4">
-    <a href="{% url 'clientes_list' %}"
-      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Clientes</a>
-    <a href="{% url 'proyectos_list' %}"
-      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Proyectos</a>
-      <a href="{% url 'facturas_list' %}"
-      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Facturas</a>
-    <a href="{% url 'admin:index' %}"
-      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Ir al Admin</a>
-    <a href="{% url 'dashboard' %}"
-      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Dashboard</a>
-    </div>
+    <a href="{% url 'clientes_list' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Clientes</a>
+    <a href="{% url 'proyectos_list' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Proyectos</a>
+    <a href="{% url 'facturas_list' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Facturas</a>
+    <a href="{% url 'mensualidades_list' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Mensualidades</a>
+    <a href="{% url 'eventos_list' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Agenda</a>
+    <a href="{% url 'admin:index' %}" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Ir al Admin</a>
+  </div>
 </div>
 {% endblock %}

@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main class="pt-32 px-6 fade-in">
+  <section class="max-w-4xl mx-auto text-center mb-12">
+    <h1 class="text-4xl font-bold mb-4">Términos y Condiciones</h1>
+    <p class="text-lg text-white/80">Estas son las condiciones que rigen el uso de nuestro sitio web y la contratación
+      de los servicios de SupReg Solutions.</p>
+    <p class="text-sm text-white/50 mt-4">Última actualización: 23 de julio de 2026</p>
+  </section>
+
+  <section class="max-w-4xl mx-auto space-y-8 text-white/80 leading-relaxed pb-20">
+
+    <div class="bg-gradient-to-br from-purple-900 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">1. Aceptación de los términos</h2>
+      <p>Al acceder y utilizar el sitio <a class="text-indigo-400 hover:text-indigo-300"
+          href="https://www.supregsolutions.com">www.supregsolutions.com</a> o al contratar cualquiera de nuestros
+        servicios, aceptás estos Términos y Condiciones en su totalidad. Si no estás de acuerdo con alguno de ellos, te
+        pedimos que no utilices el sitio ni contrates nuestros servicios.</p>
+      <p class="mt-4">Estos términos se complementan con nuestra <a class="text-indigo-400 hover:text-indigo-300"
+          href="{% url 'privacidad' %}">Política de Privacidad</a>, que forma parte integrante del presente acuerdo.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-indigo-800 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">2. Definiciones</h2>
+      <ul class="list-disc list-inside space-y-2">
+        <li><strong>"SupReg Solutions", "nosotros":</strong> el prestador de los servicios, con operaciones en la
+          República Argentina.</li>
+        <li><strong>"Cliente", "vos":</strong> la persona humana o jurídica que contrata los servicios.</li>
+        <li><strong>"Servicios":</strong> desarrollo web, automatizaciones, integraciones de sistemas, soporte técnico,
+          consultoría IT y todo otro servicio ofrecido por SupReg Solutions.</li>
+        <li><strong>"Propuesta":</strong> el presupuesto o documento donde se detalla el alcance, plazo y precio de un
+          trabajo concreto.</li>
+      </ul>
+    </div>
+
+    <div class="bg-gradient-to-br from-purple-900 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">3. Uso del sitio web</h2>
+      <p>El contenido de este sitio tiene fines informativos y comerciales. Al utilizarlo, te comprometés a:</p>
+      <ul class="list-disc list-inside mt-4 space-y-2">
+        <li>No emplearlo con fines ilícitos, fraudulentos o que puedan dañar a terceros.</li>
+        <li>No intentar acceder sin autorización a áreas restringidas, sistemas o bases de datos.</li>
+        <li>No introducir software malicioso ni realizar acciones que afecten el funcionamiento del sitio.</li>
+        <li>Brindar información veraz cuando nos contactes.</li>
+      </ul>
+      <p class="mt-4">Nos reservamos el derecho de restringir el acceso a quien incumpla estas condiciones.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-indigo-800 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">4. Contratación de servicios</h2>
+      <p>La información publicada en el sitio no constituye una oferta vinculante. Cada trabajo se formaliza mediante una
+        Propuesta escrita que incluye:</p>
+      <ul class="list-disc list-inside mt-4 space-y-2">
+        <li>Alcance detallado de las tareas a realizar.</li>
+        <li>Plazo estimado de entrega.</li>
+        <li>Precio, moneda y condiciones de pago.</li>
+        <li>Entregables concretos y, cuando corresponda, cantidad de revisiones incluidas.</li>
+      </ul>
+      <p class="mt-4">El servicio se considera contratado cuando aceptás la Propuesta por escrito (email, WhatsApp o
+        firma) y, si así se pactó, abonás el anticipo correspondiente. Toda tarea no descripta en la Propuesta se
+        considera fuera de alcance y será presupuestada por separado.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-purple-900 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">5. Precios, facturación y pagos</h2>
+      <ul class="list-disc list-inside space-y-2">
+        <li>Los precios se expresan en pesos argentinos (ARS) o en dólares estadounidenses (USD), según lo indicado en
+          cada Propuesta.</li>
+        <li>Salvo indicación en contrario, los importes no incluyen impuestos, los que se adicionarán conforme la
+          normativa vigente.</li>
+        <li>Los servicios de mantenimiento, soporte o suscripción se facturan de forma mensual por adelantado, en la
+          fecha de vencimiento acordada.</li>
+        <li>Los costos de servicios de terceros (dominios, hosting, licencias, APIs, pasarelas de pago) son a cargo del
+          Cliente, salvo pacto expreso en contrario.</li>
+      </ul>
+      <p class="mt-4"><strong>Mora:</strong> la falta de pago dentro de los plazos acordados nos habilita a suspender la
+        prestación del servicio y el acceso a los entregables, previa notificación al Cliente, hasta la regularización
+        de la deuda.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-indigo-800 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">6. Plazos y colaboración del Cliente</h2>
+      <p>Los plazos informados son estimados y se calculan sobre la base de que el Cliente entregue en tiempo y forma la
+        información, contenidos, accesos y aprobaciones necesarios.</p>
+      <p class="mt-4">Es responsabilidad del Cliente:</p>
+      <ul class="list-disc list-inside mt-4 space-y-2">
+        <li>Proveer textos, imágenes, logos y demás materiales, garantizando que cuenta con los derechos para
+          utilizarlos.</li>
+        <li>Facilitar los accesos técnicos requeridos (dominios, hosting, cuentas, sistemas a integrar).</li>
+        <li>Designar un referente para consultas y aprobaciones.</li>
+        <li>Responder las solicitudes de aprobación dentro de un plazo razonable.</li>
+      </ul>
+      <p class="mt-4">Las demoras atribuibles al Cliente extienden proporcionalmente los plazos de entrega, sin
+        generar responsabilidad para SupReg Solutions.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-purple-900 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">7. Propiedad intelectual</h2>
+      <p>Todos los contenidos de este sitio (marca, logotipo, diseño, textos, imágenes y código) son propiedad de SupReg
+        Solutions o de sus licenciantes, y están protegidos por la Ley N° 11.723 de Propiedad Intelectual. Queda
+        prohibida su reproducción o uso sin autorización previa y por escrito.</p>
+      <p class="mt-4">Respecto de los desarrollos contratados: una vez abonada la totalidad del precio, el Cliente
+        adquiere los derechos de uso sobre los entregables específicos de su proyecto. SupReg Solutions conserva la
+        titularidad sobre sus componentes, librerías, frameworks internos y metodologías reutilizables, sobre los que
+        otorga al Cliente una licencia de uso no exclusiva e indefinida para operar su solución.</p>
+      <p class="mt-4">Salvo que el Cliente manifieste lo contrario por escrito, podremos mencionar el trabajo realizado
+        y exhibirlo en nuestro portfolio y redes sociales.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-indigo-800 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">8. Confidencialidad</h2>
+      <p>Ambas partes se obligan a mantener en reserva la información confidencial a la que accedan con motivo de la
+        relación comercial (datos de negocio, credenciales, código fuente, información de clientes) y a no divulgarla a
+        terceros sin autorización previa. Esta obligación permanece vigente durante dos (2) años posteriores a la
+        finalización del vínculo.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-purple-900 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">9. Garantía y soporte</h2>
+      <p>Garantizamos la corrección sin cargo de errores o defectos de funcionamiento imputables a nuestro desarrollo
+        durante los <strong>30 días corridos</strong> posteriores a la entrega final.</p>
+      <p class="mt-4">La garantía no cubre:</p>
+      <ul class="list-disc list-inside mt-4 space-y-2">
+        <li>Modificaciones realizadas por el Cliente o por terceros sobre el trabajo entregado.</li>
+        <li>Fallas originadas en servicios de terceros (hosting, APIs, pasarelas de pago, plataformas externas).</li>
+        <li>Nuevas funcionalidades o cambios de alcance solicitados con posterioridad.</li>
+        <li>Problemas derivados de un uso indebido o de la falta de mantenimiento.</li>
+      </ul>
+      <p class="mt-4">El soporte continuo y el mantenimiento evolutivo se contratan de forma independiente mediante un
+        plan mensual.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-indigo-800 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">10. Limitación de responsabilidad</h2>
+      <p>SupReg Solutions presta sus servicios con la debida diligencia profesional, pero no garantiza que el sitio o
+        las soluciones desarrolladas funcionen de forma ininterrumpida o libre de errores, ni resultados comerciales
+        específicos.</p>
+      <p class="mt-4">En ningún caso responderemos por daños indirectos, lucro cesante, pérdida de datos o pérdida de
+        oportunidades comerciales. Nuestra responsabilidad total frente al Cliente, por cualquier concepto, se limita al
+        monto efectivamente abonado por el servicio que dio origen al reclamo durante los últimos seis (6) meses.</p>
+      <p class="mt-4">Tampoco somos responsables por interrupciones o fallas atribuibles a proveedores externos, ni por
+        casos fortuitos o de fuerza mayor.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-purple-900 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">11. Cancelación y rescisión</h2>
+      <ul class="list-disc list-inside space-y-2">
+        <li><strong>Proyectos:</strong> si el Cliente decide cancelar un proyecto en curso, deberá abonar las etapas
+          efectivamente ejecutadas hasta la fecha de notificación. Los anticipos abonados no son reintegrables.</li>
+        <li><strong>Servicios mensuales:</strong> cualquiera de las partes puede darlos de baja notificando por escrito
+          con al menos <strong>30 días</strong> de anticipación. El período en curso se factura íntegramente.</li>
+        <li><strong>Incumplimiento:</strong> podemos rescindir el acuerdo de forma inmediata ante falta de pago o
+          incumplimiento grave de estos términos por parte del Cliente.</li>
+      </ul>
+      <p class="mt-4">Finalizada la relación, entregaremos al Cliente los accesos y materiales que le correspondan,
+        siempre que no existan deudas pendientes.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-indigo-800 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">12. Protección de datos personales</h2>
+      <p>El tratamiento de los datos personales se rige por nuestra <a class="text-indigo-400 hover:text-indigo-300"
+          href="{% url 'privacidad' %}">Política de Privacidad</a>, elaborada conforme la Ley N° 25.326. Cuando en la
+        prestación del servicio accedamos a datos personales de los clientes o usuarios del Cliente, actuaremos
+        exclusivamente como encargados del tratamiento, siguiendo sus instrucciones y aplicando medidas de seguridad
+        adecuadas.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-purple-900 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">13. Enlaces y servicios de terceros</h2>
+      <p>El sitio y nuestras soluciones pueden integrar o enlazar servicios de terceros (redes sociales, plataformas de
+        Meta, pasarelas de pago, proveedores de hosting y APIs). Su uso se rige por los términos y políticas de cada
+        proveedor, sobre los que no tenemos control ni responsabilidad.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-indigo-800 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">14. Modificaciones</h2>
+      <p>Podemos actualizar estos Términos y Condiciones en cualquier momento. La versión vigente será siempre la
+        publicada en esta página, con su fecha de última actualización. Los cambios no afectan a los proyectos ya
+        contratados, que se rigen por los términos aceptados al momento de la contratación.</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-purple-900 to-black p-6 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold mb-3 text-white">15. Ley aplicable y jurisdicción</h2>
+      <p>Estos términos se rigen por las leyes de la República Argentina. Ante cualquier controversia, las partes
+        intentarán primero una solución amistosa. De no alcanzarla, se someterán a los tribunales ordinarios de la
+        Ciudad Autónoma de Buenos Aires, renunciando a cualquier otro fuero o jurisdicción.</p>
+      <p class="mt-4">Si alguna cláusula de estos términos fuera declarada inválida, las restantes conservarán plena
+        vigencia.</p>
+    </div>
+
+    <div class="max-w-3xl mx-auto text-center bg-gradient-to-br from-purple-800 via-black to-purple-800 rounded-3xl p-10">
+      <h2 class="text-2xl font-bold mb-4 text-white">¿Consultas sobre estos términos?</h2>
+      <p class="text-white/80">Escribinos y te respondemos.</p>
+      <a class="inline-block mt-6 px-6 py-3 rounded-full bg-indigo-600 hover:bg-indigo-500 transition text-white font-medium"
+        href="mailto:contacto@supregsolutions.com">contacto@supregsolutions.com</a>
+    </div>
+
+  </section>
+</main>
+
+{% endblock %}

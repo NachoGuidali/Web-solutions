@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    home, servicios, about, dashboard,
+    home, servicios, about, privacidad, terminos, dashboard,
     clientes_list, proyectos_list, editar_proyecto, nuevo_cliente, nuevo_proyecto,
     facturas_list, factura_create, factura_update, factura_delete, factura_mark_cobrada,
     mensualidades_list, mensualidad_create, mensualidad_update, mensualidad_delete,
@@ -11,6 +11,8 @@ urlpatterns = [
     path('', home, name='home'),
     path('servicios', servicios, name='servicios'),
     path('about', about, name='about'),
+    path('politica-de-privacidad', privacidad, name='privacidad'),
+    path('terminos-y-condiciones', terminos, name='terminos'),
 
     path('dashboard/', dashboard, name='dashboard'),
 

@@ -20,6 +20,12 @@ def servicios(request):
 def about(request):
     return render(request, 'about.html')
 
+def privacidad(request):
+    return render(request, 'privacidad.html')
+
+def terminos(request):
+    return render(request, 'terminos.html')
+
 
 @login_required
 def dashboard(request):

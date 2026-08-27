@@ -1,0 +1,37 @@
+{% extends 'crm_base.html' %}
+{% block title %}Nuevo pipeline{% endblock %}
+{% block heading %}Nuevo pipeline{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl">
+  <form method="post" class="bg-white/[0.04] border border-white/10 rounded-2xl p-5 md:p-7 space-y-5">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="bg-red-500/10 border border-red-500/25 text-red-200 rounded-xl p-3 text-sm">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 gap-4">
+      {% include '_form_fields.html' %}
+    </div>
+
+    <label class="flex items-start gap-3 bg-indigo-500/[0.07] border border-indigo-500/25 rounded-xl p-4 cursor-pointer">
+      <input type="checkbox" name="etapas_por_defecto" value="1" checked class="h-5 w-5 rounded accent-indigo-500 mt-0.5">
+      <span class="text-sm">
+        <strong>Crear las etapas típicas de ventas</strong>
+        <span class="block text-white/50 text-xs mt-1">
+          Nuevo lead → Contactado → Propuesta enviada → Negociación → Ganado / Perdido.
+          Después las podés renombrar, reordenar o borrar.
+        </span>
+      </span>
+    </label>
+
+    <div class="flex flex-col sm:flex-row gap-3 pt-2 border-t border-white/10">
+      <button type="submit" class="px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-medium">
+        <i class="fa-solid fa-floppy-disk mr-1.5"></i> Crear
+      </button>
+      <a href="{% url 'kanban' %}" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-center">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

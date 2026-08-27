@@ -1,0 +1,142 @@
+{% extends 'crm_base.html' %}
+{% block title %}Tareas{% endblock %}
+{% block heading %}Tareas{% endblock %}
+{% block subheading %}
+  <p class="text-xs text-white/40">
+    {{ pendientes }} pendiente{{ pendientes|pluralize }}
+    {% if vencidas %}· <span class="text-red-300">{{ vencidas }} vencida{{ vencidas|pluralize }}</span>{% endif %}
+  </p>
+{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'tarea_create' %}" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">
+    <i class="fa-solid fa-plus"></i><span class="hidden sm:inline">Nueva tarea</span>
+  </a>
+{% endblock %}
+
+{% block content %}
+
+<!-- alta rápida -->
+<form method="post" action="{% url 'tarea_rapida' %}" class="bg-white/[0.04] border border-white/10 rounded-2xl p-4 mb-5">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+  <div class="flex flex-col sm:flex-row gap-2">
+    {{ form_rapido.titulo }}
+    {{ form_rapido.vence }}
+    {{ form_rapido.prioridad }}
+    <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium whitespace-nowrap">
+      <i class="fa-solid fa-plus mr-1"></i> Agregar
+    </button>
+  </div>
+</form>
+
+<!-- filtros -->
+<div class="flex flex-wrap items-center gap-2 mb-5">
+  <a href="?vista=pendientes" class="px-4 py-2 rounded-xl border text-sm transition
+     {% if vista != 'completadas' %}bg-indigo-500/15 border-indigo-500/35 text-indigo-200{% else %}bg-white/5 border-white/10 hover:bg-white/10{% endif %}">
+    Pendientes
+  </a>
+  <a href="?vista=completadas" class="px-4 py-2 rounded-xl border text-sm transition
+     {% if vista == 'completadas' %}bg-indigo-500/15 border-indigo-500/35 text-indigo-200{% else %}bg-white/5 border-white/10 hover:bg-white/10{% endif %}">
+    Completadas
+  </a>
+
+  <form method="get" class="ml-auto flex items-center gap-2 text-sm">
+    <input type="hidden" name="vista" value="{{ vista }}">
+    <select name="prioridad" onchange="this.form.submit()" class="rounded-xl px-3 py-2 bg-white text-black outline-none">
+      <option value="">Toda prioridad</option>
+      {% for valor, etiqueta in prioridades %}
+        <option value="{{ valor }}" {% if filters.prioridad == valor %}selected{% endif %}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+    <select name="cliente" onchange="this.form.submit()" class="rounded-xl px-3 py-2 bg-white text-black outline-none">
+      <option value="">Todo cliente</option>
+      {% for c in clientes %}
+        <option value="{{ c.id }}" {% if filters.cliente == c.id|stringformat:"s" %}selected{% endif %}>{{ c.nombre }}</option>
+      {% endfor %}
+    </select>
+  </form>
+</div>
+
+{% if vista == 'completadas' %}
+
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <h2 class="font-semibold mb-4">Últimas 50 completadas</h2>
+    <div class="space-y-2">
+      {% for t in completadas %}
+        {% include '_tarea.html' %}
+      {% empty %}
+        <p class="text-white/35 text-sm py-6 text-center">Todavía no completaste ninguna tarea.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+{% else %}
+
+  {% if grupos.vencidas %}
+    <div class="bg-red-500/[0.05] border border-red-500/25 rounded-2xl p-5 mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold text-red-200">
+          <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>
+          Vencidas <span class="text-white/40 font-normal text-sm">({{ grupos.vencidas|length }})</span>
+        </h2>
+        <form method="post" action="{% url 'tareas_completar_vencidas' %}"
+              onsubmit="return confirm('¿Marcar como hechas las {{ grupos.vencidas|length }} tareas vencidas?')">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button class="text-xs px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10">
+            Marcar todas hechas
+          </button>
+        </form>
+      </div>
+      <div class="space-y-2">
+        {% for t in grupos.vencidas %}{% include '_tarea.html' %}{% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <h2 class="font-semibold mb-4">Hoy <span class="text-white/40 font-normal text-sm">({{ grupos.hoy|length }})</span></h2>
+      <div class="space-y-2">
+        {% for t in grupos.hoy %}{% include '_tarea.html' %}
+        {% empty %}<p class="text-white/35 text-sm py-4 text-center">Nada para hoy.</p>{% endfor %}
+      </div>
+    </div>
+
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <h2 class="font-semibold mb-4">Esta semana <span class="text-white/40 font-normal text-sm">({{ grupos.semana|length }})</span></h2>
+      <div class="space-y-2">
+        {% for t in grupos.semana %}{% include '_tarea.html' %}
+        {% empty %}<p class="text-white/35 text-sm py-4 text-center">Nada en los próximos 7 días.</p>{% endfor %}
+      </div>
+    </div>
+
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <h2 class="font-semibold mb-4">Más adelante <span class="text-white/40 font-normal text-sm">({{ grupos.despues|length }})</span></h2>
+      <div class="space-y-2">
+        {% for t in grupos.despues %}{% include '_tarea.html' %}
+        {% empty %}<p class="text-white/35 text-sm py-4 text-center">Nada agendado más adelante.</p>{% endfor %}
+      </div>
+    </div>
+
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <h2 class="font-semibold mb-4">Sin fecha <span class="text-white/40 font-normal text-sm">({{ grupos.sin_fecha|length }})</span></h2>
+      <div class="space-y-2">
+        {% for t in grupos.sin_fecha %}{% include '_tarea.html' %}
+        {% empty %}<p class="text-white/35 text-sm py-4 text-center">Todo tiene fecha. 👌</p>{% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {% if not grupos.vencidas and not grupos.hoy and not grupos.semana and not grupos.despues and not grupos.sin_fecha %}
+    <div class="bg-white/[0.03] border border-white/10 border-dashed rounded-2xl p-12 text-center mt-4">
+      <i class="fa-solid fa-mug-hot text-3xl text-white/15"></i>
+      <p class="text-white/50 mt-3">No tenés nada pendiente.</p>
+    </div>
+  {% endif %}
+
+{% endif %}
+
+{% endblock %}

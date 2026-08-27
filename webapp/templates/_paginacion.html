@@ -1,0 +1,23 @@
+{% if page_obj.paginator.num_pages > 1 %}
+<div class="flex items-center justify-between gap-4 mt-5 text-sm">
+  <p class="text-white/50">
+    Mostrando {{ page_obj.start_index }}–{{ page_obj.end_index }} de {{ page_obj.paginator.count }}
+  </p>
+
+  <div class="flex items-center gap-1">
+    {% if page_obj.has_previous %}
+      <a href="?page=1{{ qs_extra }}" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10">«</a>
+      <a href="?page={{ page_obj.previous_page_number }}{{ qs_extra }}" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10">Anterior</a>
+    {% endif %}
+
+    <span class="px-3 py-1.5 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-indigo-200">
+      {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{{ qs_extra }}" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10">Siguiente</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}{{ qs_extra }}" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10">»</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}

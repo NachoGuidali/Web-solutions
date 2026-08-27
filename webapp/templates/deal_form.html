@@ -1,6 +1,6 @@
 {% extends 'crm_base.html' %}
-{% block title %}{% if mode == 'create' %}Nuevo evento{% else %}Editar evento{% endif %}{% endblock %}
-{% block heading %}{% if mode == 'create' %}Nuevo evento{% else %}Editar evento{% endif %}{% endblock %}
+{% block title %}{% if mode == 'create' %}Nuevo deal{% else %}Editar deal{% endif %}{% endblock %}
+{% block heading %}{% if mode == 'create' %}Nuevo deal{% else %}Editar «{{ deal.titulo }}»{% endif %}{% endblock %}
 
 {% block content %}
 <div class="max-w-3xl">
@@ -9,27 +9,21 @@
     {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
 
     {% if form.non_field_errors %}
-      <div class="bg-red-500/10 border border-red-500/25 text-red-200 rounded-xl p-3 text-sm">
-        {{ form.non_field_errors }}
-      </div>
+      <div class="bg-red-500/10 border border-red-500/25 text-red-200 rounded-xl p-3 text-sm">{{ form.non_field_errors }}</div>
     {% endif %}
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {% with campos_anchos="titulo,descripcion,ubicacion" %}{% include '_form_fields.html' %}{% endwith %}
+      {% with campos_anchos="titulo,descripcion,motivo_cierre" %}{% include '_form_fields.html' %}{% endwith %}
     </div>
-
-    <p class="text-xs text-white/35">
-      <i class="fa-solid fa-bell"></i>
-      El recordatorio se manda por mail a los contactos internos del CRM según los minutos configurados (1440 = un día antes).
-    </p>
 
     <div class="flex flex-col sm:flex-row gap-3 pt-2 border-t border-white/10">
       <button type="submit" class="px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-medium">
         <i class="fa-solid fa-floppy-disk mr-1.5"></i> Guardar
       </button>
-      <a href="{% url 'eventos_list' %}" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-center">Cancelar</a>
-      {% if evento %}
-        <a href="{% url 'evento_delete' evento.pk %}"
+      <a href="{% if deal %}{% url 'deal_detail' deal.pk %}{% elif pipeline %}{% url 'kanban' pipeline.pk %}{% else %}{% url 'kanban' %}{% endif %}"
+         class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-center">Cancelar</a>
+      {% if deal %}
+        <a href="{% url 'deal_delete' deal.pk %}"
            class="sm:ml-auto px-4 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/25 text-red-200 transition text-center">
           <i class="fa-solid fa-trash mr-1.5"></i> Eliminar
         </a>

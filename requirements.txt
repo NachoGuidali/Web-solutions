@@ -1,1 +1,8 @@
+# Probado con estas versiones: `python manage.py test webapp` pasa en 4.2.6 y 5.0.6
 Django==4.2.6
+
+# Sólo hacen falta si programás los trabajos con Celery + Redis.
+# En PythonAnywhere no hay Redis: usá `python manage.py crm_cron` desde una
+# Scheduled Task y no instales nada de esto.
+# celery==5.6.3
+# redis==5.0.8

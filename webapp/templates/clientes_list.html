@@ -1,57 +1,116 @@
-{% extends 'base.html' %}
+{% extends 'crm_base.html' %}
+{% block title %}Clientes{% endblock %}
+{% block heading %}Clientes{% endblock %}
+{% block subheading %}<p class="text-xs text-white/40">{{ total }} resultado{{ total|pluralize }}</p>{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'clientes_export' %}" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-sm" title="Exportar CSV">
+    <i class="fa-solid fa-file-csv"></i><span class="hidden md:inline ml-1.5">CSV</span>
+  </a>
+  <a href="{% url 'nuevo_cliente' %}" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">
+    <i class="fa-solid fa-plus"></i><span class="hidden sm:inline">Nuevo cliente</span>
+  </a>
+{% endblock %}
+
 {% block content %}
-<div class="pt-28 max-w-6xl mx-auto px-4">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-indigo-400">Clientes</h1>
-    <a href="{% url 'nuevo_cliente' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm shadow">+ Nuevo Cliente</a>
-  </div>
-  <div class="mt-10 flex flex-wrap gap-4">
-    <a href="{% url 'clientes_list' %}"
-      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Clientes</a>
-    <a href="{% url 'proyectos_list' %}"
-      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Proyectos</a>
-    <a href="{% url 'admin:index' %}"
-      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Ir al Admin</a>
-    <a href="{% url 'dashboard' %}"
-      class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Dashboard</a>
+
+<form method="get" class="bg-white/[0.04] border border-white/10 rounded-2xl p-4 mb-5">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+    <div class="md:col-span-2">
+      <label class="text-xs text-white/50">Buscar</label>
+      <input type="text" name="q" value="{{ filters.q }}" placeholder="Nombre, empresa, email, teléfono, notas..."
+             class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
     </div>
 
-    {% for cliente in clientes %}
-    <div class="bg-white/5 border border-white/10 rounded-xl p-4 shadow">
-      <div class="flex justify-between items-center">
-        <div>
-          <h2 class="text-xl font-semibold text-white">{{ cliente.nombre }}</h2>
-          <p class="text-sm text-white/80">{{ cliente.email }} | {{ cliente.telefono }}</p>
-          {% if cliente.empresa %}
-          <p class="text-sm text-white/60">Empresa: {{ cliente.empresa }}</p>
-          {% endif %}
+    <div>
+      <label class="text-xs text-white/50">Estado</label>
+      <select name="estado" class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
+        <option value="">Todos</option>
+        {% for valor, etiqueta in estados %}
+          <option value="{{ valor }}" {% if filters.estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="text-xs text-white/50">Ordenar por</label>
+      <select name="orden" class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
+        <option value="nombre" {% if filters.orden == 'nombre' %}selected{% endif %}>Nombre (A-Z)</option>
+        <option value="-nombre" {% if filters.orden == '-nombre' %}selected{% endif %}>Nombre (Z-A)</option>
+        <option value="reciente" {% if filters.orden == 'reciente' %}selected{% endif %}>Más recientes</option>
+        <option value="proyectos" {% if filters.orden == 'proyectos' %}selected{% endif %}>Más proyectos</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex gap-2 mt-3">
+    <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">Filtrar</button>
+    <a href="{% url 'clientes_list' %}" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-sm">Limpiar</a>
+  </div>
+</form>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+  {% for cliente in page_obj %}
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5 hover:border-white/20 transition">
+      <div class="flex items-start justify-between gap-3">
+        <div class="min-w-0">
+          <a href="{% url 'cliente_detail' cliente.pk %}" class="text-lg font-semibold hover:text-indigo-300 transition block truncate">
+            {{ cliente.nombre }}
+          </a>
+          {% if cliente.empresa %}<div class="text-sm text-white/50 truncate">{{ cliente.empresa }}</div>{% endif %}
         </div>
-        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-700 text-white capitalize">
-          {{ cliente.estado }}
+
+        <span class="shrink-0 px-2.5 py-1 rounded-full text-xs font-medium border
+          {% if cliente.estado == 'activo' %}bg-emerald-500/15 text-emerald-300 border-emerald-500/30
+          {% elif cliente.estado == 'potencial' %}bg-indigo-500/15 text-indigo-300 border-indigo-500/30
+          {% else %}bg-white/5 text-white/50 border-white/15{% endif %}">
+          {{ cliente.get_estado_display }}
         </span>
       </div>
 
-      {% if cliente.proyectos.all %}
-      <div class="mt-4">
-        <h3 class="text-sm font-bold text-white/70 mb-2">Proyectos:</h3>
-        <ul class="space-y-1">
-          {% for proyecto in cliente.proyectos.all %}
-          <li class="flex justify-between items-center bg-white/5 p-2 rounded">
-            <span>{{ proyecto.nombre }}</span>
-            <span class="text-xs font-medium px-2 py-1 rounded-full bg-gray-700 text-white capitalize">
-              {{ proyecto.estado|cut:"_" }}
-
-            </span>
-          </li>
-          {% endfor %}
-        </ul>
+      <div class="mt-3 space-y-1 text-sm text-white/60">
+        {% if cliente.email %}
+          <div class="truncate"><i class="fa-regular fa-envelope w-4 text-white/30"></i>
+            <a href="mailto:{{ cliente.email }}" class="hover:text-indigo-300">{{ cliente.email }}</a></div>
+        {% endif %}
+        {% if cliente.telefono %}
+          <div><i class="fa-solid fa-phone w-4 text-white/30"></i> {{ cliente.telefono }}</div>
+        {% endif %}
       </div>
-      {% endif %}
+
+      <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-white/10 text-xs">
+        <span class="px-2 py-1 rounded-lg bg-white/5 text-white/60">
+          {{ cliente.n_proyectos }} proyecto{{ cliente.n_proyectos|pluralize }}
+        </span>
+        {% if cliente.cobrado_ars %}
+          <span class="px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-300">${{ cliente.cobrado_ars|floatformat:0 }}</span>
+        {% endif %}
+        {% if cliente.cobrado_usd %}
+          <span class="px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-300">U$D {{ cliente.cobrado_usd|floatformat:0 }}</span>
+        {% endif %}
+        {% if cliente.pendiente_ars %}
+          <span class="px-2 py-1 rounded-lg bg-amber-500/10 text-amber-300">Debe ${{ cliente.pendiente_ars|floatformat:0 }}</span>
+        {% endif %}
+        {% if cliente.pendiente_usd %}
+          <span class="px-2 py-1 rounded-lg bg-amber-500/10 text-amber-300">Debe U$D {{ cliente.pendiente_usd|floatformat:0 }}</span>
+        {% endif %}
+
+        <div class="ml-auto flex gap-1.5">
+          <a href="{% url 'cliente_detail' cliente.pk %}" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10">Ver</a>
+          <a href="{% url 'cliente_update' cliente.pk %}" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10">Editar</a>
+        </div>
+      </div>
     </div>
-    {% empty %}
-    <p class="text-white">No hay clientes aún.</p>
-    {% endfor %}
-  </div>
-  
+  {% empty %}
+    <div class="lg:col-span-2 bg-white/[0.03] border border-white/10 border-dashed rounded-2xl p-12 text-center">
+      <i class="fa-solid fa-users text-3xl text-white/15"></i>
+      <p class="text-white/50 mt-3">No hay clientes que coincidan con la búsqueda.</p>
+      <a href="{% url 'nuevo_cliente' %}" class="inline-block mt-4 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm">
+        Crear el primero
+      </a>
+    </div>
+  {% endfor %}
 </div>
+
+{% include '_paginacion.html' %}
 {% endblock %}

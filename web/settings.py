@@ -64,6 +64,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'webapp.context_processors.crm_badges',
             ],
         },
     },
@@ -149,23 +150,46 @@ DEFAULT_FROM_EMAIL = "SupReg CRM <supregsolutions@gmail.com>"
 
 # a quién le llegan los recordatorios internos
 CRM_ALERT_EMAILS = ["supregsolutions@gmail.com", "nachog.akd@hotmail.com"]
+
+# ---- CRM ----
+# casa de cambio que se usa para consolidar todo en dólares
+# opciones: bolsa (MEP), blue, oficial, cripto, tarjeta
+CRM_CASA_DOLAR = "bolsa"
+
+# vencimiento por defecto de una factura nueva (días desde la emisión)
+CRM_DIAS_VENCIMIENTO_FACTURA = 15
 TIME_ZONE = "America/Argentina/Buenos_Aires"
 USE_TZ = True
 
 
 
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/1"
-CELERY_TIMEZONE = "America/Argentina/Buenos_Aires"
+# ---- Celery (opcional) ----
+# Sólo se usa si el servidor tiene Redis. Si no, los mismos trabajos se corren
+# con `python manage.py crm_cron` desde un cron o una Scheduled Task.
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://127.0.0.1:6379/2")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://127.0.0.1:6379/3")
+CELERY_TIMEZONE = TIME_ZONE
 
-from celery.schedules import crontab
-CELERY_BEAT_SCHEDULE = {
-    "crm_mensualidades_diario_0900": {
-        "task": "webapp.tasks.enviar_recordatorios_mensualidades",
-        "schedule": crontab(hour=9, minute=0),
-    },
-    "crm_eventos_cada_5_min": {
-        "task": "webapp.tasks.enviar_recordatorios_eventos",
-        "schedule": crontab(minute="*/5"),
-    },
-}
+try:
+    from celery.schedules import crontab
+except ImportError:
+    CELERY_BEAT_SCHEDULE = {}
+else:
+    CELERY_BEAT_SCHEDULE = {
+        "crm_cotizacion_diaria_0830": {
+            "task": "webapp.tasks.sincronizar_cotizaciones",
+            "schedule": crontab(hour=8, minute=30),
+        },
+        "crm_mensualidades_diario_0900": {
+            "task": "webapp.tasks.enviar_recordatorios_mensualidades",
+            "schedule": crontab(hour=9, minute=0),
+        },
+        "crm_eventos_cada_5_min": {
+            "task": "webapp.tasks.enviar_recordatorios_eventos",
+            "schedule": crontab(minute="*/5"),
+        },
+        "crm_facturas_vencidas_lunes_0930": {
+            "task": "webapp.tasks.avisar_facturas_vencidas",
+            "schedule": crontab(day_of_week=1, hour=9, minute=30),
+        },
+    }

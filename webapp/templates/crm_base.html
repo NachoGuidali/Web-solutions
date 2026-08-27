@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CRM{% endblock %} — SupReg Solutions</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/x-icon" href="{% static 'imagenes/logob4bm.bmp' %}">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    /* los widgets de los ModelForm ya vienen con clases, esto cubre lo que se renderice suelto */
+    input, textarea, select { color: #000; }
+    input[type="checkbox"] { accent-color: #6366f1; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: #0b0b0f; }
+    ::-webkit-scrollbar-thumb { background: #2a2a35; border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3a3a48; }
+    .nav-link.activo { background: rgb(99 102 241 / 0.15); color: #a5b4fc; border-color: rgb(99 102 241 / 0.35); }
+  </style>
+</head>
+
+<body class="bg-[#08080c] text-white font-sans min-h-screen">
+
+  <!-- ================= Sidebar ================= -->
+  <aside id="sidebar"
+    class="fixed inset-y-0 left-0 z-40 w-64 bg-[#0d0d14] border-r border-white/10 flex flex-col
+           -translate-x-full lg:translate-x-0 transition-transform duration-300">
+
+    <div class="px-5 py-5 border-b border-white/10 flex items-center gap-3">
+      <img src="{% static 'imagenes/logonuevo2.png' %}" alt="SupReg" class="h-9">
+      <div class="leading-tight">
+        <div class="font-bold text-sm">SupReg</div>
+        <div class="text-[11px] text-white/40 tracking-wider uppercase">CRM</div>
+      </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1 text-sm">
+      {% url 'dashboard' as u_dash %}
+      {% url 'clientes_list' as u_cli %}
+      {% url 'proyectos_list' as u_pro %}
+      {% url 'facturas_list' as u_fac %}
+      {% url 'mensualidades_list' as u_men %}
+      {% url 'eventos_list' as u_eve %}
+
+      <a href="{{ u_dash }}" class="nav-link {% if request.path == u_dash %}activo{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-white/5 transition">
+        <i class="fa-solid fa-chart-line w-4 text-center"></i> Dashboard
+      </a>
+      <a href="{{ u_cli }}" class="nav-link {% if '/clientes' in request.path or '/interacciones' in request.path %}activo{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-white/5 transition">
+        <i class="fa-solid fa-users w-4 text-center"></i> Clientes
+      </a>
+      <a href="{{ u_pro }}" class="nav-link {% if '/proyectos' in request.path %}activo{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-white/5 transition">
+        <i class="fa-solid fa-diagram-project w-4 text-center"></i> Proyectos
+      </a>
+      <a href="{% url 'tareas_list' %}" class="nav-link {% if '/tareas' in request.path %}activo{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-white/5 transition">
+        <i class="fa-solid fa-list-check w-4 text-center"></i> Tareas
+        {% if tareas_pendientes_nav %}<span data-contador-tareas class="ml-auto text-[11px] px-1.5 py-0.5 rounded-full {% if tareas_vencidas_nav %}bg-red-500/25 text-red-200{% else %}bg-indigo-500/25 text-indigo-200{% endif %}">{{ tareas_pendientes_nav }}</span>{% endif %}
+      </a>
+      <a href="{% url 'kanban' %}" class="nav-link {% if '/kanban' in request.path or '/deals' in request.path %}activo{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-white/5 transition">
+        <i class="fa-solid fa-table-columns w-4 text-center"></i> Kanban
+      </a>
+
+      <a href="{{ u_fac }}" class="nav-link {% if '/facturas' in request.path %}activo{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-white/5 transition">
+        <i class="fa-solid fa-file-invoice-dollar w-4 text-center"></i> Facturas
+      </a>
+      <a href="{{ u_men }}" class="nav-link {% if '/mensualidades' in request.path %}activo{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-white/5 transition">
+        <i class="fa-solid fa-arrows-rotate w-4 text-center"></i> Mensualidades
+      </a>
+      <a href="{{ u_eve }}" class="nav-link {% if '/agenda' in request.path %}activo{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-white/5 transition">
+        <i class="fa-regular fa-calendar-check w-4 text-center"></i> Agenda
+      </a>
+
+      <a href="{% url 'cotizaciones_list' %}" class="nav-link {% if '/cotizaciones' in request.path %}activo{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-xl border border-transparent hover:bg-white/5 transition">
+        <i class="fa-solid fa-dollar-sign w-4 text-center"></i> Cotizaciones
+      </a>
+
+      <div class="pt-4 mt-4 border-t border-white/10 space-y-1">
+        <p class="px-3 pb-1 text-[11px] uppercase tracking-wider text-white/35">Acciones rápidas</p>
+        <a href="{% url 'nuevo_cliente' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition text-white/70">
+          <i class="fa-solid fa-user-plus w-4 text-center"></i> Nuevo cliente
+        </a>
+        <a href="{% url 'nuevo_proyecto' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition text-white/70">
+          <i class="fa-solid fa-folder-plus w-4 text-center"></i> Nuevo proyecto
+        </a>
+        <a href="{% url 'factura_create' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition text-white/70">
+          <i class="fa-solid fa-plus w-4 text-center"></i> Nueva factura
+        </a>
+        <a href="{% url 'deal_create' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition text-white/70">
+          <i class="fa-solid fa-handshake w-4 text-center"></i> Nuevo deal
+        </a>
+      </div>
+    </nav>
+
+    <div class="px-3 py-4 border-t border-white/10 space-y-1 text-sm">
+      <a href="{% url 'admin:index' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition text-white/60">
+        <i class="fa-solid fa-screwdriver-wrench w-4 text-center"></i> Admin Django
+      </a>
+      <a href="{% url 'home' %}" class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition text-white/60">
+        <i class="fa-solid fa-globe w-4 text-center"></i> Ver la web
+      </a>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-red-500/10 hover:text-red-200 transition text-white/60">
+          <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Cerrar sesión
+        </button>
+      </form>
+      <div class="px-3 pt-2 text-[11px] text-white/30">
+        {{ request.user.get_username }}
+      </div>
+    </div>
+  </aside>
+
+  <!-- overlay mobile -->
+  <div id="overlay" class="fixed inset-0 bg-black/60 z-30 hidden lg:hidden"></div>
+
+  <!-- ================= Contenido ================= -->
+  <div class="lg:pl-64">
+
+    <header class="sticky top-0 z-20 bg-[#08080c]/85 backdrop-blur border-b border-white/10">
+      <div class="px-4 md:px-8 py-3.5 flex items-center gap-4">
+        <button id="menu-btn" class="lg:hidden text-xl px-2 -ml-2" aria-label="Abrir menú">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="min-w-0 flex-1">
+          <h1 class="text-lg md:text-xl font-bold truncate">{% block heading %}{% endblock %}</h1>
+          {% block subheading %}{% endblock %}
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          {% block topbar_actions %}{% endblock %}
+        </div>
+      </div>
+    </header>
+
+    <main class="px-4 md:px-8 py-6">
+      {% if messages %}
+        <div class="space-y-2 mb-5">
+          {% for m in messages %}
+            <div class="flex items-start gap-3 rounded-xl px-4 py-3 border text-sm
+              {% if m.tags == 'success' %}bg-emerald-500/10 border-emerald-500/25 text-emerald-200
+              {% elif m.tags == 'error' %}bg-red-500/10 border-red-500/25 text-red-200
+              {% elif m.tags == 'warning' %}bg-amber-500/10 border-amber-500/25 text-amber-200
+              {% else %}bg-white/5 border-white/10 text-white/80{% endif %}">
+              <i class="fa-solid
+                {% if m.tags == 'success' %}fa-circle-check
+                {% elif m.tags == 'error' %}fa-circle-exclamation
+                {% elif m.tags == 'warning' %}fa-triangle-exclamation
+                {% else %}fa-circle-info{% endif %} mt-0.5"></i>
+              <span>{{ m }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="px-4 md:px-8 py-6 text-xs text-white/25 border-t border-white/5">
+      SupReg Solutions — CRM interno
+    </footer>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const abrir = () => { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); };
+    const cerrar = () => { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); };
+    document.getElementById('menu-btn').addEventListener('click', abrir);
+    overlay.addEventListener('click', cerrar);
+  </script>
+
+  <script>
+  // Marcar tareas hechas sin recargar. Si algo falla, el form se manda normal.
+  (function () {
+    document.addEventListener("submit", function (e) {
+      const form = e.target.closest(".form-toggle");
+      if (!form) return;
+
+      e.preventDefault();
+      const fila = form.closest(".tarea");
+      const boton = form.querySelector("button");
+      boton.disabled = true;
+
+      fetch(form.action, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": form.querySelector("[name=csrfmiddlewaretoken]").value,
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: new FormData(form),
+      })
+        .then(r => r.json())
+        .then(datos => {
+          if (!datos.ok) { form.submit(); return; }
+          // la tarea sale de la lista en la que está, se complete o se reabra
+          fila.style.transition = "opacity .25s, transform .25s";
+          fila.style.opacity = "0";
+          fila.style.transform = "translateX(12px)";
+          setTimeout(() => {
+            fila.remove();
+            document.querySelectorAll("[data-contador-tareas]").forEach(el => {
+              const n = parseInt(el.textContent, 10);
+              if (!isNaN(n)) el.textContent = Math.max(0, datos.completada ? n - 1 : n + 1);
+            });
+          }, 250);
+        })
+        .catch(() => form.submit());
+    });
+  })();
+  </script>
+
+  {% block scripts %}{% endblock %}
+</body>
+
+</html>

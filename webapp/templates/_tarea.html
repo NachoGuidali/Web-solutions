@@ -1,0 +1,76 @@
+{# una fila de tarea; se usa en el dashboard, en el listado y en la ficha del deal #}
+<div class="tarea group flex items-start gap-3 px-3 py-2.5 rounded-xl border transition
+            {% if t.completada %}bg-white/[0.02] border-white/5 opacity-50
+            {% elif t.esta_vencida %}bg-red-500/[0.06] border-red-500/25
+            {% elif t.es_hoy %}bg-amber-500/[0.06] border-amber-500/25
+            {% else %}bg-white/[0.03] border-white/10 hover:border-white/20{% endif %}"
+     data-tarea="{{ t.id }}">
+
+  <form method="post" action="{% url 'tarea_toggle' t.id %}" class="form-toggle shrink-0 pt-0.5">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <button type="submit" title="{% if t.completada %}Reabrir{% else %}Marcar hecha{% endif %}"
+            class="w-5 h-5 rounded-md border flex items-center justify-center transition
+                   {% if t.completada %}bg-emerald-500 border-emerald-500 text-white
+                   {% else %}border-white/25 hover:border-emerald-400 hover:bg-emerald-500/20{% endif %}">
+      {% if t.completada %}<i class="fa-solid fa-check text-[10px]"></i>{% endif %}
+    </button>
+  </form>
+
+  <div class="min-w-0 flex-1">
+    <div class="flex items-start gap-2 flex-wrap">
+      <span class="text-sm {% if t.completada %}line-through text-white/40{% endif %}">{{ t.titulo }}</span>
+
+      {% if not t.completada %}
+        {% if t.prioridad == 'alta' %}
+          <span class="px-1.5 py-0.5 rounded text-[10px] bg-rose-500/15 text-rose-300 border border-rose-500/30">Alta</span>
+        {% elif t.prioridad == 'baja' %}
+          <span class="px-1.5 py-0.5 rounded text-[10px] bg-white/5 text-white/40 border border-white/10">Baja</span>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <div class="flex items-center gap-2 flex-wrap text-[11px] text-white/40 mt-1">
+      {% if t.vence %}
+        <span class="{% if t.esta_vencida %}text-red-300{% elif t.es_hoy %}text-amber-300{% endif %}">
+          <i class="fa-regular fa-calendar"></i>
+          {% if t.esta_vencida %}venció hace {{ t.dias_para_vencer|cut:"-" }}d
+          {% elif t.es_hoy %}hoy
+          {% else %}{{ t.vence|date:"j/n" }}{% endif %}
+        </span>
+      {% endif %}
+
+      {% if t.proyecto %}
+        <a href="{% url 'proyecto_detail' t.proyecto.id %}" class="hover:text-indigo-300 truncate max-w-[160px]">
+          <i class="fa-solid fa-diagram-project"></i> {{ t.proyecto.nombre }}
+        </a>
+      {% elif t.deal %}
+        <a href="{% url 'deal_detail' t.deal.id %}" class="hover:text-indigo-300 truncate max-w-[160px]">
+          <i class="fa-solid fa-handshake"></i> {{ t.deal.titulo }}
+        </a>
+      {% elif t.cliente %}
+        <a href="{% url 'cliente_detail' t.cliente.id %}" class="hover:text-indigo-300 truncate max-w-[160px]">
+          <i class="fa-regular fa-user"></i> {{ t.cliente.nombre }}
+        </a>
+      {% endif %}
+    </div>
+
+    {% if t.detalle %}
+      <p class="text-[11px] text-white/35 mt-1 whitespace-pre-line">{{ t.detalle|truncatechars:140 }}</p>
+    {% endif %}
+  </div>
+
+  <div class="shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition">
+    <a href="{% url 'tarea_update' t.id %}?next={{ request.get_full_path|urlencode }}"
+       class="px-2 py-1 rounded-lg text-white/30 hover:text-white/70 hover:bg-white/5 text-xs" title="Editar">
+      <i class="fa-solid fa-pen"></i>
+    </a>
+    <form method="post" action="{% url 'tarea_delete' t.id %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.get_full_path }}">
+      <button class="px-2 py-1 rounded-lg text-red-300/40 hover:text-red-300 hover:bg-red-500/10 text-xs" title="Eliminar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </form>
+  </div>
+</div>

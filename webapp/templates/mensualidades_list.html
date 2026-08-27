@@ -1,68 +1,142 @@
-{% extends "base.html" %}
+{% extends 'crm_base.html' %}
+{% block title %}Mensualidades{% endblock %}
+{% block heading %}Mensualidades{% endblock %}
+{% block subheading %}<p class="text-xs text-white/40">Cobros recurrentes y facturación automática</p>{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'mensualidad_create' %}" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">
+    <i class="fa-solid fa-plus"></i><span class="hidden sm:inline">Nueva mensualidad</span>
+  </a>
+{% endblock %}
+
 {% block content %}
-<section class="max-w-7xl mx-auto px-4 pt-32 fade-in">
-  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-      <h1 class="text-3xl font-bold">Mensualidades</h1>
-      <p class="text-white/70 mt-1">Configurá proyectos con cobro mensual y vencimientos.</p>
-    </div>
 
-    <div class="flex gap-2">
-      <a href="{% url 'dashboard' %}" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Dashboard</a>
-      <a href="{% url 'mensualidad_create' %}" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm shadow">
-        + Nueva mensualidad
-      </a>
-    </div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+  <div class="bg-indigo-500/[0.08] border border-indigo-500/25 rounded-2xl p-5">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Ingreso recurrente ARS</div>
+    <div class="text-2xl font-bold text-indigo-300 mt-1">${{ mrr_ars|floatformat:0 }}<span class="text-sm text-white/40 font-normal">/mes</span></div>
   </div>
+  <div class="bg-indigo-500/[0.08] border border-indigo-500/25 rounded-2xl p-5">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Ingreso recurrente USD</div>
+    <div class="text-2xl font-bold text-indigo-300 mt-1">U$D {{ mrr_usd|floatformat:0 }}<span class="text-sm text-white/40 font-normal">/mes</span></div>
+  </div>
+  <form method="get" class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <label class="text-xs text-white/50 uppercase tracking-wider">Mostrar</label>
+    <select name="activa" onchange="this.form.submit()" class="mt-2 w-full rounded-xl px-3 py-2 bg-white text-black outline-none">
+      <option value="">Todas</option>
+      <option value="1" {% if filters.activa == '1' %}selected{% endif %}>Sólo activas</option>
+      <option value="0" {% if filters.activa == '0' %}selected{% endif %}>Sólo pausadas</option>
+    </select>
+  </form>
+</div>
 
-  <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-    <div class="overflow-x-auto">
-      <table class="min-w-full text-sm">
-        <thead class="bg-white/5 text-white/80">
-          <tr>
-            <th class="text-left px-4 py-3">Proyecto</th>
-            <th class="text-left px-4 py-3">Cliente</th>
-            <th class="text-left px-4 py-3">Monto</th>
-            <th class="text-left px-4 py-3">Vence</th>
-            <th class="text-left px-4 py-3">Activa</th>
-            <th class="text-right px-4 py-3">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-white/10">
-          {% for m in mensualidades %}
-          <tr class="hover:bg-white/5 transition">
-            <td class="px-4 py-3 font-medium">{{ m.proyecto.nombre }}</td>
-            <td class="px-4 py-3 text-white/80">{{ m.proyecto.cliente.nombre }}</td>
-            <td class="px-4 py-3">{{ m.moneda }} <span class="font-semibold">{{ m.monto }}</span></td>
-            <td class="px-4 py-3 text-white/80">{{ m.proximo_vencimiento }}</td>
+<div class="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead class="bg-white/[0.03] text-white/50 text-xs uppercase tracking-wider">
+        <tr>
+          <th class="text-left px-4 py-3">Proyecto / Cliente</th>
+          <th class="text-right px-4 py-3">Monto</th>
+          <th class="text-left px-4 py-3">Próximo vencimiento</th>
+          <th class="text-left px-4 py-3">Último facturado</th>
+          <th class="text-left px-4 py-3">Estado</th>
+          <th class="text-right px-4 py-3">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-white/10">
+        {% for m in mensualidades %}
+          <tr class="hover:bg-white/[0.03] transition {% if not m.activa %}opacity-50{% endif %}">
             <td class="px-4 py-3">
+              <a href="{% url 'proyecto_detail' m.proyecto.id %}" class="font-medium hover:text-indigo-300 transition block truncate max-w-[220px]">
+                {{ m.proyecto.nombre }}
+              </a>
+              <a href="{% url 'cliente_detail' m.proyecto.cliente.id %}" class="text-xs text-white/45 hover:text-indigo-300 transition">
+                {{ m.proyecto.cliente.nombre }}
+              </a>
+            </td>
+            <td class="px-4 py-3 text-right whitespace-nowrap">
+              <span class="text-white/50 text-xs">{{ m.moneda }}</span>
+              <span class="font-semibold">{{ m.monto|floatformat:0 }}</span>
+            </td>
+            <td class="px-4 py-3 text-xs whitespace-nowrap">
+              <div class="text-white/70">{{ m.proximo_vencimiento|date:"j/n/Y" }}</div>
               {% if m.activa %}
-                <span class="px-2 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Sí</span>
-              {% else %}
-                <span class="px-2 py-1 rounded-full text-xs bg-red-500/20 text-red-200 border border-red-500/30">No</span>
+                {% if m.dias_para_vencer < 0 %}
+                  <div class="text-red-300">atrasada {{ m.dias_para_vencer|cut:"-" }}d</div>
+                {% elif m.dias_para_vencer == 0 %}
+                  <div class="text-amber-300">vence hoy</div>
+                {% else %}
+                  <div class="text-white/40">en {{ m.dias_para_vencer }}d</div>
+                {% endif %}
               {% endif %}
             </td>
+            <td class="px-4 py-3 text-xs text-white/50 whitespace-nowrap">
+              {{ m.ultimo_periodo_facturado|date:"m/Y"|default:"—" }}
+            </td>
             <td class="px-4 py-3">
-              <div class="flex justify-end gap-2">
-                <a href="{% url 'mensualidad_update' m.id %}"
-                   class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10">
-                  Editar
+              <div class="flex flex-col gap-1">
+                {% if m.activa %}
+                  <span class="px-2 py-1 rounded-full text-[11px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 w-fit whitespace-nowrap">Activa</span>
+                {% else %}
+                  <span class="px-2 py-1 rounded-full text-[11px] bg-white/5 text-white/50 border border-white/15 w-fit whitespace-nowrap">Pausada</span>
+                {% endif %}
+                {% if m.generar_factura_automatica %}
+                  <span class="text-[11px] text-white/35 whitespace-nowrap"><i class="fa-solid fa-robot"></i> auto</span>
+                {% endif %}
+              </div>
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex justify-end gap-1.5 text-xs">
+                <form method="post" action="{% url 'mensualidad_facturar' m.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  {% if m.puede_facturar_ahora %}
+                    <button class="px-2.5 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-200 whitespace-nowrap"
+                            title="Emitir la factura del período {{ m.periodo_pendiente|date:'m/Y' }}">
+                      <i class="fa-solid fa-file-invoice"></i> Facturar
+                    </button>
+                  {% else %}
+                    <input type="hidden" name="forzar" value="1">
+                    <button class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 whitespace-nowrap"
+                            title="El período {{ m.periodo_pendiente|date:'m/Y' }} todavía no vence — esto lo factura por adelantado"
+                            onclick="return confirm('El período {{ m.periodo_pendiente|date:'m/Y' }} todavía no vence. ¿Facturarlo igual?')">
+                      <i class="fa-solid fa-forward"></i> Adelantar
+                    </button>
+                  {% endif %}
+                </form>
+                <form method="post" action="{% url 'mensualidad_toggle' m.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10" title="{% if m.activa %}Pausar{% else %}Activar{% endif %}">
+                    <i class="fa-solid {% if m.activa %}fa-pause{% else %}fa-play{% endif %}"></i>
+                  </button>
+                </form>
+                <a href="{% url 'mensualidad_update' m.id %}" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10" title="Editar">
+                  <i class="fa-solid fa-pen"></i>
                 </a>
-                <a href="{% url 'mensualidad_delete' m.id %}"
-                   class="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 transition border border-red-500/20 text-red-200">
-                  Eliminar
+                <a href="{% url 'mensualidad_delete' m.id %}" class="px-2.5 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-200" title="Eliminar">
+                  <i class="fa-solid fa-trash"></i>
                 </a>
               </div>
             </td>
           </tr>
-          {% empty %}
+        {% empty %}
           <tr>
-            <td colspan="6" class="px-4 py-8 text-center text-white/60">No hay mensualidades cargadas.</td>
+            <td colspan="6" class="px-4 py-12 text-center">
+              <i class="fa-solid fa-arrows-rotate text-3xl text-white/15"></i>
+              <p class="text-white/50 mt-3">No hay mensualidades configuradas.</p>
+              <a href="{% url 'mensualidad_create' %}" class="inline-block mt-4 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm">Crear la primera</a>
+            </td>
           </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-</section>
+</div>
+
+<p class="text-xs text-white/30 mt-4">
+  <i class="fa-solid fa-circle-info"></i>
+  Las mensualidades con <strong>auto</strong> emiten la factura pendiente sola el día del vencimiento y avisan por mail.
+</p>
+
 {% endblock %}

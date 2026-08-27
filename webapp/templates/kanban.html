@@ -1,0 +1,292 @@
+{% extends 'crm_base.html' %}
+{% block title %}Kanban{% endblock %}
+{% block heading %}{% if pipeline %}{{ pipeline.nombre }}{% else %}Kanban{% endif %}{% endblock %}
+{% block subheading %}
+  {% if pipeline %}
+    <p class="text-xs text-white/40">
+      {{ abiertos }} abierto{{ abiertos|pluralize }} · U$D {{ valor_abierto|floatformat:0 }} en juego
+      {% if conversion != None %} · {{ conversion }}% de conversión{% endif %}
+    </p>
+  {% endif %}
+{% endblock %}
+
+{% block topbar_actions %}
+  {% if pipeline %}
+    <a href="{% url 'pipeline_config' pipeline.pk %}" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-sm" title="Configurar etapas">
+      <i class="fa-solid fa-sliders"></i><span class="hidden md:inline ml-1.5">Etapas</span>
+    </a>
+    <a href="{% url 'deal_create_pipeline' pipeline.pk %}" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">
+      <i class="fa-solid fa-plus"></i><span class="hidden sm:inline">Nuevo deal</span>
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% if not pipeline %}
+
+  <div class="max-w-xl mx-auto bg-white/[0.03] border border-white/10 border-dashed rounded-2xl p-10 text-center">
+    <i class="fa-solid fa-table-columns text-4xl text-white/15"></i>
+    <h2 class="text-xl font-semibold mt-4">Todavía no hay ningún tablero</h2>
+    <p class="text-white/50 mt-2 text-sm">
+      Un pipeline es un flujo con sus etapas: por ejemplo <em>Nuevo lead → Contactado →
+      Propuesta enviada → Negociación → Ganado / Perdido</em>. Los deals se mueven entre
+      esas columnas arrastrándolos.
+    </p>
+    <a href="{% url 'pipeline_create' %}" class="inline-block mt-6 px-5 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-medium">
+      <i class="fa-solid fa-plus mr-1.5"></i> Crear mi primer pipeline
+    </a>
+  </div>
+
+{% else %}
+
+  <!-- selector de pipeline + resumen -->
+  <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-5">
+    <div class="flex flex-wrap items-center gap-2">
+      {% for p in pipelines %}
+        <a href="{% url 'kanban' p.pk %}"
+           class="px-3.5 py-2 rounded-xl border text-sm transition
+                  {% if p.pk == pipeline.pk %}bg-indigo-500/15 border-indigo-500/35 text-indigo-200{% else %}bg-white/5 border-white/10 hover:bg-white/10{% endif %}">
+          {{ p.nombre }}
+        </a>
+      {% endfor %}
+      <a href="{% url 'pipeline_create' %}" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 border-dashed text-sm text-white/50" title="Nuevo pipeline">
+        <i class="fa-solid fa-plus"></i>
+      </a>
+    </div>
+
+    <form method="get" class="lg:ml-auto flex items-center gap-2">
+      <input type="text" name="q" value="{{ q }}" placeholder="Buscar deal o cliente..."
+             class="rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400 text-sm w-full lg:w-64">
+      {% if q %}<a href="{% url 'kanban' pipeline.pk %}" class="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-sm">✕</a>{% endif %}
+    </form>
+  </div>
+
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-4">
+      <div class="text-xs text-white/50 uppercase tracking-wider">En juego</div>
+      <div class="text-xl font-bold text-indigo-300 mt-1">U$D {{ valor_abierto|floatformat:0 }}</div>
+    </div>
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-4">
+      <div class="text-xs text-white/50 uppercase tracking-wider">Ganado</div>
+      <div class="text-xl font-bold text-emerald-300 mt-1">U$D {{ valor_ganado|floatformat:0 }}</div>
+    </div>
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-4">
+      <div class="text-xs text-white/50 uppercase tracking-wider">Conversión</div>
+      <div class="text-xl font-bold mt-1">
+        {% if conversion != None %}{{ conversion }}%{% else %}<span class="text-white/30">—</span>{% endif %}
+      </div>
+      <div class="text-[11px] text-white/35 mt-0.5">{{ ganados }} ganado(s) / {{ perdidos }} perdido(s)</div>
+    </div>
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-4">
+      <div class="text-xs text-white/50 uppercase tracking-wider">Abiertos</div>
+      <div class="text-xl font-bold mt-1">{{ abiertos }}</div>
+    </div>
+  </div>
+
+  <!-- tablero -->
+  <div id="tablero" class="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:-mx-8 md:px-8">
+    {% for col in columnas %}
+      <div class="columna shrink-0 w-[300px] bg-white/[0.03] border border-white/10 rounded-2xl flex flex-col max-h-[calc(100vh-22rem)]"
+           data-etapa="{{ col.etapa.id }}">
+
+        <div class="p-4 border-b border-white/10">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full {{ col.etapa.clase_barra }}"></span>
+            <h3 class="font-semibold text-sm flex-1 truncate">{{ col.etapa.nombre }}</h3>
+            <span class="text-xs text-white/40 shrink-0">{{ col.resumen.cantidad }}</span>
+          </div>
+          <div class="text-xs text-white/40 mt-1.5">
+            U$D {{ col.resumen.total_usd|floatformat:0 }}
+            {% if col.etapa.tipo == 'ganada' %}<i class="fa-solid fa-trophy text-emerald-400/60 ml-1"></i>
+            {% elif col.etapa.tipo == 'perdida' %}<i class="fa-solid fa-xmark text-rose-400/60 ml-1"></i>{% endif %}
+          </div>
+        </div>
+
+        <div class="zona flex-1 overflow-y-auto p-3 space-y-2.5 min-h-[120px]">
+          {% for d in col.deals %}
+            <div class="tarjeta group bg-white/[0.05] border border-white/10 rounded-xl p-3 cursor-grab
+                        hover:border-white/25 hover:bg-white/[0.08] transition active:cursor-grabbing"
+                 draggable="true" data-deal="{{ d.id }}">
+
+              <a href="{% url 'deal_detail' d.id %}" class="block">
+                <div class="text-sm font-medium leading-snug">{{ d.titulo }}</div>
+
+                {% if d.cliente %}
+                  <div class="text-xs text-white/45 mt-1 truncate">
+                    <i class="fa-regular fa-user text-[10px]"></i> {{ d.cliente.nombre }}
+                  </div>
+                {% else %}
+                  <div class="text-xs text-amber-300/60 mt-1"><i class="fa-solid fa-circle-exclamation text-[10px]"></i> sin cliente</div>
+                {% endif %}
+
+                <div class="flex items-center justify-between gap-2 mt-2.5">
+                  <span class="text-sm font-semibold">
+                    {{ d.moneda }} {{ d.valor|floatformat:0 }}
+                  </span>
+                  {% if d.moneda == 'ARS' and d.valor_usd %}
+                    <span class="text-[11px] text-white/35">≈ U$D {{ d.valor_usd|floatformat:0 }}</span>
+                  {% endif %}
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap mt-2 text-[11px]">
+                  {% if d.cierre_estimado and d.esta_abierto %}
+                    <span class="{% if d.esta_demorado %}text-red-300{% else %}text-white/40{% endif %}">
+                      <i class="fa-regular fa-clock"></i>
+                      {% if d.esta_demorado %}demorado {{ d.dias_para_cierre|cut:"-" }}d
+                      {% else %}cierra {{ d.cierre_estimado|date:"j/n" }}{% endif %}
+                    </span>
+                  {% endif %}
+                  {% if d.tareas_pendientes %}
+                    <span class="text-indigo-300/70"><i class="fa-solid fa-list-check"></i> {{ d.tareas_pendientes }}</span>
+                  {% endif %}
+                  {% if d.proyecto %}
+                    <span class="text-emerald-300/70" title="Ya tiene proyecto"><i class="fa-solid fa-diagram-project"></i></span>
+                  {% endif %}
+                </div>
+              </a>
+            </div>
+          {% empty %}
+            <p class="text-white/20 text-xs text-center py-6 pointer-events-none">Arrastrá deals acá</p>
+          {% endfor %}
+        </div>
+
+        <div class="p-3 border-t border-white/10">
+          <a href="{% url 'deal_create_pipeline' pipeline.pk %}?etapa={{ col.etapa.id }}"
+             class="block text-center text-xs text-white/40 hover:text-indigo-300 py-1.5 rounded-lg hover:bg-white/5 transition">
+            <i class="fa-solid fa-plus"></i> Agregar
+          </a>
+        </div>
+      </div>
+    {% empty %}
+      <div class="w-full bg-white/[0.03] border border-white/10 border-dashed rounded-2xl p-10 text-center">
+        <p class="text-white/50">Este pipeline no tiene etapas todavía.</p>
+        <a href="{% url 'pipeline_config' pipeline.pk %}" class="inline-block mt-4 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm">
+          Configurar etapas
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <p class="text-xs text-white/30 mt-3">
+    <i class="fa-solid fa-hand-pointer"></i>
+    Arrastrá una tarjeta a otra columna para moverla. En pantallas chicas, entrá al deal y cambiale la etapa.
+  </p>
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{% if pipeline %}
+<script>
+(function () {
+  const csrf = "{{ csrf_token }}";
+  const tablero = document.getElementById("tablero");
+  if (!tablero) return;
+
+  let arrastrada = null;
+
+  // ---- origen del arrastre ----
+  tablero.addEventListener("dragstart", (e) => {
+    const tarjeta = e.target.closest(".tarjeta");
+    if (!tarjeta) return;
+    arrastrada = tarjeta;
+    tarjeta.classList.add("opacity-40");
+    e.dataTransfer.effectAllowed = "move";
+    // Firefox no dispara drop sin datos seteados
+    e.dataTransfer.setData("text/plain", tarjeta.dataset.deal);
+  });
+
+  tablero.addEventListener("dragend", () => {
+    if (arrastrada) arrastrada.classList.remove("opacity-40");
+    document.querySelectorAll(".zona").forEach(z => z.classList.remove("bg-indigo-500/5"));
+    arrastrada = null;
+  });
+
+  // ---- dónde cae ----
+  function despuesDeCual(zona, y) {
+    const otras = [...zona.querySelectorAll(".tarjeta:not(.opacity-40)")];
+    return otras.reduce((cerca, hijo) => {
+      const caja = hijo.getBoundingClientRect();
+      const offset = y - caja.top - caja.height / 2;
+      return offset < 0 && offset > cerca.offset ? { offset, elemento: hijo } : cerca;
+    }, { offset: Number.NEGATIVE_INFINITY }).elemento;
+  }
+
+  document.querySelectorAll(".zona").forEach((zona) => {
+    zona.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      if (!arrastrada) return;
+      zona.classList.add("bg-indigo-500/5");
+
+      const referencia = despuesDeCual(zona, e.clientY);
+      const vacio = zona.querySelector("p");
+      if (vacio) vacio.remove();
+
+      if (referencia) zona.insertBefore(arrastrada, referencia);
+      else zona.appendChild(arrastrada);
+    });
+
+    zona.addEventListener("dragleave", (e) => {
+      if (!zona.contains(e.relatedTarget)) zona.classList.remove("bg-indigo-500/5");
+    });
+
+    zona.addEventListener("drop", (e) => {
+      e.preventDefault();
+      zona.classList.remove("bg-indigo-500/5");
+      if (!arrastrada) return;
+      guardar(arrastrada, zona);
+    });
+  });
+
+  // ---- persistencia ----
+  function guardar(tarjeta, zona) {
+    const columna = zona.closest(".columna");
+    const cuerpo = new FormData();
+    cuerpo.append("etapa", columna.dataset.etapa);
+    zona.querySelectorAll(".tarjeta").forEach(t => cuerpo.append("orden[]", t.dataset.deal));
+
+    tarjeta.classList.add("ring-1", "ring-indigo-400/40");
+
+    fetch(`/dashboard/deals/${tarjeta.dataset.deal}/mover/`, {
+      method: "POST",
+      headers: { "X-CSRFToken": csrf, "X-Requested-With": "XMLHttpRequest" },
+      body: cuerpo,
+    })
+      .then(r => r.json())
+      .then(datos => {
+        tarjeta.classList.remove("ring-1", "ring-indigo-400/40");
+        if (!datos.ok) { avisar(datos.error || "No se pudo mover"); return; }
+
+        if (datos.puede_convertir &&
+            confirm("Deal ganado 🎉 ¿Querés crear el proyecto a partir de este deal?")) {
+          const f = document.createElement("form");
+          f.method = "POST";
+          f.action = `/dashboard/deals/${tarjeta.dataset.deal}/convertir/`;
+          f.innerHTML = `<input type="hidden" name="csrfmiddlewaretoken" value="${csrf}">`;
+          document.body.appendChild(f);
+          f.submit();
+          return;
+        }
+        // los totales por columna los recalcula el servidor
+        setTimeout(() => window.location.reload(), 400);
+      })
+      .catch(() => {
+        tarjeta.classList.remove("ring-1", "ring-indigo-400/40");
+        avisar("Se perdió la conexión: recargá para ver el estado real.");
+      });
+  }
+
+  function avisar(texto) {
+    const caja = document.createElement("div");
+    caja.className = "fixed bottom-5 left-1/2 -translate-x-1/2 z-50 px-4 py-3 rounded-xl " +
+                     "bg-red-500/15 border border-red-500/30 text-red-200 text-sm shadow-lg";
+    caja.textContent = texto;
+    document.body.appendChild(caja);
+    setTimeout(() => caja.remove(), 4000);
+  }
+})();
+</script>
+{% endif %}
+{% endblock %}

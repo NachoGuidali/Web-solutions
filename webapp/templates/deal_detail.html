@@ -1,0 +1,151 @@
+{% extends 'crm_base.html' %}
+{% block title %}{{ deal.titulo }}{% endblock %}
+{% block heading %}{{ deal.titulo }}{% endblock %}
+{% block subheading %}
+  <p class="text-xs text-white/40">
+    {{ deal.pipeline.nombre }} · {{ deal.etapa.nombre }}
+    {% if deal.cliente %} · <a href="{% url 'cliente_detail' deal.cliente.id %}" class="hover:text-indigo-300">{{ deal.cliente.nombre }}</a>{% endif %}
+  </p>
+{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'deal_update' deal.pk %}" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-sm">
+    <i class="fa-solid fa-pen"></i><span class="hidden md:inline ml-1.5">Editar</span>
+  </a>
+{% endblock %}
+
+{% block content %}
+
+<a href="{% url 'kanban' deal.pipeline.pk %}" class="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition mb-4">
+  <i class="fa-solid fa-arrow-left text-xs"></i> Volver al tablero
+</a>
+
+{% if deal.esta_ganado and not deal.proyecto %}
+  <div class="bg-emerald-500/10 border border-emerald-500/25 rounded-xl px-4 py-3 mb-4 flex flex-col sm:flex-row sm:items-center gap-3">
+    <div class="text-sm text-emerald-200 flex-1">
+      <i class="fa-solid fa-trophy mr-1.5"></i>
+      Deal ganado. Podés convertirlo en proyecto y arrancar a facturarlo.
+    </div>
+    <form method="post" action="{% url 'deal_convertir' deal.pk %}">
+      {% csrf_token %}
+      <button class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 transition text-sm font-medium whitespace-nowrap"
+              {% if not deal.cliente %}disabled title="Asignale un cliente primero"{% endif %}>
+        Crear proyecto
+      </button>
+    </form>
+  </div>
+{% endif %}
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+
+  <div class="space-y-4">
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <div class="text-xs text-white/50 uppercase tracking-wider">Valor</div>
+      <div class="text-3xl font-bold mt-2">{{ deal.moneda }} {{ deal.valor|floatformat:0 }}</div>
+      {% if deal.moneda == 'ARS' and deal.valor_usd %}
+        <div class="text-sm text-white/40 mt-1">≈ U$D {{ deal.valor_usd|floatformat:0 }}</div>
+      {% endif %}
+
+      <div class="mt-4 pt-4 border-t border-white/10">
+        <div class="text-xs text-white/50 uppercase tracking-wider mb-2">Etapa</div>
+        <form method="post" action="{% url 'deal_mover' deal.pk %}" class="flex gap-2">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <select name="etapa" class="flex-1 rounded-xl px-3 py-2 bg-white text-black outline-none">
+            {% for e in etapas %}
+              <option value="{{ e.id }}" {% if e.id == deal.etapa_id %}selected{% endif %}>{{ e.nombre }}</option>
+            {% endfor %}
+          </select>
+          <button class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">Mover</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <h2 class="font-semibold mb-4">Detalle</h2>
+      <dl class="space-y-3 text-sm">
+        <div>
+          <dt class="text-xs text-white/40 uppercase tracking-wider">Cliente</dt>
+          <dd class="mt-0.5">
+            {% if deal.cliente %}
+              <a href="{% url 'cliente_detail' deal.cliente.id %}" class="text-indigo-300 hover:text-indigo-200">{{ deal.cliente.nombre }}</a>
+            {% else %}
+              <span class="text-amber-300/70">Sin asignar</span>
+            {% endif %}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs text-white/40 uppercase tracking-wider">Cierre estimado</dt>
+          <dd class="mt-0.5 {% if deal.esta_demorado %}text-red-300{% endif %}">
+            {{ deal.cierre_estimado|date:"j \d\e F, Y"|default:"—" }}
+            {% if deal.esta_demorado %}<span class="text-xs">({{ deal.dias_para_cierre|cut:"-" }}d de demora)</span>{% endif %}
+          </dd>
+        </div>
+        {% if deal.cerrado_en %}
+        <div>
+          <dt class="text-xs text-white/40 uppercase tracking-wider">Cerrado</dt>
+          <dd class="mt-0.5">{{ deal.cerrado_en|date:"j/n/Y" }}</dd>
+        </div>
+        {% endif %}
+        {% if deal.proyecto %}
+        <div>
+          <dt class="text-xs text-white/40 uppercase tracking-wider">Proyecto</dt>
+          <dd class="mt-0.5">
+            <a href="{% url 'proyecto_detail' deal.proyecto.id %}" class="text-emerald-300 hover:text-emerald-200">{{ deal.proyecto.nombre }} →</a>
+          </dd>
+        </div>
+        {% endif %}
+        {% if deal.descripcion %}
+        <div>
+          <dt class="text-xs text-white/40 uppercase tracking-wider">Descripción</dt>
+          <dd class="mt-1 text-white/70 whitespace-pre-line">{{ deal.descripcion }}</dd>
+        </div>
+        {% endif %}
+        {% if deal.motivo_cierre %}
+        <div>
+          <dt class="text-xs text-white/40 uppercase tracking-wider">Motivo del cierre</dt>
+          <dd class="mt-1 text-white/70 whitespace-pre-line">{{ deal.motivo_cierre }}</dd>
+        </div>
+        {% endif %}
+      </dl>
+    </div>
+  </div>
+
+  <!-- tareas del deal -->
+  <div class="xl:col-span-2">
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <h2 class="font-semibold mb-4">Tareas de este deal</h2>
+
+      <form method="post" action="{% url 'tarea_rapida' %}" class="mb-5">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <input type="hidden" name="deal" value="{{ deal.pk }}">
+        {% if deal.cliente %}<input type="hidden" name="cliente" value="{{ deal.cliente.pk }}">{% endif %}
+        <div class="flex flex-col sm:flex-row gap-2">
+          {{ form_rapido.titulo }}
+          {{ form_rapido.vence }}
+          {{ form_rapido.prioridad }}
+          <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium whitespace-nowrap">
+            <i class="fa-solid fa-plus mr-1"></i> Agregar
+          </button>
+        </div>
+      </form>
+
+      <div class="space-y-2">
+        {% for t in tareas %}
+          {% include '_tarea.html' %}
+        {% empty %}
+          <p class="text-white/35 text-sm py-6 text-center">Sin tareas. Agregá el próximo paso para no perder el hilo.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-6 pt-5 border-t border-white/10">
+  <a href="{% url 'deal_delete' deal.pk %}" class="text-sm text-red-300/60 hover:text-red-300 transition">
+    <i class="fa-solid fa-trash mr-1"></i> Eliminar este deal
+  </a>
+</div>
+
+{% endblock %}

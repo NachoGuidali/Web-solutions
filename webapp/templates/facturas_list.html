@@ -1,144 +1,199 @@
-{% extends "base.html" %}
+{% extends 'crm_base.html' %}
+{% block title %}Facturas{% endblock %}
+{% block heading %}Facturas{% endblock %}
+{% block subheading %}<p class="text-xs text-white/40">{{ total }} resultado{{ total|pluralize }} con los filtros actuales</p>{% endblock %}
+
+{% block topbar_actions %}
+  <a href="?{{ qs_extra|slice:'1:' }}{% if qs_extra %}&{% endif %}export=csv"
+     class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-sm" title="Exportar el filtro actual a CSV">
+    <i class="fa-solid fa-file-csv"></i><span class="hidden md:inline ml-1.5">CSV</span>
+  </a>
+  <a href="{% url 'factura_create' %}" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">
+    <i class="fa-solid fa-plus"></i><span class="hidden sm:inline">Nueva factura</span>
+  </a>
+{% endblock %}
+
 {% block content %}
 
-<section class="max-w-7xl mx-auto px-4 pt-32 fade-in">
+<!-- Totales del filtro -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+  <div class="bg-emerald-500/[0.07] border border-emerald-500/20 rounded-2xl p-4">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Cobrado ARS</div>
+    <div class="text-xl font-bold text-emerald-300 mt-1">${{ cobrado_ars|floatformat:0 }}</div>
+  </div>
+  <div class="bg-emerald-500/[0.07] border border-emerald-500/20 rounded-2xl p-4">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Cobrado USD</div>
+    <div class="text-xl font-bold text-emerald-300 mt-1">U$D {{ cobrado_usd|floatformat:0 }}</div>
+  </div>
+  <div class="bg-amber-500/[0.07] border border-amber-500/20 rounded-2xl p-4">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Pendiente ARS</div>
+    <div class="text-xl font-bold text-amber-300 mt-1">${{ pendiente_ars|floatformat:0 }}</div>
+  </div>
+  <div class="bg-amber-500/[0.07] border border-amber-500/20 rounded-2xl p-4">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Pendiente USD</div>
+    <div class="text-xl font-bold text-amber-300 mt-1">U$D {{ pendiente_usd|floatformat:0 }}</div>
+  </div>
+</div>
 
-  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-    <div>
-      <h1 class="text-3xl font-bold">Facturas</h1>
-      <p class="text-white/70 mt-1">Gestioná facturas sin entrar al admin.</p>
+<!-- Filtros -->
+<form method="get" class="bg-white/[0.04] border border-white/10 rounded-2xl p-4 mb-5">
+  <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-3">
+    <div class="xl:col-span-2">
+      <label class="text-xs text-white/50">Buscar</label>
+      <input type="text" name="q" value="{{ filters.q }}" placeholder="Cliente, proyecto, método, observaciones"
+             class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
     </div>
 
+    <div>
+      <label class="text-xs text-white/50">Estado</label>
+      <select name="estado" class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
+        <option value="">Todos</option>
+        <option value="pendiente" {% if filters.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+        <option value="vencidas" {% if filters.estado == 'vencidas' %}selected{% endif %}>Vencidas</option>
+        <option value="cobrado" {% if filters.estado == 'cobrado' %}selected{% endif %}>Cobrado</option>
+      </select>
+    </div>
 
-    <a href="{% url 'dashboard' %}"
-      class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">dashboard</a>
-    <a href="{% url 'factura_create' %}"
-       class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-medium">
-      <i class="fa-solid fa-plus"></i>
-      Nueva factura
-    </a>
-    
+    <div>
+      <label class="text-xs text-white/50">Cliente</label>
+      <select name="cliente" class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
+        <option value="">Todos</option>
+        {% for c in clientes %}
+          <option value="{{ c.id }}" {% if filters.cliente == c.id|stringformat:"s" %}selected{% endif %}>{{ c.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="text-xs text-white/50">Desde</label>
+      <input type="date" name="desde" value="{{ filters.desde }}"
+             class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
+    </div>
+
+    <div>
+      <label class="text-xs text-white/50">Hasta</label>
+      <input type="date" name="hasta" value="{{ filters.hasta }}"
+             class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
+    </div>
   </div>
 
-  <!-- Filtros -->
-  <form method="get"
-        class="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-5 mb-6">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-      <div>
-        <label class="text-sm text-white/70">Buscar</label>
-        <input type="text" name="q" value="{{ filters.q }}"
-               placeholder="Proyecto / método / observaciones"
-               class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
-      </div>
+  <div class="flex flex-wrap gap-2 mt-3">
+    <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">Filtrar</button>
+    <a href="{% url 'facturas_list' %}" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-sm">Limpiar</a>
 
-      <div>
-        <label class="text-sm text-white/70">Estado</label>
-        <select name="estado"
-                class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
-          <option value="">Todos</option>
-          <option value="pendiente" {% if filters.estado == "pendiente" %}selected{% endif %}>Pendiente</option>
-          <option value="cobrado" {% if filters.estado == "cobrado" %}selected{% endif %}>Cobrado</option>
-        </select>
-      </div>
+    <label class="ml-auto flex items-center gap-2 text-sm text-white/60">
+      Moneda
+      <select name="moneda" onchange="this.form.submit()" class="rounded-xl px-3 py-2 bg-white text-black outline-none">
+        <option value="">Todas</option>
+        <option value="ARS" {% if filters.moneda == 'ARS' %}selected{% endif %}>ARS</option>
+        <option value="USD" {% if filters.moneda == 'USD' %}selected{% endif %}>USD</option>
+      </select>
+    </label>
+  </div>
+</form>
 
-      <div>
-        <label class="text-sm text-white/70">Moneda</label>
-        <select name="moneda"
-                class="mt-1 w-full rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
-          <option value="">Todas</option>
-          <option value="ARS" {% if filters.moneda == "ARS" %}selected{% endif %}>ARS</option>
-          <option value="USD" {% if filters.moneda == "USD" %}selected{% endif %}>USD</option>
-        </select>
-      </div>
+<!-- Tabla -->
+<div class="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead class="bg-white/[0.03] text-white/50 text-xs uppercase tracking-wider">
+        <tr>
+          <th class="text-left px-4 py-3">#</th>
+          <th class="text-left px-4 py-3">Cliente / Proyecto</th>
+          <th class="text-left px-4 py-3">Fecha</th>
+          <th class="text-left px-4 py-3">Vence</th>
+          <th class="text-right px-4 py-3">Monto</th>
+          <th class="text-left px-4 py-3">Estado</th>
+          <th class="text-left px-4 py-3">Método</th>
+          <th class="text-right px-4 py-3">Acciones</th>
+        </tr>
+      </thead>
 
-      <div class="flex items-end gap-2">
-        <button type="submit"
-                class="w-full rounded-xl px-4 py-2 bg-white/10 hover:bg-white/20 transition border border-white/10">
-          Filtrar
-        </button>
-        <a href="{% url 'facturas_list' %}"
-           class="rounded-xl px-4 py-2 bg-white/5 hover:bg-white/10 transition border border-white/10 whitespace-nowrap">
-          Reset
-        </a>
-      </div>
-    </div>
-  </form>
-
-  <!-- Tabla / Lista -->
-  <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-    <div class="overflow-x-auto">
-      <table class="min-w-full text-sm">
-        <thead class="bg-white/5 text-white/80">
-          <tr>
-            <th class="text-left px-4 py-3">ID</th>
-            <th class="text-left px-4 py-3">Proyecto</th>
-            <th class="text-left px-4 py-3">Fecha</th>
-            <th class="text-left px-4 py-3">Monto</th>
-            <th class="text-left px-4 py-3">Estado</th>
-            <th class="text-left px-4 py-3">Método</th>
-            <th class="text-right px-4 py-3">Acciones</th>
-          </tr>
-        </thead>
-
-        <tbody class="divide-y divide-white/10">
-          {% for f in facturas %}
-          <tr class="hover:bg-white/5 transition">
-            <td class="px-4 py-3 text-white/80">#{{ f.id }}</td>
-            <td class="px-4 py-3 font-medium">{{ f.proyecto.nombre }}</td>
-            <td class="px-4 py-3 text-white/80">{{ f.fecha }}</td>
-            <td class="px-4 py-3">
-              <span class="text-white/80">{{ f.moneda }}</span>
-              <span class="font-semibold">{{ f.monto }}</span>
+      <tbody class="divide-y divide-white/10">
+        {% for f in page_obj %}
+          <tr class="hover:bg-white/[0.03] transition {% if f.esta_vencida %}bg-red-500/[0.04]{% endif %}">
+            <td class="px-4 py-3 text-white/40 text-xs">
+              {{ f.id }}
+              {% if f.automatica %}<i class="fa-solid fa-robot ml-1" title="Generada automáticamente"></i>{% endif %}
             </td>
             <td class="px-4 py-3">
-              {% if f.estado == "cobrado" %}
-                <span class="px-2 py-1 rounded-full text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  Cobrado
-                </span>
-              {% else %}
-                <span class="px-2 py-1 rounded-full text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Pendiente
-                </span>
+              <a href="{% url 'proyecto_detail' f.proyecto.id %}" class="font-medium hover:text-indigo-300 transition block truncate max-w-[220px]">
+                {{ f.proyecto.nombre }}
+              </a>
+              <a href="{% url 'cliente_detail' f.proyecto.cliente.id %}" class="text-xs text-white/45 hover:text-indigo-300 transition">
+                {{ f.proyecto.cliente.nombre }}
+              </a>
+            </td>
+            <td class="px-4 py-3 text-white/60 text-xs whitespace-nowrap">{{ f.fecha|date:"j/n/Y" }}</td>
+            <td class="px-4 py-3 text-xs whitespace-nowrap {% if f.esta_vencida %}text-red-300{% else %}text-white/50{% endif %}">
+              {{ f.fecha_vencimiento|date:"j/n/Y"|default:"—" }}
+            </td>
+            <td class="px-4 py-3 text-right whitespace-nowrap">
+              <div>
+                <span class="text-white/50 text-xs">{{ f.moneda }}</span>
+                <span class="font-semibold">{{ f.monto|floatformat:0 }}</span>
+              </div>
+              {% if f.moneda == 'ARS' %}
+                {% if f.monto_usd %}
+                  <div class="text-[11px] text-white/35">≈ U$D {{ f.monto_usd|floatformat:0 }}</div>
+                {% else %}
+                  <div class="text-[11px] text-amber-300/60" title="No hay cotización para esta fecha">sin cotizar</div>
+                {% endif %}
               {% endif %}
             </td>
-            <td class="px-4 py-3 text-white/80">{{ f.metodo_pago|default:"-" }}</td>
-
             <td class="px-4 py-3">
-              <div class="flex justify-end gap-2">
-                <a href="{% url 'factura_update' f.id %}"
-                   class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10">
-                  Editar
-                </a>
-
-                <a href="{% url 'factura_delete' f.id %}"
-                   class="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 transition border border-red-500/20 text-red-200">
-                  Eliminar
-                </a>
-
-                {% if f.estado != "cobrado" %}
-                <form method="post" action="{% url 'factura_mark_cobrada' f.id %}">
-                  {% csrf_token %}
-                  <button type="submit"
-                          class="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 transition border border-emerald-500/20 text-emerald-200">
-                    Marcar cobrada
-                  </button>
-                </form>
+              {% if f.estado == 'cobrado' %}
+                <span class="px-2 py-1 rounded-full text-[11px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 whitespace-nowrap">Cobrado</span>
+              {% elif f.esta_vencida %}
+                <span class="px-2 py-1 rounded-full text-[11px] bg-red-500/15 text-red-300 border border-red-500/30 whitespace-nowrap">Vencida {{ f.dias_vencida }}d</span>
+              {% else %}
+                <span class="px-2 py-1 rounded-full text-[11px] bg-amber-500/15 text-amber-300 border border-amber-500/30 whitespace-nowrap">Pendiente</span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3 text-white/50 text-xs">{{ f.metodo_pago|default:"—" }}</td>
+            <td class="px-4 py-3">
+              <div class="flex justify-end gap-1.5 text-xs">
+                {% if f.estado == 'cobrado' %}
+                  <form method="post" action="{% url 'factura_mark_pendiente' f.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10" title="Volver a pendiente">
+                      <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                  </form>
+                {% else %}
+                  <form method="post" action="{% url 'factura_mark_cobrada' f.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button class="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-200" title="Marcar cobrada">
+                      <i class="fa-solid fa-check"></i>
+                    </button>
+                  </form>
                 {% endif %}
+
+                <a href="{% url 'factura_update' f.id %}?next={{ request.get_full_path|urlencode }}"
+                   class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10" title="Editar">
+                  <i class="fa-solid fa-pen"></i>
+                </a>
+                <a href="{% url 'factura_delete' f.id %}?next={{ request.get_full_path|urlencode }}"
+                   class="px-2.5 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-200" title="Eliminar">
+                  <i class="fa-solid fa-trash"></i>
+                </a>
               </div>
             </td>
           </tr>
-          {% empty %}
+        {% empty %}
           <tr>
-            <td colspan="7" class="px-4 py-8 text-center text-white/60">
-              No hay facturas cargadas.
+            <td colspan="8" class="px-4 py-12 text-center">
+              <i class="fa-solid fa-file-invoice-dollar text-3xl text-white/15"></i>
+              <p class="text-white/50 mt-3">No hay facturas con estos filtros.</p>
             </td>
           </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
+</div>
 
-</section>
-
+{% include '_paginacion.html' %}
 {% endblock %}

@@ -1,95 +1,419 @@
-{% extends 'base.html' %}
+{% extends 'crm_base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block heading %}Panel de control{% endblock %}
+{% block subheading %}<p class="text-xs text-white/40">{{ hoy|date:"l j \d\e F, Y" }}</p>{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'factura_create' %}" class="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">
+    <i class="fa-solid fa-plus"></i> Factura
+  </a>
+{% endblock %}
+
 {% block content %}
-<div class="pt-28 px-4 max-w-7xl mx-auto">
-  <h1 class="text-3xl font-bold mb-6 text-indigo-400">Panel de Control SupReg</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow">
-      <h2 class="text-xl font-semibold mb-2">Clientes</h2>
-      <p class="text-3xl font-bold text-indigo-300">{{ total_clientes }}</p>
+<!-- ============ KPIs financieros ============ -->
+{% if cotizacion %}
+  <div class="flex flex-wrap items-center gap-2 text-xs text-white/40 mb-3">
+    <i class="fa-solid fa-dollar-sign"></i>
+    Consolidado al {{ cotizacion.get_casa_display }} de {{ cotizacion.fecha|date:"j/n/Y" }}:
+    <strong class="text-white/70">${{ cotizacion.venta|floatformat:2 }}</strong>
+    {% if cotizacion_atrasada %}
+      <span class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+        {{ dias_sin_cotizar }} días sin actualizar
+      </span>
+    {% endif %}
+    <a href="{% url 'cotizaciones_list' %}" class="text-indigo-300 hover:text-indigo-200">gestionar →</a>
+  </div>
+{% else %}
+  <div class="bg-amber-500/10 border border-amber-500/25 text-amber-200 rounded-xl px-4 py-3 mb-4 text-sm">
+    <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>
+    No hay cotización del dólar cargada, así que no se puede consolidar en una sola moneda.
+    <a href="{% url 'cotizaciones_list' %}" class="underline hover:text-white">Cargar ahora</a>.
+  </div>
+{% endif %}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <div class="flex items-center justify-between text-white/50 text-xs uppercase tracking-wider">
+      <span>Cobrado este mes</span>
+      <i class="fa-solid fa-wallet text-emerald-400/70"></i>
     </div>
-
-    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow">
-      <h2 class="text-xl font-semibold mb-2">Proyectos Activos</h2>
-      <p class="text-3xl font-bold text-indigo-300">{{ proyectos_activos }}</p>
-    </div>
-
-    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow">
-      <h2 class="text-xl font-semibold mb-2">Facturas Pendientes</h2>
-      <p class="text-3xl font-bold text-amber-300">{{ facturas_pendientes }}</p>
-    </div>
-
-    <div class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow">
-      <h2 class="text-xl font-semibold mb-2">Total Facturado</h2>
-      <div class="text-white/80 mt-2 space-y-1">
-        <div><strong>ARS:</strong> ${{ total_facturado_ars }}</div>
-        <div><strong>USD:</strong> U$D {{ total_facturado_usd }}</div>
+    <div class="mt-3">
+      <div class="text-2xl font-bold text-emerald-300">U$D {{ mes_equivalente|floatformat:0 }}</div>
+      <div class="text-xs text-white/40 mt-1.5">
+        ${{ mes_ars|floatformat:0 }}
+        {% if mes_usd_nativo %} + U$D {{ mes_usd_nativo|floatformat:0 }} directos{% endif %}
       </div>
     </div>
   </div>
 
-  <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Vencimientos -->
-    <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-xl font-semibold">Vencimientos (14 días)</h2>
-        <a href="{% url 'mensualidades_list' %}" class="text-sm text-indigo-300 hover:text-indigo-400">Ver todas</a>
-      </div>
-
-      <div class="space-y-3">
-        {% for m in vencimientos %}
-          <div class="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-3">
-            <div>
-              <div class="font-semibold">{{ m.proyecto.nombre }}</div>
-              <div class="text-sm text-white/70">Cliente: {{ m.proyecto.cliente.nombre }}</div>
-              <div class="text-sm text-white/60">Vence: {{ m.proximo_vencimiento }} — {{ m.moneda }} {{ m.monto }}</div>
-            </div>
-            <a href="{% url 'mensualidad_update' m.id %}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10 text-sm">
-              Editar
-            </a>
-          </div>
-        {% empty %}
-          <div class="text-white/60">No hay vencimientos próximos.</div>
-        {% endfor %}
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <div class="flex items-center justify-between text-white/50 text-xs uppercase tracking-wider">
+      <span>Por cobrar</span>
+      <i class="fa-solid fa-hourglass-half text-amber-400/70"></i>
+    </div>
+    <div class="mt-3">
+      <div class="text-2xl font-bold text-amber-300">U$D {{ por_cobrar_equivalente|floatformat:0 }}</div>
+      <div class="text-xs text-white/40 mt-1.5">
+        ${{ por_cobrar_ars|floatformat:0 }}
+        {% if por_cobrar_usd %} + U$D {{ por_cobrar_usd|floatformat:0 }} directos{% endif %}
       </div>
     </div>
-
-    <!-- Eventos -->
-    <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="text-xl font-semibold">Agenda (7 días)</h2>
-        <a href="{% url 'eventos_list' %}" class="text-sm text-indigo-300 hover:text-indigo-400">Ver agenda</a>
-      </div>
-
-      <div class="space-y-3">
-        {% for e in eventos %}
-          <div class="flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-3">
-            <div>
-              <div class="font-semibold">{{ e.titulo }}</div>
-              <div class="text-sm text-white/70">{{ e.get_tipo_display }} — {{ e.inicio }}</div>
-              <div class="text-sm text-white/60">
-                {% if e.cliente %}Cliente: {{ e.cliente.nombre }}{% endif %}
-                {% if e.proyecto %} | Proyecto: {{ e.proyecto.nombre }}{% endif %}
-              </div>
-            </div>
-            <a href="{% url 'evento_update' e.id %}" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition border border-white/10 text-sm">
-              Editar
-            </a>
-          </div>
-        {% empty %}
-          <div class="text-white/60">No hay eventos próximos.</div>
-        {% endfor %}
-      </div>
-    </div>
+    <a href="{% url 'facturas_list' %}?estado=pendiente" class="mt-3 inline-block text-xs text-indigo-300 hover:text-indigo-200">
+      {{ facturas_pendientes }} factura{{ facturas_pendientes|pluralize }} pendiente{{ facturas_pendientes|pluralize }} →
+    </a>
   </div>
 
-  <div class="mt-10 flex flex-wrap gap-4">
-    <a href="{% url 'clientes_list' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Clientes</a>
-    <a href="{% url 'proyectos_list' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Ver Proyectos</a>
-    <a href="{% url 'facturas_list' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Facturas</a>
-    <a href="{% url 'mensualidades_list' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Mensualidades</a>
-    <a href="{% url 'eventos_list' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm shadow">Agenda</a>
-    <a href="{% url 'admin:index' %}" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm shadow">Ir al Admin</a>
+  <div class="bg-white/[0.04] border rounded-2xl p-5 {% if facturas_vencidas %}border-red-500/30 bg-red-500/[0.06]{% else %}border-white/10{% endif %}">
+    <div class="flex items-center justify-between text-white/50 text-xs uppercase tracking-wider">
+      <span>Vencido</span>
+      <i class="fa-solid fa-triangle-exclamation {% if facturas_vencidas %}text-red-400{% else %}text-white/30{% endif %}"></i>
+    </div>
+    <div class="mt-3">
+      <div class="text-2xl font-bold {% if facturas_vencidas %}text-red-300{% else %}text-white/40{% endif %}">
+        U$D {{ vencido_equivalente|floatformat:0 }}
+      </div>
+      <div class="text-xs text-white/40 mt-1.5">
+        ${{ vencido_ars|floatformat:0 }}
+        {% if vencido_usd %} + U$D {{ vencido_usd|floatformat:0 }} directos{% endif %}
+      </div>
+    </div>
+    <a href="{% url 'facturas_list' %}?estado=vencidas" class="mt-3 inline-block text-xs text-indigo-300 hover:text-indigo-200">
+      {{ facturas_vencidas }} vencida{{ facturas_vencidas|pluralize }} →
+    </a>
+  </div>
+
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <div class="flex items-center justify-between text-white/50 text-xs uppercase tracking-wider">
+      <span>Facturado histórico</span>
+      <i class="fa-solid fa-chart-simple text-indigo-400/70"></i>
+    </div>
+    <div class="mt-3">
+      <div class="text-2xl font-bold text-indigo-300">U$D {{ total_equivalente|floatformat:0 }}</div>
+      <div class="text-xs text-white/40 mt-1.5">
+        ${{ total_facturado_ars|floatformat:0 }}
+        {% if total_facturado_usd %} + U$D {{ total_facturado_usd|floatformat:0 }} directos{% endif %}
+      </div>
+    </div>
+    {% if sin_cotizar %}
+      <div class="mt-2 text-xs text-amber-300/80">{{ sin_cotizar }} factura(s) sin convertir</div>
+    {% endif %}
   </div>
 </div>
+
+<!-- ============ KPIs operativos ============ -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+  <a href="{% url 'clientes_list' %}" class="bg-white/[0.04] border border-white/10 rounded-2xl p-4 hover:bg-white/[0.07] transition">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Clientes</div>
+    <div class="text-2xl font-bold mt-1">{{ total_clientes }}</div>
+    <div class="text-xs text-emerald-300/70 mt-1">{{ clientes_activos }} activo{{ clientes_activos|pluralize }}</div>
+  </a>
+
+  <a href="{% url 'proyectos_list' %}?estado=abiertos" class="bg-white/[0.04] border border-white/10 rounded-2xl p-4 hover:bg-white/[0.07] transition">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Proyectos abiertos</div>
+    <div class="text-2xl font-bold mt-1">{{ proyectos_activos }}</div>
+    <div class="text-xs text-white/40 mt-1">en curso, pendientes o pausados</div>
+  </a>
+
+  <a href="{% url 'proyectos_list' %}?estado=atrasados" class="bg-white/[0.04] border rounded-2xl p-4 hover:bg-white/[0.07] transition {% if proyectos_atrasados %}border-red-500/30{% else %}border-white/10{% endif %}">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Atrasados</div>
+    <div class="text-2xl font-bold mt-1 {% if proyectos_atrasados %}text-red-300{% endif %}">{{ proyectos_atrasados }}</div>
+    <div class="text-xs text-white/40 mt-1">pasaron la fecha de entrega</div>
+  </a>
+
+  <a href="{% url 'tareas_list' %}" class="bg-white/[0.04] border rounded-2xl p-4 hover:bg-white/[0.07] transition {% if tareas_vencidas %}border-red-500/30{% else %}border-white/10{% endif %}">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Tareas pendientes</div>
+    <div class="text-2xl font-bold mt-1 {% if tareas_vencidas %}text-red-300{% endif %}">{{ tareas_pendientes }}</div>
+    <div class="text-xs mt-1 {% if tareas_vencidas %}text-red-300/70{% else %}text-white/40{% endif %}">
+      {% if tareas_vencidas %}{{ tareas_vencidas }} vencida{{ tareas_vencidas|pluralize }}{% else %}al día{% endif %}
+    </div>
+  </a>
+</div>
+
+<!-- ============ Tareas + pipeline ============ -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+
+  <!-- Qué hago hoy -->
+  <div class="lg:col-span-2 bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold">Qué hay que hacer</h2>
+      <a href="{% url 'tareas_list' %}" class="text-xs text-indigo-300 hover:text-indigo-200">Ver todas →</a>
+    </div>
+
+    <form method="post" action="{% url 'tarea_rapida' %}" class="mb-5">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.path }}">
+      <div class="flex flex-col sm:flex-row gap-2">
+        {{ form_tarea.titulo }}
+        {{ form_tarea.vence }}
+        {{ form_tarea.prioridad }}
+        <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium whitespace-nowrap">
+          <i class="fa-solid fa-plus mr-1"></i> Agregar
+        </button>
+      </div>
+    </form>
+
+    {% if tareas.vencidas %}
+      <div class="mb-4">
+        <div class="flex items-center gap-2 text-xs uppercase tracking-wider text-red-300/80 mb-2">
+          <i class="fa-solid fa-triangle-exclamation"></i> Vencidas ({{ tareas.vencidas|length }})
+        </div>
+        <div class="space-y-2">
+          {% for t in tareas.vencidas|slice:":5" %}{% include '_tarea.html' %}{% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="mb-4">
+      <div class="text-xs uppercase tracking-wider text-white/40 mb-2">Hoy ({{ tareas.hoy|length }})</div>
+      <div class="space-y-2">
+        {% for t in tareas.hoy|slice:":6" %}{% include '_tarea.html' %}
+        {% empty %}<p class="text-white/30 text-sm py-2">Nada agendado para hoy.</p>{% endfor %}
+      </div>
+    </div>
+
+    {% if tareas.semana %}
+      <div>
+        <div class="text-xs uppercase tracking-wider text-white/40 mb-2">Esta semana ({{ tareas.semana|length }})</div>
+        <div class="space-y-2">
+          {% for t in tareas.semana|slice:":4" %}{% include '_tarea.html' %}{% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if not tareas.vencidas and not tareas.hoy and not tareas.semana %}
+      <div class="text-center py-6">
+        <i class="fa-solid fa-mug-hot text-2xl text-white/15"></i>
+        <p class="text-white/40 text-sm mt-2">Sin pendientes a la vista.</p>
+        {% if tareas.sin_fecha %}
+          <p class="text-white/30 text-xs mt-1">Tenés {{ tareas.sin_fecha|length }} tarea(s) sin fecha.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Pipeline -->
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold">Pipeline</h2>
+      <a href="{% url 'kanban' %}" class="text-xs text-indigo-300 hover:text-indigo-200">Ver tablero →</a>
+    </div>
+
+    {% if pipeline %}
+      <div class="bg-white/[0.03] border border-white/10 rounded-xl p-4 mb-4">
+        <div class="text-xs text-white/50 uppercase tracking-wider">En juego</div>
+        <div class="text-2xl font-bold text-indigo-300 mt-1">U$D {{ valor_pipeline|floatformat:0 }}</div>
+        <div class="text-xs text-white/40 mt-1">
+          {{ total_deals_abiertos }} deal{{ total_deals_abiertos|pluralize }} abierto{{ total_deals_abiertos|pluralize }}
+          {% if deals_demorados %}<span class="text-red-300">· {{ deals_demorados }} demorado(s)</span>{% endif %}
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        {% for d in deals_abiertos %}
+          <a href="{% url 'deal_detail' d.id %}" class="block bg-white/[0.03] border border-white/10 rounded-xl p-3 hover:bg-white/[0.06] transition">
+            <div class="text-sm font-medium truncate">{{ d.titulo }}</div>
+            <div class="flex items-center justify-between gap-2 mt-1">
+              <span class="text-xs text-white/45 truncate">
+                {% if d.cliente %}{{ d.cliente.nombre }} · {% endif %}{{ d.etapa.nombre }}
+              </span>
+              <span class="text-xs font-semibold shrink-0">{{ d.moneda }} {{ d.valor|floatformat:0 }}</span>
+            </div>
+            {% if d.esta_demorado %}
+              <div class="text-[11px] text-red-300 mt-1">Cierre demorado {{ d.dias_para_cierre|cut:"-" }}d</div>
+            {% endif %}
+          </a>
+        {% empty %}
+          <p class="text-white/35 text-sm py-4 text-center">No hay deals abiertos.</p>
+        {% endfor %}
+      </div>
+
+      <a href="{% url 'deal_create' %}" class="block text-center text-xs text-white/40 hover:text-indigo-300 mt-3 py-2 rounded-lg hover:bg-white/5 transition">
+        <i class="fa-solid fa-plus"></i> Nuevo deal
+      </a>
+    {% else %}
+      <div class="text-center py-6">
+        <i class="fa-solid fa-table-columns text-2xl text-white/15"></i>
+        <p class="text-white/40 text-sm mt-2">Todavía no tenés un tablero.</p>
+        <a href="{% url 'pipeline_create' %}" class="inline-block mt-3 px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-xs">
+          Crear pipeline
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ============ Gráfico de ingresos ============ -->
+<div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5 md:p-6 mt-4">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-1">
+    <h2 class="font-semibold">Cobranzas de los últimos 6 meses</h2>
+    <span class="text-xs text-white/40">equivalente en dólares, por fecha de cobro</span>
+  </div>
+  <p class="text-xs text-white/30 mb-5">
+    En dólares para que los meses sean comparables: con la inflación, pesos de meses distintos no se pueden sumar.
+  </p>
+
+  <div class="flex items-end justify-between gap-2 md:gap-4 h-48">
+    {% for p in serie_ingresos %}
+      <div class="flex-1 flex flex-col items-center justify-end h-full gap-2">
+        <div class="text-[11px] text-white/60 font-medium">
+          {% if p.equivalente %}{{ p.equivalente|floatformat:0 }}{% endif %}
+        </div>
+        <div class="w-full flex justify-center h-full items-end">
+          <div class="w-2/3 max-w-[52px] bg-indigo-500 hover:bg-indigo-400 rounded-t transition-all min-h-[2px]"
+               style="height: {{ p.alto }}%"
+               title="U$D {{ p.equivalente|floatformat:2 }}"></div>
+        </div>
+        <div class="text-[11px] text-white/45 whitespace-nowrap">{{ p.etiqueta }}</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="grid grid-cols-3 md:grid-cols-6 gap-2 mt-4 pt-4 border-t border-white/10 text-center text-[11px]">
+    {% for p in serie_ingresos %}
+      <div>
+        <div class="text-white/40">{{ p.etiqueta }}</div>
+        <div class="text-indigo-300 font-medium">U$D {{ p.equivalente|floatformat:0 }}</div>
+        {% if p.ars %}<div class="text-white/35">${{ p.ars|floatformat:0 }}</div>{% endif %}
+        {% if p.usd %}<div class="text-emerald-300/70">U$D {{ p.usd|floatformat:0 }}</div>{% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if not total_del_periodo %}
+    <div class="mt-4 pt-4 border-t border-white/10 text-center text-sm text-white/40">
+      <i class="fa-regular fa-face-meh"></i>
+      No hay cobros registrados en los últimos 6 meses.
+      <a href="{% url 'facturas_list' %}" class="text-indigo-300 hover:text-indigo-200">Revisar facturas →</a>
+    </div>
+  {% endif %}
+</div>
+
+<!-- ============ Listas ============ -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+
+  <!-- Vencimientos de mensualidades -->
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold">Mensualidades por vencer <span class="text-white/40 text-sm font-normal">(14 días)</span></h2>
+      <a href="{% url 'mensualidades_list' %}" class="text-xs text-indigo-300 hover:text-indigo-200">Ver todas →</a>
+    </div>
+
+    <div class="space-y-2">
+      {% for m in vencimientos %}
+        <div class="flex items-center justify-between gap-3 bg-white/[0.03] border border-white/10 rounded-xl p-3">
+          <div class="min-w-0">
+            <a href="{% url 'proyecto_detail' m.proyecto.id %}" class="font-medium hover:text-indigo-300 transition truncate block">{{ m.proyecto.nombre }}</a>
+            <div class="text-xs text-white/50 truncate">{{ m.proyecto.cliente.nombre }}</div>
+            <div class="text-xs mt-1">
+              <span class="text-white/70">{{ m.moneda }} {{ m.monto|floatformat:0 }}</span>
+              <span class="text-white/30 mx-1">·</span>
+              {% if m.dias_para_vencer < 0 %}
+                <span class="text-red-300">vencida hace {{ m.dias_para_vencer|cut:"-" }} día(s)</span>
+              {% elif m.dias_para_vencer == 0 %}
+                <span class="text-amber-300">vence hoy</span>
+              {% else %}
+                <span class="text-white/50">en {{ m.dias_para_vencer }} día(s)</span>
+              {% endif %}
+            </div>
+          </div>
+          <form method="post" action="{% url 'mensualidad_facturar' m.id %}" class="shrink-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button class="px-3 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-200 text-xs whitespace-nowrap">
+              Facturar
+            </button>
+          </form>
+        </div>
+      {% empty %}
+        <p class="text-white/40 text-sm py-4 text-center">Sin vencimientos próximos.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Agenda -->
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold">Próximos eventos</h2>
+      <a href="{% url 'eventos_list' %}" class="text-xs text-indigo-300 hover:text-indigo-200">Ver agenda →</a>
+    </div>
+
+    <div class="space-y-2">
+      {% for e in eventos %}
+        <div class="flex items-center justify-between gap-3 bg-white/[0.03] border border-white/10 rounded-xl p-3">
+          <div class="min-w-0">
+            <div class="font-medium truncate">{{ e.titulo }}</div>
+            <div class="text-xs text-white/50">
+              {{ e.get_tipo_display }} · {{ e.inicio|date:"D j/n H:i" }}
+              {% if e.es_hoy %}<span class="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">hoy</span>{% endif %}
+            </div>
+            {% if e.cliente %}<div class="text-xs text-white/40 truncate">{{ e.cliente.nombre }}</div>{% endif %}
+          </div>
+          <form method="post" action="{% url 'evento_toggle' e.id %}" class="shrink-0">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button class="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-200 text-xs whitespace-nowrap">
+              <i class="fa-solid fa-check"></i>
+            </button>
+          </form>
+        </div>
+      {% empty %}
+        <p class="text-white/40 text-sm py-4 text-center">No hay eventos en los próximos 7 días.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Proyectos atrasados -->
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold">Proyectos atrasados</h2>
+      <a href="{% url 'proyectos_list' %}?estado=atrasados" class="text-xs text-indigo-300 hover:text-indigo-200">Ver todos →</a>
+    </div>
+
+    <div class="space-y-2">
+      {% for p in atrasados %}
+        <a href="{% url 'proyecto_detail' p.id %}" class="block bg-white/[0.03] border border-red-500/20 rounded-xl p-3 hover:bg-white/[0.06] transition">
+          <div class="font-medium truncate">{{ p.nombre }}</div>
+          <div class="text-xs text-white/50">{{ p.cliente.nombre }} · {{ p.get_estado_display }}</div>
+          <div class="text-xs text-red-300 mt-1">Entrega era {{ p.fecha_entrega|date:"j/n/Y" }}</div>
+        </a>
+      {% empty %}
+        <p class="text-white/40 text-sm py-4 text-center">Ningún proyecto atrasado. 👌</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Últimas facturas -->
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold">Últimas facturas</h2>
+      <a href="{% url 'facturas_list' %}" class="text-xs text-indigo-300 hover:text-indigo-200">Ver todas →</a>
+    </div>
+
+    <div class="space-y-2">
+      {% for f in ultimas_facturas %}
+        <div class="flex items-center justify-between gap-3 bg-white/[0.03] border border-white/10 rounded-xl p-3">
+          <div class="min-w-0">
+            <div class="font-medium truncate">{{ f.proyecto.nombre }}</div>
+            <div class="text-xs text-white/50 truncate">{{ f.proyecto.cliente.nombre }} · {{ f.fecha|date:"j/n/Y" }}</div>
+          </div>
+          <div class="text-right shrink-0">
+            <div class="font-semibold text-sm">{{ f.moneda }} {{ f.monto|floatformat:0 }}</div>
+            {% if f.estado == 'cobrado' %}
+              <span class="text-[11px] text-emerald-300">Cobrado</span>
+            {% elif f.esta_vencida %}
+              <span class="text-[11px] text-red-300">Vencida</span>
+            {% else %}
+              <span class="text-[11px] text-amber-300">Pendiente</span>
+            {% endif %}
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-white/40 text-sm py-4 text-center">Todavía no hay facturas.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
 {% endblock %}

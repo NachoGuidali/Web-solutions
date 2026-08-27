@@ -1,0 +1,160 @@
+{% extends 'crm_base.html' %}
+{% block title %}Cotizaciones{% endblock %}
+{% block heading %}Cotizaciones del dólar{% endblock %}
+{% block subheading %}<p class="text-xs text-white/40">Con esto el CRM expresa todo en una sola moneda</p>{% endblock %}
+
+{% block topbar_actions %}
+  <form method="post" action="{% url 'cotizaciones_sync' %}">
+    {% csrf_token %}
+    <button class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">
+      <i class="fa-solid fa-rotate"></i><span class="hidden sm:inline">Actualizar</span>
+    </button>
+  </form>
+{% endblock %}
+
+{% block content %}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+
+  <div class="bg-white/[0.04] border rounded-2xl p-5 {% if dias_sin_cotizar > 3 %}border-amber-500/30{% else %}border-white/10{% endif %}">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Cotización vigente</div>
+    {% if vigente %}
+      <div class="text-3xl font-bold text-emerald-300 mt-2">${{ vigente.venta|floatformat:2 }}</div>
+      <div class="text-xs text-white/45 mt-1">
+        {{ vigente.get_casa_display }} · {{ vigente.fecha|date:"j/n/Y" }}
+        {% if dias_sin_cotizar > 3 %}
+          <span class="text-amber-300">— {{ dias_sin_cotizar }} días de atraso</span>
+        {% elif dias_sin_cotizar > 0 %}
+          <span class="text-white/35">— hace {{ dias_sin_cotizar }} día(s)</span>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="text-xl font-bold text-amber-300 mt-2">Sin datos</div>
+      <div class="text-xs text-white/45 mt-1">Actualizá para traerlas de la API.</div>
+    {% endif %}
+  </div>
+
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Cargadas</div>
+    <div class="text-3xl font-bold mt-2">{{ total }}</div>
+    <div class="text-xs text-white/45 mt-1">Casa en uso: <strong class="text-white/70">{{ casa_activa }}</strong></div>
+  </div>
+
+  <div class="bg-white/[0.04] border rounded-2xl p-5 {% if sin_cotizar %}border-amber-500/30{% else %}border-white/10{% endif %}">
+    <div class="text-xs text-white/50 uppercase tracking-wider">Facturas sin convertir</div>
+    <div class="text-3xl font-bold mt-2 {% if sin_cotizar %}text-amber-300{% else %}text-emerald-300{% endif %}">{{ sin_cotizar|length }}</div>
+    <div class="text-xs text-white/45 mt-1">
+      {% if sin_cotizar %}
+        No hay cotización para su fecha: {% for f in sin_cotizar|slice:":5" %}#{{ f.id }} {% endfor %}
+      {% else %}
+        Todas las facturas tienen equivalente en dólares.
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+  <!-- alta manual -->
+  <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5 h-fit">
+    <h2 class="font-semibold mb-1">Cargar a mano</h2>
+    <p class="text-xs text-white/40 mb-4">
+      Lo que cargues acá no lo pisa la sincronización automática.
+    </p>
+
+    <form method="post" action="{% url 'cotizacion_create' %}" class="space-y-3">
+      {% csrf_token %}
+      <div class="grid grid-cols-1 gap-3">
+        {% include '_form_fields.html' %}
+      </div>
+      <button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-medium text-sm">
+        <i class="fa-solid fa-plus mr-1.5"></i> Guardar
+      </button>
+    </form>
+
+    <form method="post" action="{% url 'cotizaciones_sync' %}" class="mt-4 pt-4 border-t border-white/10">
+      {% csrf_token %}
+      <input type="hidden" name="historico" value="1">
+      <button class="w-full px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-sm">
+        <i class="fa-solid fa-clock-rotate-left mr-1.5"></i> Traer histórico completo
+      </button>
+      <p class="text-xs text-white/30 mt-2">
+        Completa los huecos hacia atrás hasta la factura más vieja.
+      </p>
+    </form>
+  </div>
+
+  <!-- listado -->
+  <div class="lg:col-span-2">
+    <form method="get" class="flex items-center gap-2 mb-3">
+      <label class="text-sm text-white/60">Casa</label>
+      <select name="casa" onchange="this.form.submit()" class="rounded-xl px-3 py-2 bg-white text-black outline-none text-sm">
+        <option value="">Todas</option>
+        {% for valor, etiqueta in casas %}
+          <option value="{{ valor }}" {% if filters.casa == valor %}selected{% endif %}>{{ etiqueta }}</option>
+        {% endfor %}
+      </select>
+    </form>
+
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-white/[0.03] text-white/50 text-xs uppercase tracking-wider">
+            <tr>
+              <th class="text-left px-4 py-3">Fecha</th>
+              <th class="text-left px-4 py-3">Casa</th>
+              <th class="text-right px-4 py-3">Compra</th>
+              <th class="text-right px-4 py-3">Venta</th>
+              <th class="text-left px-4 py-3">Origen</th>
+              <th class="text-right px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/10">
+            {% for tc in page_obj %}
+              <tr class="hover:bg-white/[0.03] transition">
+                <td class="px-4 py-2.5 whitespace-nowrap">{{ tc.fecha|date:"j/n/Y" }}</td>
+                <td class="px-4 py-2.5 text-white/60 text-xs">{{ tc.get_casa_display }}</td>
+                <td class="px-4 py-2.5 text-right text-white/60">{{ tc.compra|floatformat:2|default:"—" }}</td>
+                <td class="px-4 py-2.5 text-right font-semibold">${{ tc.venta|floatformat:2 }}</td>
+                <td class="px-4 py-2.5">
+                  {% if tc.fuente == 'manual' %}
+                    <span class="px-2 py-0.5 rounded-full text-[11px] bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Manual</span>
+                  {% else %}
+                    <span class="text-[11px] text-white/35"><i class="fa-solid fa-cloud-arrow-down"></i> API</span>
+                  {% endif %}
+                </td>
+                <td class="px-4 py-2.5 text-right">
+                  <form method="post" action="{% url 'cotizacion_delete' tc.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button class="px-2 py-1 rounded-lg text-red-300/50 hover:text-red-300 hover:bg-red-500/10 text-xs" title="Eliminar">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="6" class="px-4 py-12 text-center">
+                  <i class="fa-solid fa-dollar-sign text-3xl text-white/15"></i>
+                  <p class="text-white/50 mt-3">No hay cotizaciones cargadas.</p>
+                  <p class="text-white/35 text-xs mt-1">Usá «Actualizar» para traerlas de la API.</p>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% include '_paginacion.html' %}
+  </div>
+</div>
+
+<p class="text-xs text-white/30 mt-5">
+  <i class="fa-solid fa-circle-info"></i>
+  Se usa el valor de <strong>venta</strong>. Al cobrar una factura se le guarda la cotización de ese día,
+  así su equivalente en dólares queda fijo y no cambia con el dólar de hoy.
+</p>
+
+{% endblock %}

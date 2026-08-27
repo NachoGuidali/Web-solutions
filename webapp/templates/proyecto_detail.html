@@ -1,0 +1,287 @@
+{% extends 'crm_base.html' %}
+{% block title %}{{ proyecto.nombre }}{% endblock %}
+{% block heading %}{{ proyecto.nombre }}{% endblock %}
+{% block subheading %}
+  <p class="text-xs text-white/40">
+    <a href="{% url 'cliente_detail' proyecto.cliente.id %}" class="hover:text-indigo-300">{{ proyecto.cliente.nombre }}</a>
+    · {{ proyecto.get_estado_display }}
+  </p>
+{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'editar_proyecto' proyecto.id %}" class="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-sm">
+    <i class="fa-solid fa-pen"></i><span class="hidden md:inline ml-1.5">Editar</span>
+  </a>
+  <a href="{% url 'factura_create' %}?proyecto={{ proyecto.id }}&next={{ request.path }}"
+     class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">
+    <i class="fa-solid fa-plus"></i><span class="hidden sm:inline">Factura</span>
+  </a>
+{% endblock %}
+
+{% block content %}
+
+<a href="{% url 'proyectos_list' %}" class="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition mb-4">
+  <i class="fa-solid fa-arrow-left text-xs"></i> Volver a proyectos
+</a>
+
+{% if proyecto.esta_atrasado %}
+  <div class="bg-red-500/10 border border-red-500/25 text-red-200 rounded-xl px-4 py-3 mb-4 text-sm">
+    <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>
+    La entrega venció el {{ proyecto.fecha_entrega|date:"j/n/Y" }} ({{ proyecto.dias_para_entrega|cut:"-" }} días de atraso).
+  </div>
+{% endif %}
+
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+
+  <!-- ====== Izquierda ====== -->
+  <div class="space-y-4">
+
+    <!-- Estado + avance -->
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <h2 class="font-semibold mb-4">Avance del cobro</h2>
+
+      <div class="flex items-baseline justify-between mb-2">
+        <span class="text-2xl font-bold text-emerald-300">{{ proyecto.moneda }} {{ proyecto.monto_cobrado|floatformat:0 }}</span>
+        <span class="text-sm text-white/40">de {{ proyecto.precio|floatformat:0 }}</span>
+      </div>
+
+      <div class="h-2.5 bg-white/10 rounded-full overflow-hidden">
+        <div class="h-full bg-emerald-500 rounded-full transition-all" style="width: {{ proyecto.porcentaje_cobrado }}%"></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
+        <div class="bg-white/[0.03] rounded-xl p-3">
+          <div class="text-xs text-white/40">Saldo</div>
+          <div class="font-semibold mt-0.5 {% if proyecto.saldo > 0 %}text-amber-300{% else %}text-emerald-300{% endif %}">
+            {{ proyecto.moneda }} {{ proyecto.saldo|floatformat:0 }}
+          </div>
+        </div>
+        <div class="bg-white/[0.03] rounded-xl p-3">
+          <div class="text-xs text-white/40">Facturado sin cobrar</div>
+          <div class="font-semibold mt-0.5 text-white/80">{{ proyecto.moneda }} {{ pendiente|floatformat:0 }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cambio rápido de estado -->
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <h2 class="font-semibold mb-3">Estado</h2>
+      <form method="post" action="{% url 'proyecto_cambiar_estado' proyecto.id %}" class="flex gap-2">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <select name="estado" class="flex-1 rounded-xl px-3 py-2 bg-white text-black outline-none focus:ring-2 focus:ring-indigo-400">
+          {% for valor, etiqueta in proyecto.ESTADOS %}
+            <option value="{{ valor }}" {% if proyecto.estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+          {% endfor %}
+        </select>
+        <button class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition text-sm font-medium">Cambiar</button>
+      </form>
+    </div>
+
+    <!-- Datos -->
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <h2 class="font-semibold mb-4">Detalle</h2>
+      <dl class="space-y-3 text-sm">
+        <div>
+          <dt class="text-xs text-white/40 uppercase tracking-wider">Inicio</dt>
+          <dd class="mt-0.5">{{ proyecto.fecha_inicio|date:"j \d\e F, Y" }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs text-white/40 uppercase tracking-wider">Entrega</dt>
+          <dd class="mt-0.5">{{ proyecto.fecha_entrega|date:"j \d\e F, Y"|default:"—" }}</dd>
+        </div>
+        {% if proyecto.descripcion %}
+        <div>
+          <dt class="text-xs text-white/40 uppercase tracking-wider">Descripción</dt>
+          <dd class="mt-1 text-white/70 whitespace-pre-line">{{ proyecto.descripcion }}</dd>
+        </div>
+        {% endif %}
+        {% if proyecto.observaciones %}
+        <div>
+          <dt class="text-xs text-white/40 uppercase tracking-wider">Observaciones</dt>
+          <dd class="mt-1 text-amber-200/80 whitespace-pre-line">{{ proyecto.observaciones }}</dd>
+        </div>
+        {% endif %}
+      </dl>
+    </div>
+
+    <!-- Mensualidad -->
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <h2 class="font-semibold mb-3">Cobro recurrente</h2>
+      {% if mensualidad %}
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-lg font-bold">{{ mensualidad.moneda }} {{ mensualidad.monto|floatformat:0 }}<span class="text-sm text-white/40 font-normal">/mes</span></span>
+          {% if mensualidad.activa %}
+            <span class="px-2 py-1 rounded-full text-xs bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Activa</span>
+          {% else %}
+            <span class="px-2 py-1 rounded-full text-xs bg-white/5 text-white/50 border border-white/15">Pausada</span>
+          {% endif %}
+        </div>
+
+        <div class="text-sm text-white/60 space-y-1">
+          <div>Vence el {{ mensualidad.proximo_vencimiento|date:"j/n/Y" }}</div>
+          <div class="text-xs text-white/40">
+            Aviso {{ mensualidad.dias_antes_recordatorio }} día(s) antes ·
+            {% if mensualidad.generar_factura_automatica %}factura automática{% else %}factura manual{% endif %}
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mt-4 text-xs">
+          <a href="{% url 'mensualidad_update' mensualidad.id %}" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10">Editar</a>
+          <form method="post" action="{% url 'mensualidad_facturar' mensualidad.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            {% if mensualidad.puede_facturar_ahora %}
+              <button class="px-3 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-200">
+                Facturar {{ mensualidad.periodo_pendiente|date:"m/Y" }}
+              </button>
+            {% else %}
+              <input type="hidden" name="forzar" value="1">
+              <button class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white/60"
+                      onclick="return confirm('El período {{ mensualidad.periodo_pendiente|date:'m/Y' }} todavía no vence. ¿Facturarlo igual?')">
+                Adelantar {{ mensualidad.periodo_pendiente|date:"m/Y" }}
+              </button>
+            {% endif %}
+          </form>
+          <form method="post" action="{% url 'mensualidad_toggle' mensualidad.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10">
+              {% if mensualidad.activa %}Pausar{% else %}Activar{% endif %}
+            </button>
+          </form>
+        </div>
+      {% else %}
+        <p class="text-white/40 text-sm">Este proyecto no tiene cobro mensual configurado.</p>
+        <a href="{% url 'mensualidad_create' %}?proyecto={{ proyecto.id }}"
+           class="inline-block mt-3 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm">
+          <i class="fa-solid fa-plus mr-1"></i> Configurar mensualidad
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ====== Derecha ====== -->
+  <div class="xl:col-span-2 space-y-4">
+
+    <!-- Facturas -->
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold">Facturas <span class="text-white/40 text-sm font-normal">({{ facturas|length }})</span></h2>
+        <a href="{% url 'factura_create' %}?proyecto={{ proyecto.id }}&next={{ request.path }}" class="text-xs text-indigo-300 hover:text-indigo-200">+ Nueva</a>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="text-white/40 text-xs uppercase tracking-wider">
+            <tr class="border-b border-white/10">
+              <th class="text-left pb-2 pr-3">#</th>
+              <th class="text-left pb-2 pr-3">Fecha</th>
+              <th class="text-left pb-2 pr-3">Monto</th>
+              <th class="text-left pb-2 pr-3">Estado</th>
+              <th class="text-right pb-2">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/10">
+            {% for f in facturas %}
+              <tr class="hover:bg-white/[0.03] transition">
+                <td class="py-2.5 pr-3 text-white/40 text-xs">{{ f.id }}</td>
+                <td class="py-2.5 pr-3 text-white/60 text-xs whitespace-nowrap">
+                  {{ f.fecha|date:"j/n/y" }}
+                  {% if f.automatica %}<i class="fa-solid fa-robot text-white/25 ml-1" title="Generada automáticamente"></i>{% endif %}
+                </td>
+                <td class="py-2.5 pr-3 whitespace-nowrap">
+                  <span class="font-medium">{{ f.moneda }} {{ f.monto|floatformat:0 }}</span>
+                  {% if f.moneda == 'ARS' and f.monto_usd %}
+                    <div class="text-[11px] text-white/35">≈ U$D {{ f.monto_usd|floatformat:0 }}</div>
+                  {% endif %}
+                </td>
+                <td class="py-2.5 pr-3">
+                  {% if f.estado == 'cobrado' %}
+                    <span class="px-2 py-0.5 rounded-full text-[11px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Cobrado</span>
+                  {% elif f.esta_vencida %}
+                    <span class="px-2 py-0.5 rounded-full text-[11px] bg-red-500/15 text-red-300 border border-red-500/30">Vencida {{ f.dias_vencida }}d</span>
+                  {% else %}
+                    <span class="px-2 py-0.5 rounded-full text-[11px] bg-amber-500/15 text-amber-300 border border-amber-500/30">Pendiente</span>
+                  {% endif %}
+                </td>
+                <td class="py-2.5">
+                  <div class="flex justify-end gap-1.5 text-xs">
+                    {% if f.estado != 'cobrado' %}
+                      <form method="post" action="{% url 'factura_mark_cobrada' f.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-emerald-200" title="Marcar cobrada">
+                          <i class="fa-solid fa-check"></i>
+                        </button>
+                      </form>
+                    {% endif %}
+                    <a href="{% url 'factura_update' f.id %}?next={{ request.path }}" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10">
+                      <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a href="{% url 'factura_delete' f.id %}?next={{ request.path }}" class="px-2.5 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-200">
+                      <i class="fa-solid fa-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5" class="py-6 text-center text-white/35">Todavía no hay facturas de este proyecto.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Eventos -->
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold">Eventos</h2>
+        <a href="{% url 'evento_create' %}?proyecto={{ proyecto.id }}&cliente={{ proyecto.cliente.id }}" class="text-xs text-indigo-300 hover:text-indigo-200">+ Agendar</a>
+      </div>
+      <div class="space-y-2">
+        {% for e in eventos %}
+          <a href="{% url 'evento_update' e.id %}" class="block bg-white/[0.03] border border-white/10 rounded-xl p-3 hover:bg-white/[0.06] transition">
+            <div class="text-sm font-medium {% if e.completado %}line-through text-white/40{% endif %}">{{ e.titulo }}</div>
+            <div class="text-xs text-white/45">{{ e.get_tipo_display }} · {{ e.inicio|date:"j/n/Y H:i" }}</div>
+          </a>
+        {% empty %}
+          <p class="text-white/35 text-sm py-2">Sin eventos asociados.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Interacciones -->
+    <div class="bg-white/[0.04] border border-white/10 rounded-2xl p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold">Bitácora</h2>
+        <a href="{% url 'cliente_detail' proyecto.cliente.id %}" class="text-xs text-indigo-300 hover:text-indigo-200">Registrar en el cliente →</a>
+      </div>
+      <div class="space-y-3">
+        {% for i in interacciones %}
+          <div class="flex gap-3">
+            <div class="shrink-0 w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs text-white/50">
+              <i class="fa-solid {{ i.icono }}"></i>
+            </div>
+            <div class="min-w-0 flex-1 pb-3 border-b border-white/5">
+              <div class="text-xs text-white/45">
+                <span class="text-white/70 font-medium">{{ i.get_tipo_display }}</span> · {{ i.fecha|date:"j/n/Y H:i" }}
+              </div>
+              <p class="text-sm text-white/80 mt-1 whitespace-pre-line">{{ i.detalle }}</p>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-white/35 text-sm py-2">Sin interacciones registradas para este proyecto.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-6 pt-5 border-t border-white/10">
+  <a href="{% url 'proyecto_delete' proyecto.id %}" class="text-sm text-red-300/60 hover:text-red-300 transition">
+    <i class="fa-solid fa-trash mr-1"></i> Eliminar este proyecto
+  </a>
+</div>
+
+{% endblock %}

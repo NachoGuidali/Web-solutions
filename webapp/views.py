@@ -72,6 +72,10 @@ def servicios(request):
     return render(request, 'servicios.html')
 
 
+def crm(request):
+    return render(request, 'crm.html')
+
+
 def about(request):
     return render(request, 'about.html')
 

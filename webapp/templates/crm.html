@@ -1,0 +1,427 @@
+{% extends 'base.html' %}
+
+{% block title %}Supreg CRM | CRM de ventas con WhatsApp y telefonía integrados{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="Supreg CRM: CRM de ventas con WhatsApp multinúmero, telefonía integrada, asignación automática y análisis de pautas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Estilos de la página Supreg CRM, encapsulados en .crm-page para no chocar con Tailwind ni con el resto del sitio. */
+.crm-page {
+  --bg: #07070B;
+  --surface: #11131C;
+  --ink: #F8FAFC;
+  --text: #E5E7EB;
+  --muted: #A7AEC2;
+  --line: #262A3A;
+  --tint: #1E1B4B;
+  --accent: #818CF8;
+  --accent-text: #A5B4FC;
+  --teal: #A78BFA;
+  --grad: linear-gradient(120deg, #6B21A8 0%, #3730A3 100%);
+  --band: #0D0B1A;
+  --band-2: rgba(255, 255, 255, 0.06);
+  --band-text: #F8FAFC;
+  --band-muted: #C7CBE0;
+  --band-line: rgba(255, 255, 255, 0.16);
+  --ok: #818CF8;
+  --font-display: 'Bricolage Grotesque', 'Trebuchet MS', Arial, sans-serif;
+  --font-body: 'Public Sans', Arial, sans-serif;
+  --radius: 18px;
+  color-scheme: dark;
+}
+.crm-page * { box-sizing: border-box; }
+.crm-page { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+.crm-page .wrap { max-width: 1160px; margin: 0 auto; padding-inline: 20px; }
+.crm-page h1, .crm-page h2, .crm-page h3 { font-family: var(--font-display); color: var(--ink); text-wrap: balance; margin: 0; }
+.crm-page p { margin: 0; }
+.crm-page a { color: inherit; }
+.crm-page :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+.crm-page .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-text); }
+.crm-page .band .eyebrow { color: var(--accent); }
+.crm-page .btn { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 16px; padding: 13px 22px; border-radius: 999px; text-decoration: none; border: 2px solid transparent; cursor: pointer; font-family: var(--font-body); }
+.crm-page .btn-primary { background: var(--grad); color: #FFFFFF; box-shadow: 0 10px 30px -12px rgba(107,33,168,.8); }
+.crm-page .btn-primary:hover { filter: brightness(1.06); }
+.crm-page .btn-ghost { border-color: var(--line); color: var(--ink); background: transparent; }
+.crm-page .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.crm-page .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.crm-page .brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: 21px; color: var(--ink); text-decoration: none; }
+.crm-page .brand .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 25%, transparent); }
+.crm-page .nav { display: flex; gap: 22px; font-size: 15px; }
+.crm-page .nav a { text-decoration: none; color: var(--muted); }
+.crm-page .nav a:hover { color: var(--ink); }
+@media (max-width: 860px) {
+.crm-page .nav { display: none; }
+ 
+}
+.crm-page .hero { padding-block: 72px 56px; }
+.crm-page .hero .wrap { display: grid; grid-template-columns: 1.02fr 1fr; gap: 56px; align-items: center; }
+.crm-page .hero h1 { font-size: clamp(40px, 5.4vw, 66px); font-weight: 800; line-height: 1.02; letter-spacing: -0.025em; margin-top: 14px; }
+.crm-page .hero .lead { font-size: 20px; color: var(--muted); margin-top: 20px; max-width: 34em; }
+.crm-page .hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+.crm-page .hero .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 30px; }
+.crm-page .chip { font-size: 13px; padding: 5px 12px; border-radius: 999px; background: var(--tint); color: var(--text); }
+@media (max-width: 900px) {
+.crm-page .hero .wrap { grid-template-columns: 1fr; }
+ 
+}
+.crm-page .mock { position: relative; background: #11131C; border: 1px solid #2A2F45; border-radius: 22px; padding: 18px; box-shadow: 0 30px 80px -30px rgba(107,33,168,.55); min-width: 0; }
+.crm-page .mock-bar { display: flex; align-items: center; justify-content: space-between; color: var(--band-muted); font-size: 12px; margin-bottom: 12px; }
+.crm-page .mock-bar b { color: var(--band-text); font-family: var(--font-display); font-size: 15px; }
+.crm-page .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.crm-page .col { background: var(--band-2); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.crm-page .col h4 { margin: 0 0 2px; font-size: 12px; color: var(--band-muted); font-weight: 600; display: flex; justify-content: space-between; font-family: var(--font-body); }
+.crm-page .card { background: #FCFCFA; color: #16262A; border-radius: 9px; padding: 9px 10px; font-size: 12.5px; line-height: 1.35; border-left: 3px solid var(--c, #3E6B6F); }
+.crm-page .card b { display: block; font-size: 13px; }
+.crm-page .card small { color: #4B5E61; display: block; }
+.crm-page .card .tags { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+.crm-page .card .tags span { font-size: 10.5px; background: #E4ECE8; border-radius: 6px; padding: 1px 6px; }
+.crm-page .callpop { position: absolute; right: -14px; bottom: -22px; background: #FCFCFA; color: #16262A; border-radius: 14px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 16px 40px -12px rgba(8,23,25,.6); border: 1px solid #DCE2DD; }
+.crm-page .callpop .ring { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(120deg, #6B21A8, #3730A3); display: grid; place-items: center; color: #fff; font-size: 16px; }
+.crm-page .callpop b { display: block; font-size: 14px; }
+.crm-page .callpop small { color: #4B5E61; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: no-preference) {
+.crm-page .callpop .ring { animation: crm-pulse 1.8s ease-out infinite; }
+ 
+}
+@keyframes crm-pulse { 0% { box-shadow: 0 0 0 0 rgba(129,140,248,.6); } 100% { box-shadow: 0 0 0 14px rgba(129,140,248,0); } }
+@media (max-width: 520px) {
+.crm-page .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.crm-page .cols .col:nth-child(3) { display: none; }
+.crm-page .callpop { right: 8px; }
+ 
+}
+.crm-page .channels { border-block: 1px solid var(--line); padding-block: 22px; }
+.crm-page .channels .wrap { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center; justify-content: space-between; color: var(--muted); font-size: 15px; }
+.crm-page .channels strong { color: var(--ink); font-weight: 600; }
+.crm-page section.block { padding-block: 88px; }
+.crm-page .head { max-width: 760px; display: grid; gap: 14px; margin-bottom: 44px; }
+.crm-page .head h2 { font-size: clamp(30px, 3.8vw, 46px); font-weight: 750; line-height: 1.08; letter-spacing: -0.015em; }
+.crm-page .head p { font-size: 18px; color: var(--muted); }
+.crm-page .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 900px) {
+.crm-page .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+ 
+}
+@media (max-width: 600px) {
+.crm-page .grid { grid-template-columns: 1fr; }
+ 
+}
+.crm-page .feat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.crm-page .feat h3 { font-size: 21px; font-weight: 700; }
+.crm-page .feat p { color: var(--muted); font-size: 15.5px; }
+.crm-page .feat ul { margin: 4px 0 0; padding-left: 18px; color: var(--text); font-size: 15px; display: grid; gap: 4px; }
+.crm-page .feat .ico { width: 38px; height: 38px; border-radius: 10px; background: var(--tint); display: grid; place-items: center; color: var(--teal); }
+.crm-page .band { background: linear-gradient(135deg, #3B0764 0%, #1E1B4B 48%, #07070B 100%); color: var(--band-text); }
+.crm-page .band h2, .crm-page .band h3 { color: var(--band-text); }
+.crm-page .band .head p, .crm-page .band p { color: var(--band-muted); }
+.crm-page .split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+@media (max-width: 900px) {
+.crm-page .split { grid-template-columns: 1fr; }
+ 
+}
+.crm-page .rail { display: grid; gap: 18px; }
+.crm-page .rail div { border-left: 3px solid var(--band-line); padding: 4px 0 4px 20px; }
+.crm-page .rail div:first-child { border-left-color: var(--accent); }
+.crm-page .rail h3 { font-size: 19px; font-weight: 650; font-family: var(--font-body); }
+.crm-page .rail p { font-size: 15.5px; }
+.crm-page .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; counter-reset: paso; }
+@media (max-width: 900px) {
+.crm-page .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+ 
+}
+@media (max-width: 520px) {
+.crm-page .steps { grid-template-columns: 1fr; }
+ 
+}
+.crm-page .step { border-top: 3px solid var(--accent); padding-top: 16px; display: grid; gap: 6px; }
+.crm-page .step::before { counter-increment: paso; content: counter(paso); font-family: var(--font-display); font-weight: 800; font-size: 30px; color: var(--accent-text); }
+.crm-page .step h3 { font-size: 19px; font-family: var(--font-body); font-weight: 650; }
+.crm-page .step p { color: var(--muted); font-size: 15.5px; }
+.crm-page .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 30px; }
+@media (max-width: 700px) {
+.crm-page .duo { grid-template-columns: 1fr; }
+ 
+}
+.crm-page .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--band-line); }
+.crm-page table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; min-width: 620px; }
+.crm-page th, .crm-page td { padding: 12px 16px; text-align: right; border-bottom: 1px solid var(--band-line); color: var(--band-text); }
+.crm-page th { font-weight: 600; color: var(--band-muted); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; background: var(--band-2); }
+.crm-page th:first-child, .crm-page td:first-child { text-align: left; }
+.crm-page tr:last-child td { border-bottom: none; }
+.crm-page .bar { display: inline-block; height: 8px; border-radius: 4px; background: var(--accent); vertical-align: middle; margin-right: 8px; }
+.crm-page .note { font-size: 13px; color: var(--band-muted); margin-top: 12px; }
+.crm-page .numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+@media (max-width: 760px) {
+.crm-page .numbers { grid-template-columns: 1fr; }
+ 
+}
+.crm-page .numbers div { display: grid; gap: 6px; }
+.crm-page .numbers strong { font-family: var(--font-display); font-size: clamp(44px, 6vw, 68px); font-weight: 800; line-height: 1; color: var(--ink); letter-spacing: -0.02em; }
+.crm-page .numbers span { color: var(--muted); font-size: 15.5px; }
+.crm-page .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 36px; }
+.crm-page .impl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 760px) {
+.crm-page .impl { grid-template-columns: 1fr; }
+ 
+}
+.crm-page .impl div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; display: grid; gap: 8px; }
+.crm-page .impl h3 { font-size: 19px; }
+.crm-page .impl p { color: var(--muted); font-size: 15.5px; }
+.crm-page .faq { display: grid; gap: 10px; max-width: 860px; }
+.crm-page .faq details { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; }
+.crm-page .faq summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.crm-page .faq details p { margin-top: 10px; color: var(--muted); }
+.crm-page .cta { background: var(--grad); color: #FFFFFF; }
+.crm-page .cta .wrap { padding-block: 72px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; }
+@media (max-width: 800px) {
+.crm-page .cta .wrap { grid-template-columns: 1fr; }
+ 
+}
+.crm-page .cta h2 { color: #FFFFFF; font-size: clamp(30px, 4vw, 48px); font-weight: 800; line-height: 1.05; }
+.crm-page .cta p { color: #E0E7FF; font-size: 18px; margin-top: 12px; }
+.crm-page .contact { background: rgba(7, 7, 11, 0.45); border: 1px solid rgba(255, 255, 255, 0.18); color: #F8FAFC; border-radius: var(--radius); padding: 24px; display: grid; gap: 10px; }
+.crm-page .contact span { color: #C7D2FE; font-size: 14px; }
+.crm-page .contact b { font-size: 18px; user-select: all; }
+.crm-page footer { padding-block: 28px; color: var(--muted); font-size: 14px; }
+.crm-page footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+.crm-page { padding-top: 96px; }
+.crm-page a { text-decoration: none; }
+.crm-page .feat ul { list-style: disc; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="crm-page">
+<main id="inicio">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">CRM de ventas</p>
+        <h1>Cada lead, con dueño, historial y seguimiento.</h1>
+        <p class="lead">Supreg CRM junta formularios, WhatsApp, llamadas y campañas en un solo tablero. El vendedor sabe a quién llamar ahora y el supervisor ve cuánto cuesta cada venta.</p>
+        <div class="ctas">
+          <a class="btn btn-primary" href="#contacto">Pedir una demo</a>
+          <a class="btn btn-ghost" href="#funciones">Ver funciones</a>
+        </div>
+        <div class="chips">
+          <span class="chip">Sin duplicados</span>
+          <span class="chip">Asignación automática</span>
+          <span class="chip">WhatsApp multinúmero</span>
+          <span class="chip">Click para llamar</span>
+        </div>
+      </div>
+
+      <div class="mock" role="img" aria-label="Ejemplo del tablero: tarjetas de prospectos en las etapas Nuevo, En gestión y Contacto efectivo, con una llamada en curso">
+        <div class="mock-bar"><b>Embudo · Prospectos</b><span>Ejemplo</span></div>
+        <div class="cols">
+          <div class="col">
+            <h4>Nuevo <span>12</span></h4>
+            <div class="card" style="--c:#A855F7"><b>Lucía Fernández</b><small>Pauta Instagram · hace 3 min</small><div class="tags"><span>WhatsApp</span></div></div>
+            <div class="card" style="--c:#A855F7"><b>Martín Sosa</b><small>Formulario web · hace 9 min</small></div>
+            <div class="card"><b>Carla Ibáñez</b><small>Llamada entrante · 10:42</small></div>
+          </div>
+          <div class="col">
+            <h4>En gestión <span>27</span></h4>
+            <div class="card" style="--c:#818CF8"><b>Jorge Paredes</b><small>2 intentos · tarea hoy 16:00</small><div class="tags"><span>Recontactar</span></div></div>
+            <div class="card" style="--c:#818CF8"><b>Ana Quiroga</b><small>Mensaje leído · 11:05</small></div>
+          </div>
+          <div class="col">
+            <h4>Contacto efectivo <span>9</span></h4>
+            <div class="card" style="--c:#60A5FA"><b>Pablo Méndez</b><small>Valor $ 18.500 / mes</small><div class="tags"><span>Propuesta</span></div></div>
+            <div class="card" style="--c:#60A5FA"><b>Rocío Luna</b><small>Llamada 4:12 · grabada</small></div>
+          </div>
+        </div>
+        <div class="callpop" aria-hidden="true">
+          <span class="ring">☎</span>
+          <div><b>Jorge Paredes</b><small>En curso · 02:14</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="channels">
+    <div class="wrap">
+      <span>Recibe leads de</span>
+      <strong>Formularios web</strong><strong>API</strong><strong>WhatsApp</strong><strong>Llamadas</strong><strong>Excel</strong><strong>Carga manual</strong>
+    </div>
+  </div>
+
+  <section class="block" id="funciones">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Funciones</p>
+        <h2>Todo el recorrido del lead, desde que entra hasta que compra</h2>
+        <p>Se configura desde la pantalla, sin programar: etapas, reglas de reparto, mensajes y campos propios de tu negocio.</p>
+      </div>
+      <div class="grid">
+        <article class="feat">
+          <span class="ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M12 3v18"/></svg></span>
+          <h3>Ingreso sin duplicados</h3>
+          <p>Todos los canales terminan en el mismo contacto. El teléfono se normaliza, así nadie queda cargado dos veces.</p>
+          <ul><li>Importación de Excel con mapeo de columnas</li><li>Reingresos registrados, no duplicados</li></ul>
+        </article>
+        <article class="feat">
+          <span class="ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 20c.3-2.3 1.6-4 3.5-4s3.2 1.7 3.5 4"/></svg></span>
+          <h3>Asignación automática</h3>
+          <p>Rotativa o por menor carga, entre todos o solo entre los conectados, con horario de atención.</p>
+          <ul><li>Reglas por origen o por pauta</li><li>Leads sin asignar para repartir a mano</li></ul>
+        </article>
+        <article class="feat">
+          <span class="ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="11" rx="1"/><rect x="17" y="4" width="4" height="7" rx="1"/></svg></span>
+          <h3>Tablero y embudos</h3>
+          <p>Etapas a medida, motivos de venta y no venta, y datos obligatorios para avanzar de etapa.</p>
+          <ul><li>Pausar y postergar con fecha</li><li>Campos personalizados</li></ul>
+        </article>
+        <article class="feat">
+          <span class="ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <h3>Mi día</h3>
+          <p>La cola de trabajo del vendedor: tareas vencidas, leads nuevos sin gestionar y los que se enfriaron.</p>
+          <ul><li>Tareas y recordatorios</li><li>Avisos en pantalla</li></ul>
+        </article>
+        <article class="feat">
+          <span class="ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h7"/><path d="M17 15l2 2 4-4"/></svg></span>
+          <h3>Automatizaciones</h3>
+          <p>Mensajes por etapa, tareas de seguimiento y reactivación de prospectos pausados.</p>
+          <ul><li>Solo en horario de atención</li><li>Nunca a quien pidió no ser contactado</li></ul>
+        </article>
+        <article class="feat">
+          <span class="ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
+          <h3>Supervisión</h3>
+          <p>Filtros por etapa, vendedor y fechas, con acciones sobre cientos de leads a la vez.</p>
+          <ul><li>Reasignar, repartir, mover, cerrar</li><li>Historial con cada cambio de datos</li></ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block band" id="whatsapp">
+    <div class="wrap split">
+      <div class="head">
+        <p class="eyebrow">WhatsApp</p>
+        <h2>Todos los números de la empresa en una sola bandeja</h2>
+        <p>API oficial de Meta, Twilio o conexión por QR, conviviendo. Cada vendedor ve y usa solo las líneas que tiene habilitadas, y cada chat está pegado a su tarjeta.</p>
+      </div>
+      <div class="rail">
+        <div><h3>Elegir desde qué número escribir</h3><p>Desde la ficha, aunque el cliente ya tenga un chat con otra línea.</p></div>
+        <div><h3>Chat y tarjeta juntos</h3><p>Mover de etapa, agendar y tipificar sin salir de la conversación.</p></div>
+        <div><h3>Plantillas y respuestas rápidas</h3><p>Con la ventana de 24 horas de las líneas oficiales siempre a la vista.</p></div>
+        <div><h3>Envíos a ritmo seguro</h3><p>Los mensajes automáticos se espacian por línea para cuidar el número.</p></div>
+        <div><h3>Anuncios que se miden</h3><p>Los chats que llegan desde un anuncio quedan atribuidos a su pauta.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="telefonia">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Telefonía</p>
+        <h2>Llamar es un clic, y cada llamada queda en la ficha</h2>
+        <p>Integrado con telefonía en la nube. La central sigue siendo la de tu proveedor; el CRM origina, avisa y registra.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><h3>Toca Llamar</h3><p>Desde la ficha, el tablero, la lista o el inbox.</p></div>
+        <div class="step"><h3>Atiende solo</h3><p>El softphone atiende y ya está sonando el cliente.</p></div>
+        <div class="step"><h3>Habla con contexto</h3><p>Un aviso flotante con la ficha lo acompaña en cualquier pantalla.</p></div>
+        <div class="step"><h3>Queda todo</h3><p>Duración, grabación e intento; la tarjeta avanza sola.</p></div>
+      </div>
+      <div class="duo">
+        <article class="feat"><h3>Entrantes que crean tarjetas</h3><p>Un número nuevo se convierte en prospecto asignado a quien atendió. Si nadie atiende, queda la tarea de devolver la llamada.</p></article>
+        <article class="feat"><h3>Discador progresivo</h3><p>Campañas que le pasan la próxima llamada al vendedor libre, con reintentos automáticos a los que no atendieron.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block band" id="pautas">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Análisis de pautas</p>
+        <h2>Cuánto cuesta de verdad cada venta, por campaña</h2>
+        <p>Cada lead queda atado a la pauta por la que entró. Marketing carga la inversión y el tablero calcula costo por lead, costo por venta y conversión.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pauta</th><th>Inversión</th><th>Leads</th><th>Costo por lead</th><th>Ventas</th><th>Costo por venta</th><th>Conversión</th></tr></thead>
+          <tbody>
+            <tr><td>Instagram · Septiembre</td><td>$ 330.000</td><td>112</td><td>$ 2.946</td><td>19</td><td>$ 17.368</td><td><span class="bar" style="width:68px"></span>17,0 %</td></tr>
+            <tr><td>Google · Búsqueda</td><td>$ 210.000</td><td>64</td><td>$ 3.281</td><td>9</td><td>$ 23.333</td><td><span class="bar" style="width:56px"></span>14,1 %</td></tr>
+            <tr><td>Facebook · Formulario</td><td>$ 150.000</td><td>98</td><td>$ 1.531</td><td>7</td><td>$ 21.429</td><td><span class="bar" style="width:29px"></span>7,1 %</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Datos de ejemplo. Las métricas son por cohorte: de los leads que entraron en el período, cuántos se contactaron y compraron.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Tecnología</p>
+        <h2>Rápido con mucho volumen, seguro por diseño</h2>
+      </div>
+      <div class="numbers">
+        <div><strong>40.000</strong><span>oportunidades en prueba de carga, con pantallas que responden en menos de 200 ms</span></div>
+        <div><strong>1.000+</strong><span>leads por semana sin demoras: los envíos y procesos pesados corren en segundo plano</span></div>
+        <div><strong>24/7</strong><span>recibe leads, mensajes y llamadas aunque nadie tenga la pantalla abierta</span></div>
+      </div>
+      <div class="pills">
+        <span class="chip">Roles y permisos a medida</span>
+        <span class="chip">Bloqueo por intentos fallidos</span>
+        <span class="chip">Recupero de contraseña por email</span>
+        <span class="chip">API para integraciones</span>
+        <span class="chip">Backups diarios</span>
+        <span class="chip">En la nube, desde cualquier navegador</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Implementación</p>
+        <h2>Lo ponemos en marcha con tu equipo</h2>
+      </div>
+      <div class="impl">
+        <div><h3>Configuración</h3><p>Embudos, reglas de reparto, líneas de WhatsApp, telefonía y pautas, a la medida de cómo vendés.</p></div>
+        <div><h3>Capacitación</h3><p>Para vendedores y supervisores, con datos de práctica antes de salir en vivo.</p></div>
+        <div><h3>Soporte y mejoras</h3><p>Acompañamiento continuo y cambios cuando el equipo los necesita.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="preguntas" style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Preguntas frecuentes</p>
+        <h2>Lo que suelen preguntar</h2>
+      </div>
+      <div class="faq">
+        <details><summary>¿Puedo usar mis números de WhatsApp actuales?</summary><p>Sí. Se conectan por la API oficial de Meta, por Twilio o por QR. Se pueden combinar varias líneas y proveedores en la misma bandeja.</p></details>
+        <details><summary>¿Qué pasa con la base que ya tengo?</summary><p>Se importa desde Excel eligiendo qué columna va a cada campo. Los contactos repetidos se unifican por teléfono.</p></details>
+        <details><summary>¿Necesito cambiar de central telefónica?</summary><p>No. El CRM se integra con tu telefonía en la nube: origina las llamadas y registra cada una, mientras la central sigue siendo la de tu proveedor.</p></details>
+        <details><summary>¿Cómo se reparten los leads entre los vendedores?</summary><p>Con reglas que define el supervisor: rotativo, por menor carga, solo entre los conectados, por horario y con excepciones según el origen de cada lead.</p></details>
+        <details><summary>¿Puedo agregar campos propios de mi negocio?</summary><p>Sí, desde la configuración. Aparecen en las fichas, en los filtros y en las importaciones, y se pueden hacer obligatorios en una etapa.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="cta" id="contacto">
+  <div class="wrap">
+    <div>
+      <h2>Mirá tu proceso de ventas funcionando en una demo.</h2>
+      <p>Te mostramos el CRM con datos de ejemplo parecidos a los tuyos, y armamos juntos la configuración inicial.</p>
+    </div>
+    <div class="contact">
+      <span>Ignacio Guidali</span>
+      <b>contacto@supregsolutions.com</b>
+      <b>11 6358-9975</b>
+      <a class="btn btn-primary" style="justify-self:start;background:#FFFFFF;color:#3730A3;box-shadow:none" href="https://wa.me/5491163589975" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+    </div>
+  </div>
+</section>
+</div>
+{% endblock %}

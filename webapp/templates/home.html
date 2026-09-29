@@ -11,6 +11,11 @@
           class="writing text-green-100 mb-4 text-[10px] sm:text-xs md:text-lg lg:text-xl max-w-[95vw] overflow-hidden whitespace-nowrap tracking-tight">
           Desarrollo web, consultoría, manejo de datos, mantenimiento de Hardware y más!
         </p>
+        <a href="{% url 'crm' %}"
+          class="inline-flex items-center gap-2 mt-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm hover:bg-white/20 transition">
+          <span class="px-2 py-0.5 rounded-full bg-indigo-500 text-xs font-semibold">Nuevo</span>
+          Conocé Supreg CRM <i class="fa fa-arrow-right text-xs"></i>
+        </a>
       </div>
       <div class="md:w-1/2 fade-in">
         <img alt="Logo SupReg Solutions completo" class="mx-auto w-3/4 rounded-full" src="static/imagenes/logonuevo.png" />
@@ -60,6 +65,33 @@
     </div>
   </div>
 </div>
+
+
+<!-- Supreg CRM -->
+<section class="py-16 px-4 fade-in">
+  <div class="max-w-6xl mx-auto rounded-3xl p-8 md:p-12 bg-gradient-to-br from-purple-800 via-indigo-900 to-black border border-white/10 flex flex-col md:flex-row items-center gap-10">
+    <div class="md:w-3/5">
+      <p class="text-xs font-semibold tracking-[.16em] uppercase text-indigo-300 mb-3">Nuevo · Supreg CRM</p>
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Cada lead, con dueño, historial y seguimiento.</h2>
+      <p class="text-white/80 mb-6">Formularios, WhatsApp multinúmero, llamadas y campañas en un solo tablero. El vendedor sabe a quién llamar ahora y el supervisor ve cuánto cuesta cada venta.</p>
+      <div class="flex flex-wrap gap-2 mb-8 text-sm">
+        <span class="px-3 py-1 rounded-full bg-white/10">Asignación automática</span>
+        <span class="px-3 py-1 rounded-full bg-white/10">WhatsApp multinúmero</span>
+        <span class="px-3 py-1 rounded-full bg-white/10">Click para llamar</span>
+        <span class="px-3 py-1 rounded-full bg-white/10">Análisis de pautas</span>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href="{% url 'crm' %}" class="bg-white text-indigo-900 px-6 py-3 rounded-full font-semibold hover:bg-indigo-100 transition">Conocer el CRM</a>
+        <a href="{% url 'crm' %}#contacto" class="border border-white/30 px-6 py-3 rounded-full font-semibold hover:bg-white/10 transition">Pedir una demo</a>
+      </div>
+    </div>
+    <div class="md:w-2/5 w-full grid grid-cols-2 gap-4 text-center">
+      <div class="rounded-2xl bg-black/40 border border-white/10 p-5"><p class="text-3xl font-bold">24/7</p><p class="text-xs text-white/70 mt-1">recibe leads, mensajes y llamadas</p></div>
+      <div class="rounded-2xl bg-black/40 border border-white/10 p-5"><p class="text-3xl font-bold">1.000+</p><p class="text-xs text-white/70 mt-1">leads por semana sin demoras</p></div>
+      <div class="rounded-2xl bg-black/40 border border-white/10 p-5 col-span-2"><p class="text-lg font-bold">Sin duplicados</p><p class="text-xs text-white/70 mt-1">todos los canales terminan en el mismo contacto</p></div>
+    </div>
+  </div>
+</section>
 
 
   

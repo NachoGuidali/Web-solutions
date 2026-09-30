@@ -1,105 +1,87 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% block title %}Servicios | SupReg Solutions{% endblock %}
 
-<main class="pt-32 px-6 fade-in">
-<section class="max-w-4xl mx-auto text-center mb-16">
-<h1 class="text-4xl font-bold mb-4">Nuestros Servicios</h1>
-<p class="text-lg text-white/80">Ofrecemos soluciones tecnológicas avanzadas para la era digital. Desde desarrollo
-        web hasta automatización empresarial.</p>
+{% block content %}
+<section class="page-hero">
+  <div class="wrap fade-in">
+    <p class="eyebrow">Servicios</p>
+    <h1>Soluciones tecnológicas para la era digital</h1>
+    <p class="lead mt-5">Desde desarrollo web hasta automatización empresarial, con soporte y mantenimiento de todos tus sistemas.</p>
+  </div>
 </section>
+
 <!-- Producto destacado: Supreg CRM -->
-<section class="max-w-6xl mx-auto mb-12 fade-in">
-<a href="{% url 'crm' %}" class="block rounded-2xl p-8 bg-gradient-to-br from-purple-800 via-indigo-900 to-black border border-white/10 hover:border-indigo-400 transition">
-<div class="flex flex-col md:flex-row md:items-center gap-6">
-<div class="md:w-3/4">
-<p class="text-xs font-semibold tracking-[.16em] uppercase text-indigo-300 mb-2">Producto · Supreg CRM</p>
-<h3 class="text-2xl md:text-3xl font-bold mb-2">CRM de ventas con WhatsApp y telefonía integrados</h3>
-<p class="text-white/80">Ingreso de leads sin duplicados, asignación automática, tablero por etapas, WhatsApp multinúmero, click para llamar y costo real por venta de cada campaña.</p>
-</div>
-<div class="md:w-1/4 md:text-right">
-<span class="inline-block bg-white text-indigo-900 px-6 py-3 rounded-full font-semibold">Ver el CRM →</span>
-</div>
-</div>
-</a>
-</section>
-<section class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto fade-in">
-<div class="bg-gradient-to-br from-green-800 to-black p-6 rounded-xl shadow-lg">
-<h3 class="text-xl font-bold mb-2">Desarrollo Web</h3>
-<p>Aplicaciones modernas, seguras y escalables.</p>
-</div>
-<div class="bg-gradient-to-br from-purple-800 to-black p-6 rounded-xl shadow-lg">
-<h3 class="text-xl font-bold mb-2">E-commerce</h3>
-<p>Tiendas online personalizadas y optimizadas para vender.</p>
-</div>
-<div class="bg-gradient-to-br from-indigo-800 to-black p-6 rounded-xl shadow-lg">
-<h3 class="text-xl font-bold mb-2">Automatización</h3>
-<p>Mejorá tus procesos con bots, RPA e integracion de IA.</p>
-</div>
-<!-- Fila centrada -->
-<div class="md:col-span-3 flex flex-wrap justify-center gap-8">
-<div class="bg-gradient-to-br from-purple-800 to-black p-6 rounded-xl shadow-lg w-full md:w-1/3">
-<h3 class="text-xl font-bold mb-2">Desarrollo de Software a medida</h3>
-<p>Diseño, desarrollo e implementación de soluciones informáticas que mejoren la eficiencia y productividad de
-            su empresa.</p>
-</div>
-<div class="bg-gradient-to-br from-green-800 to-black p-6 rounded-xl shadow-lg w-full md:w-1/3">
-<h3 class="text-xl font-bold mb-2">Big Data</h3>
-<p>Transforme grandes volúmenes de información en insights accionables y tome decisiones más informadas.</p>
-</div>
-</div>
-</section>
-<!-- Sección nueva con 1 imagen y texto -->
-<!-- <section class="py-20 fade-in">
-    <div class="max-w-4xl mx-auto px-6 bg-gradient-to-br from-indigo-800 via-black to-indigo-800 rounded-3xl p-10">
-      <div class="flex flex-col md:flex-row items-center gap-6">
-        <img src="https://via.placeholder.com/500x300" alt="Ejemplo" class="rounded-xl shadow-md w-full md:w-1/2" />
-        <div class="md:w-1/2">
-          <h4 class="text-2xl font-bold mb-4">Gestioná tus activos fácilmente</h4>
-          <p class="text-white/80">Accedé a herramientas avanzadas para el seguimiento, análisis y gestión de tus criptoactivos en un solo lugar.</p>
-        </div>
+<section class="wrap fade-in">
+  <a href="{% url 'crm' %}" class="feat" style="background:var(--grad);border-color:transparent">
+    <div class="flex flex-col md:flex-row md:items-center gap-6">
+      <div class="md:w-3/4 flex flex-col gap-2">
+        <p class="eyebrow" style="color:#E0E7FF">Producto · Supreg CRM</p>
+        <h3 style="font-size:clamp(24px,3vw,32px)">CRM de ventas con WhatsApp y telefonía integrados</h3>
+        <p style="color:#E0E7FF">Ingreso de leads sin duplicados, asignación automática, tablero por etapas, WhatsApp multinúmero, click para llamar y costo real por venta de cada campaña.</p>
+      </div>
+      <div class="md:w-1/4 md:text-right">
+        <span class="btn btn-light">Ver el CRM <i class="fa fa-arrow-right text-sm"></i></span>
       </div>
     </div>
-  </section> -->
-<!-- Sección nueva de texto puro -->
-<section class="py-20 fade-in">
-<div class="max-w-3xl mx-auto px-6 bg-gradient-to-br from-purple-800 via-black to-purple-800 rounded-3xl p-10 text-center">
-<h4 class="text-2xl font-bold mb-4">Soporte Técnico</h4>
-<p class="text-white/80">Nos encargamos del soporte y mantenimiento constante de todos tus sistemas.</p>
-</div>
+  </a>
 </section>
-<div class="relative z-10 w-full h-[2px] bg-gradient-to-r from-transparent via-white/30 to-transparent my-16"></div>
-<section class="max-w-4xl mx-auto text-center mb-16">
-<h3 class="text-4xl font-bold mb-4">Hardware</h3>
-<p class="text-lg text-white/80">Ofrecemos soluciones de Hardware</p>
-</section>
-<section class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto fade-in">
-<div class="bg-gradient-to-br from-green-800 to-black p-6 rounded-xl shadow-lg">
-<h3 class="text-xl font-bold mb-2">Mantenimiento de PC</h3>
-<p>Servicios integrales de mantenimiento de PC para mantener el rendimiento óptimo de sus dispositivos.</p>
-</div>
-<div class="bg-gradient-to-br from-purple-800 to-black p-6 rounded-xl shadow-lg">
-<h3 class="text-xl font-bold mb-2">Instalación y configuración de Software</h3>
-<p> Nuestro equipo de expertos se encargará de la instalación, configuración y puesta en marcha de las
-          principales aplicaciones y herramientas que el cliente requiera.</p>
-</div>
-<div class="bg-gradient-to-br from-indigo-800 to-black p-6 rounded-xl shadow-lg">
-<h3 class="text-xl font-bold mb-2">Actualizacion de componentes</h3>
-<p>Mantener la tecnología de su negocio actualizada es fundamental para garantizar un alto rendimiento y
-          eficiencia..</p>
-</div>
-<!-- Fila centrada -->
-<!-- <div class="md:col-span-3 flex flex-wrap justify-center gap-8">
-    <div class="bg-gradient-to-br from-green-800 to-black p-6 rounded-xl shadow-lg w-full md:w-1/3">
-      <h3 class="text-xl font-bold mb-2">Big Data</h3>
-      <p>Transforme grandes volúmenes de información en insights accionables y tome decisiones más informadas.</p>
-    </div>
-    <div class="bg-gradient-to-br from-purple-800 to-black p-6 rounded-xl shadow-lg w-full md:w-1/3">
-      <h3 class="text-xl font-bold mb-2">Desarrollo de Software a medida</h3>
-      <p>Diseño, desarrollo e implementación de soluciones informáticas que mejoren la eficiencia y productividad de su empresa.</p>
-    </div>
-  </div> -->
-</section>
-</main>
 
+<!-- Software -->
+<section class="section">
+  <div class="wrap">
+    <div class="head fade-in">
+      <p class="eyebrow">Software</p>
+      <h2>Desarrollo, automatización y datos</h2>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="feat fade-in">
+        <span class="ico"><i class="fa fa-code"></i></span>
+        <h3>Desarrollo web</h3>
+        <p>Aplicaciones modernas, seguras y escalables.</p>
+      </div>
+      <div class="feat fade-in">
+        <span class="ico"><i class="fa fa-cart-shopping"></i></span>
+        <h3>E-commerce</h3>
+        <p>Tiendas online personalizadas y optimizadas para vender.</p>
+      </div>
+      <div class="feat fade-in">
+        <span class="ico"><i class="fa fa-robot"></i></span>
+        <h3>Automatización</h3>
+        <p>Mejorá tus procesos con bots, RPA e integración de IA.</p>
+      </div>
+      <div class="feat fade-in">
+        <span class="ico"><i class="fa fa-layer-group"></i></span>
+        <h3>Software a medida</h3>
+        <p>Diseño, desarrollo e implementación de soluciones informáticas que mejoren la eficiencia y productividad de tu empresa.</p>
+      </div>
+      <div class="feat fade-in">
+        <span class="ico"><i class="fa fa-database"></i></span>
+        <h3>Big Data</h3>
+        <p>Transformá grandes volúmenes de información en insights accionables y tomá decisiones más informadas.</p>
+      </div>
+      <div class="feat fade-in">
+        <span class="ico"><i class="fa fa-headset"></i></span>
+        <h3>Soporte técnico</h3>
+        <p>Nos encargamos del soporte y mantenimiento constante de todos tus sistemas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Hardware -->
+<section class="section band">
+  <div class="wrap grid md:grid-cols-2 gap-14 items-start">
+    <div class="head fade-in" style="margin-bottom:0">
+      <p class="eyebrow">Hardware</p>
+      <h2>Equipos que rinden como el primer día</h2>
+      <p>Mantener la tecnología de tu negocio actualizada es fundamental para garantizar un alto rendimiento y eficiencia.</p>
+    </div>
+    <div class="rail fade-in">
+      <div><h3>Mantenimiento de PC</h3><p>Servicios integrales para mantener el rendimiento óptimo de tus dispositivos.</p></div>
+      <div><h3>Instalación y configuración de software</h3><p>Instalamos, configuramos y ponemos en marcha las aplicaciones y herramientas que necesites.</p></div>
+      <div><h3>Actualización de componentes</h3><p>Renovamos las piezas justas para que tus equipos acompañen el trabajo diario.</p></div>
+    </div>
+  </div>
+</section>
 {% endblock %}

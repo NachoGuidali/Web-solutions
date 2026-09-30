@@ -4,9 +4,6 @@
 
 {% block extra_head %}
 <meta name="description" content="Supreg CRM: CRM de ventas con WhatsApp multinúmero, telefonía integrada, asignación automática y análisis de pautas.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Public+Sans:wght@400;500;600&display=swap">
 <style>
 /* Estilos de la página Supreg CRM, encapsulados en .crm-page para no chocar con Tailwind ni con el resto del sitio. */
 .crm-page {
@@ -33,7 +30,7 @@
   color-scheme: dark;
 }
 .crm-page * { box-sizing: border-box; }
-.crm-page { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+.crm-page { margin: 0; background: transparent; color: var(--text); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
 .crm-page .wrap { max-width: 1160px; margin: 0 auto; padding-inline: 20px; }
 .crm-page h1, .crm-page h2, .crm-page h3 { font-family: var(--font-display); color: var(--ink); text-wrap: balance; margin: 0; }
 .crm-page p { margin: 0; }
@@ -188,11 +185,13 @@
 .crm-page footer { padding-block: 28px; color: var(--muted); font-size: 14px; }
 .crm-page footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 
-.crm-page { padding-top: 96px; }
+.crm-page { padding-top: 64px; }
 .crm-page a { text-decoration: none; }
 .crm-page .feat ul { list-style: disc; }
 </style>
 {% endblock %}
+
+{% block contacto %}{% endblock %}
 
 {% block content %}
 <div class="crm-page">

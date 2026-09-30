@@ -1,11 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <!-- Título SEO optimizado -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}SupReg Solutions | Desarrollo Web, Automatizaciones e Integraciones IT{% endblock %}</title>
   <!-- Open Graph -->
   <meta content="SupReg Solutions | Soluciones IT a Medida" property="og:title" />
@@ -13,83 +12,75 @@
   <meta content="https://www.supregsolutions.com/logo-og.jpg" property="og:image" />
   <meta content="https://www.supregsolutions.com/" property="og:url" />
   <meta content="website" property="og:type" />
-  <link href="favicon.ico" rel="icon" type="image/x-icon" />
-  <!-- Meta descripción -->
   <meta
     content="Soluciones tecnológicas a medida: desarrollo web, automatización, soporte y consultoría IT para empresas. SupReg Solutions impulsa tu negocio con tecnología."
     name="description" />
-  <!-- Meta palabras clave (opcional) -->
   <meta
-    content="desarrollo web, automatización, consultoría IT, soporte técnico, soluciones tecnológicas, SupReg Solutions"
+    content="desarrollo web, automatización, consultoría IT, soporte técnico, soluciones tecnológicas, CRM, SupReg Solutions"
     name="keywords" />
-  <!-- Meta autor -->
   <meta content="SupReg Solutions" name="author" />
-  <!--favicon-->
-  <link rel="icon" type="image/x-icon" href="static/imagenes/logob4bm.bmp">
+  <link rel="icon" type="image/x-icon" href="{% static 'imagenes/logob4bm.bmp' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Public+Sans:wght@400;500;600;700&display=swap">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-
-  </link>
   <link rel="stylesheet" href="{% static 'style.css' %}">
   <style>
-    input{
-      color: black !important;
-      
-    }
-    textarea{
-      color: black !important;
-    }
-    select{
-      color: black !important;
-    }
+    input, textarea, select { color: black !important; }
   </style>
   {% block extra_head %}{% endblock %}
 </head>
 
-<body class="bg-black text-white font-sans">
-  <!-- Navbar -->
-  <header class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-7xl px-4">
-    <div
-      class="bg-black/30 text-white px-4 md:px-10 py-2 rounded-full shadow-lg flex items-center justify-between border border-white/20">
-      <!-- Logo -->
-      <div class="flex items-center gap-2">
-        <img alt="Logo SupReg Solutions" class="h-12" src="static/imagenes/logonuevo2.png" />
-        <!-- <span class="font-bold text-sm md:text-base">SupReg Solutions</span> -->
-      </div>
-      <!-- Navegación desktop -->
-      <nav class="hidden md:flex gap-6 text-sm font-medium">
-        <a class="hover:text-indigo-400 transition" href="{% url 'home' %}">Inicio</a>
-        <a class="hover:text-indigo-400 transition" href="{% url 'servicios' %}">Servicios</a>
-        <a class="hover:text-indigo-400 transition" href="{% url 'crm' %}">CRM</a>
-        <a class="hover:text-indigo-400 transition" href="{% url 'about' %}">Nosotros</a>
-        <a class="hover:text-indigo-400 transition" href="/#contacto ">Contacto</a>
-      </nav>
-      <!-- Botón hamburguesa mobile -->
-      <button class="md:hidden text-2xl" id="menu-toggle">☰</button>
-    </div>
-    <!-- Menú móvil -->
-    <div
-      class="md:hidden hidden flex flex-col bg-black rounded-2xl px-6 py-4 mt-2 space-y-3 text-sm text-white shadow-lg"
-      id="mobile-menu">
-      <a class="hover:text-indigo-400" href="{% url 'home' %}">Inicio</a>
-      <a class="hover:text-indigo-400" href="{% url 'servicios' %}">Servicios</a>
-      <a class="hover:text-indigo-400" href="{% url 'crm' %}">CRM</a>
-      <a class="hover:text-indigo-400" href="{% url 'about' %}">Nosotros</a>
-      <a class="hover:text-indigo-400" href="/#contacto ">Contacto</a>
-    </div>
-  </header>
-  {% block content %}
-  {% endblock %}
+<body class="site">
+  <!-- Logo fijo de fondo -->
+  <div class="bg-logo" aria-hidden="true">
+    <img src="{% static 'imagenes/logonuevo.png' %}" alt="">
+  </div>
 
-  <!-- Footer -->
-  <footer class="bottom-0 bg-black py-8 border-t border-white/10 mt-20 fade-in">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm">
-      <p>© 2025 SupReg Solutions. Todos los derechos reservados.</p>
-      <div class="flex gap-4 mt-4 md:mt-0">
-        <a href="{% url 'privacidad' %}" class="hover:text-indigo-400 transition">Política de Privacidad</a>
-        <a href="{% url 'terminos' %}" class="hover:text-indigo-400 transition">Términos y Condiciones</a>
-        <a href="/#contacto" class="hover:text-indigo-400 transition">Contacto</a>
+  {% with url_name=request.resolver_match.url_name %}
+  <header class="site-header">
+    <div class="bar">
+      <a href="{% url 'home' %}" aria-label="Inicio">
+        <img alt="Logo SupReg Solutions" src="{% static 'imagenes/logonuevo2.png' %}" />
+      </a>
+      <nav class="site-nav" aria-label="Principal">
+        <a href="{% url 'home' %}" {% if url_name == 'home' %}aria-current="page"{% endif %}>Inicio</a>
+        <a href="{% url 'servicios' %}" {% if url_name == 'servicios' %}aria-current="page"{% endif %}>Servicios</a>
+        <a href="{% url 'crm' %}" {% if url_name == 'crm' %}aria-current="page"{% endif %}>CRM<span class="tag">Nuevo</span></a>
+        <a href="{% url 'about' %}" {% if url_name == 'about' %}aria-current="page"{% endif %}>Nosotros</a>
+      </nav>
+      <a class="btn btn-primary btn-sm header-cta" href="#contacto">Contactanos</a>
+      <button id="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
+        <i class="fa fa-bars"></i>
+      </button>
+    </div>
+    <nav class="hidden" id="mobile-menu" aria-label="Principal móvil">
+      <a href="{% url 'home' %}">Inicio</a>
+      <a href="{% url 'servicios' %}">Servicios</a>
+      <a href="{% url 'crm' %}">Supreg CRM</a>
+      <a href="{% url 'about' %}">Nosotros</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </header>
+  {% endwith %}
+
+  <div class="site-main">
+    {% block content %}
+    {% endblock %}
+    {% block contacto %}{% include '_contacto.html' %}{% endblock %}
+  </div>
+
+  <footer class="site-footer">
+    <div class="wrap flex flex-col md:flex-row justify-between items-center gap-4">
+      <p>© {% now "Y" %} SupReg Solutions. Todos los derechos reservados.</p>
+      <div class="flex flex-wrap justify-center gap-5">
+        <a href="{% url 'crm' %}">Supreg CRM</a>
+        <a href="{% url 'privacidad' %}">Política de Privacidad</a>
+        <a href="{% url 'terminos' %}">Términos y Condiciones</a>
+        <a href="https://www.instagram.com/supregsolutions" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.linkedin.com/company/supreg-solutions" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
       </div>
     </div>
   </footer>
@@ -111,49 +102,32 @@
     const mobileMenu = document.getElementById("mobile-menu");
 
     toggleBtn.addEventListener("click", () => {
-      if (mobileMenu.classList.contains("hidden")) {
-        mobileMenu.classList.remove("hidden");
-        // Forzar reflow para que se active la transición
-        void mobileMenu.offsetWidth;
-        mobileMenu.classList.remove("opacity-0", "scale-95");
-        mobileMenu.classList.add("opacity-100", "scale-100");
-      } else {
-        mobileMenu.classList.remove("opacity-100", "scale-100");
-        mobileMenu.classList.add("opacity-0", "scale-95");
-        // Esperar que termine la animación antes de ocultar
-        setTimeout(() => {
-          mobileMenu.classList.add("hidden");
-        }, 300); // duración debe coincidir con duration-300
-      }
+      const abierto = mobileMenu.classList.toggle("hidden") === false;
+      toggleBtn.setAttribute("aria-expanded", abierto);
     });
+    // cerrar el menú al elegir una opción (sobre todo para los links a #contacto)
+    mobileMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
+      mobileMenu.classList.add("hidden");
+      toggleBtn.setAttribute("aria-expanded", false);
+    }));
   </script>
 
   <!-- Swiper JS -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script>
-    const swiper = new Swiper('.swiper', {
-  slidesPerView: 4,
-  spaceBetween: 10,
-  breakpoints: {
-    640: {
-      slidesPerView: 4,
-      spaceBetween: 20,
-    },
-    768: {
-      slidesPerView: 4,
-      spaceBetween: 30,
-    },
-    1024: {
-      slidesPerView: 6,
-      spaceBetween: 40,
-    },
-  },
-  loop: true,
-  autoplay: {
-    delay: 2000,
-  },
-});
-
+    if (document.querySelector('.swiper')) {
+      new Swiper('.swiper', {
+        slidesPerView: 3,
+        spaceBetween: 10,
+        breakpoints: {
+          640: { slidesPerView: 4, spaceBetween: 20 },
+          768: { slidesPerView: 4, spaceBetween: 30 },
+          1024: { slidesPerView: 6, spaceBetween: 40 },
+        },
+        loop: true,
+        autoplay: { delay: 2000 },
+      });
+    }
   </script>
   <script type="application/ld+json">
 {

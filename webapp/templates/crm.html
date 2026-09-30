@@ -188,6 +188,12 @@
 .crm-page { padding-top: 64px; }
 .crm-page a { text-decoration: none; }
 .crm-page .feat ul { list-style: disc; }
+.crm-page .minis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 900px) { .crm-page .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .crm-page .minis { grid-template-columns: 1fr; } }
+.crm-page .mini { border-top: 2px solid var(--line); padding-top: 14px; display: grid; gap: 4px; min-width: 0; }
+.crm-page .mini h3 { font-family: var(--font-body); font-size: 17px; font-weight: 650; }
+.crm-page .mini p { color: var(--muted); font-size: 15px; }
 </style>
 {% endblock %}
 
@@ -273,7 +279,7 @@
           <span class="ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="11" rx="1"/><rect x="17" y="4" width="4" height="7" rx="1"/></svg></span>
           <h3>Tablero y embudos</h3>
           <p>Etapas a medida, motivos de venta y no venta, y datos obligatorios para avanzar de etapa.</p>
-          <ul><li>Pausar y postergar con fecha</li><li>Campos personalizados</li></ul>
+          <ul><li>Postergar con fecha de recontacto: vuelve sola</li><li>Marca "no contactar" que frena todo envío</li><li>Campos personalizados</li></ul>
         </article>
         <article class="feat">
           <span class="ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
@@ -289,10 +295,27 @@
         </article>
         <article class="feat">
           <span class="ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
-          <h3>Supervisión</h3>
-          <p>Filtros por etapa, vendedor y fechas, con acciones sobre cientos de leads a la vez.</p>
-          <ul><li>Reasignar, repartir, mover, cerrar</li><li>Historial con cada cambio de datos</li></ul>
+          <h3>Reportes y supervisión</h3>
+          <p>Dashboard de ingresos, contactabilidad, conversión y llamadas, con el equipo en vivo.</p>
+          <ul><li>Ranking de vendedores exportable</li><li>Acciones sobre cientos de leads a la vez</li></ul>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0" aria-labelledby="ademas">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Y además</p>
+        <h2 id="ademas">Lo que hace falta para trabajar en serio</h2>
+      </div>
+      <div class="minis">
+        <div class="mini"><h3>Historial y auditoría</h3><p>Cada llamada, mensaje, cambio de etapa y cambio de datos, con quién lo hizo y el valor anterior.</p></div>
+        <div class="mini"><h3>Importación de Excel</h3><p>Detecta las columnas solo, unifica repetidos y muestra el avance fila por fila.</p></div>
+        <div class="mini"><h3>Filtros y acciones masivas</h3><p>Todos los de una etapa entre dos fechas: reasignar, repartir, mover o cerrar de una vez.</p></div>
+        <div class="mini"><h3>Roles y permisos</h3><p>Administrador, supervisor, vendedor o roles a medida. Cada vendedor ve solo lo suyo.</p></div>
+        <div class="mini"><h3>API e integraciones</h3><p>Conectá landings, formularios, n8n o tu sistema: los leads entran asignados al instante.</p></div>
+        <div class="mini"><h3>Notas y menciones</h3><p>Notas en la ficha con @menciones y avisos en pantalla para no perder nada.</p></div>
       </div>
     </div>
   </section>

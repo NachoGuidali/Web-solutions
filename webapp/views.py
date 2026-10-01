@@ -76,6 +76,10 @@ def crm(request):
     return render(request, 'crm.html')
 
 
+def comanda(request):
+    return render(request, 'comanda.html')
+
+
 def about(request):
     return render(request, 'about.html')
 

@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+
+{% block title %}Comanda Supreg | Tu propio sistema de pedidos, sin comisiones{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="Pedidos online y gestión para pizzerías, hamburgueserías y rotiserías. El cliente pide desde la web de tu local y paga con Mercado Pago. Sin comisiones por pedido.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap">
+<style>
+/* Página de Comanda Supreg, encapsulada en .cmd-page. Usa los tokens del sitio (style.css);
+   lo único propio es el ticket de impresora térmica, en papel y Courier. */
+.cmd-page { --papel: #FBFAF4; --tinta-ticket: #1C1C1A; --alerta: #F87171; --ticket: 'Courier Prime', 'Courier New', monospace; padding-top: 64px; font-size: 17px; line-height: 1.6; }
+.cmd-page * { box-sizing: border-box; }
+.cmd-page h1, .cmd-page h2, .cmd-page h3 { margin: 0; }
+.cmd-page p { margin: 0; }
+.cmd-page .bajada { max-width: 58ch; color: var(--muted); font-size: 18px; margin-top: 14px; }
+.cmd-page .bloque { padding-block: 88px; }
+.cmd-page .bloque-encabezado { max-width: 760px; margin-bottom: 44px; display: grid; gap: 4px; }
+.cmd-page h2 { font-size: clamp(30px, 3.8vw, 46px); font-weight: 750; line-height: 1.08; letter-spacing: -0.015em; }
+.cmd-page .eyebrow { margin-bottom: 10px; }
+
+/* Hero */
+.cmd-page .hero { overflow: hidden; position: relative; padding-block: 0; }
+.cmd-page .hero .wrap { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: start; padding-top: 72px; }
+.cmd-page .hero h1 { font-size: clamp(40px, 5.6vw, 68px); font-weight: 800; line-height: 1.02; letter-spacing: -0.025em; margin-top: 14px; max-width: 12ch; }
+.cmd-page .hero .bajada { font-size: 20px; margin-top: 20px; }
+.cmd-page .hero .acciones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.cmd-page .hero .chips { margin-top: 28px; }
+.cmd-page .hero-texto { padding-bottom: 72px; }
+
+/* El riel de comandas, como el de la cocina */
+.cmd-page .pase { position: relative; align-self: stretch; min-height: 560px; }
+.cmd-page .riel { position: absolute; top: 0; left: -2rem; right: -50vw; height: 22px; background: linear-gradient(#C9CFCB, #8E9893); border-radius: 0 0 4px 4px; box-shadow: 0 6px 14px rgba(0,0,0,.45); }
+.cmd-page .riel::after { content: ''; position: absolute; left: 0; right: 0; top: 7px; height: 3px; background: rgba(0,0,0,.18); }
+.cmd-page .comanda { position: absolute; top: 12px; left: 8%; width: min(340px, 86%); transform-origin: top center; transform: rotate(-1.6deg); filter: drop-shadow(0 22px 30px rgba(107,33,168,.45)); }
+.cmd-page .comanda-papel { background: var(--papel); color: var(--tinta-ticket); font: 400 15.5px/1.45 var(--ticket); padding: 26px 22px 20px; position: relative; animation: cmd-imprimir 2.6s steps(22, end) .4s both; }
+.cmd-page .comanda-papel::after { content: ''; position: absolute; left: 0; right: 0; bottom: -9px; height: 10px;
+  background: linear-gradient(-45deg, transparent 6px, var(--papel) 0) 0 0 / 12px 10px, linear-gradient(45deg, transparent 6px, var(--papel) 0) 0 0 / 12px 10px; }
+.cmd-page .comanda .broche { position: absolute; top: -4px; left: 50%; translate: -50% 0; width: 46px; height: 20px; background: #9AA3A0; border-radius: 0 0 6px 6px; z-index: 2; }
+.cmd-page .comanda pre, .cmd-page .ticket pre { margin: 0; font: inherit; white-space: pre-wrap; }
+.cmd-page .comanda .grande { font-size: 20px; font-weight: 700; line-height: 1.25; }
+.cmd-page .comanda .sello { display: inline-block; margin-top: 10px; padding: 4px 8px; border: 2px solid #3730A3; color: #3730A3; font-weight: 700; transform: rotate(-3deg); }
+@keyframes cmd-imprimir { from { clip-path: inset(0 0 100% 0); transform: translateY(-40px); } to { clip-path: inset(0 0 0 0); transform: translateY(0); } }
+.cmd-page .comanda.atras { left: 52%; width: min(250px, 60%); transform: rotate(2.2deg); opacity: .45; filter: none; }
+.cmd-page .comanda.atras .comanda-papel { animation: none; font-size: 13px; }
+
+/* Aviso de pedido nuevo, como en el tablero */
+.cmd-page .aviso { position: absolute; right: 0; bottom: 56px; z-index: 3; background: var(--surface); color: var(--ink); border: 1px solid #2A2F45; border-left: 5px solid var(--alerta); border-radius: 14px; padding: 16px 18px; width: 270px; box-shadow: 0 20px 40px rgba(0,0,0,.5); animation: cmd-llegar .5s cubic-bezier(.2,.9,.3,1.2) 3.2s both; }
+.cmd-page .aviso b { display: block; font-size: 16px; }
+.cmd-page .aviso small { color: var(--muted); font-size: 14px; }
+.cmd-page .aviso .campana { float: right; font-size: 20px; animation: cmd-sonar .6s ease-in-out 3.7s 3; transform-origin: top center; }
+@keyframes cmd-llegar { from { opacity: 0; transform: translateY(16px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes cmd-sonar { 0%,100% { transform: rotate(0); } 25% { transform: rotate(18deg); } 75% { transform: rotate(-18deg); } }
+
+@media (max-width: 900px) {
+  .cmd-page .hero .wrap { grid-template-columns: 1fr; padding-top: 48px; }
+  .cmd-page .hero-texto { padding-bottom: 16px; }
+  .cmd-page .pase { min-height: 700px; }
+  .cmd-page .riel { left: -20px; right: -20px; }
+  .cmd-page .comanda { left: 2%; }
+  .cmd-page .comanda.atras { display: none; }
+  .cmd-page .aviso { right: 0; bottom: 24px; width: min(270px, 78%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cmd-page *, .cmd-page *::before, .cmd-page *::after { animation-duration: .001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+}
+
+/* Recorrido del pedido: las columnas del tablero */
+.cmd-page .tablero { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: color-mix(in srgb, var(--surface) 88%, transparent); }
+.cmd-page .columna { padding: 22px 20px 26px; border-right: 1px solid var(--line); min-width: 0; }
+.cmd-page .columna:last-child { border-right: 0; }
+.cmd-page .columna h3 { font-size: 22px; display: flex; align-items: center; gap: 10px; }
+.cmd-page .columna h3 i { font: 700 13px/1 var(--font-body); width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center; background: var(--tint); color: var(--accent-text); }
+.cmd-page .columna p { margin-top: 10px; font-size: 15.5px; color: var(--muted); }
+.cmd-page .columna .quien { margin-top: 14px; font-size: 14px; font-weight: 600; color: var(--accent-text); }
+.cmd-page .columna.nuevo { background: rgba(248,113,113,.08); }
+.cmd-page .columna.nuevo h3 i { background: var(--alerta); color: #fff; }
+.cmd-page .columna.listo { background: rgba(129,140,248,.10); }
+.cmd-page .columna.listo h3 i { background: var(--accent); color: #fff; }
+@media (max-width: 960px) {
+  .cmd-page .tablero { grid-template-columns: 1fr; }
+  .cmd-page .columna { border-right: 0; border-bottom: 1px solid var(--line); }
+  .cmd-page .columna:last-child { border-bottom: 0; }
+}
+
+/* Roles */
+.cmd-page .roles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.cmd-page .rol { background: color-mix(in srgb, var(--surface) 88%, transparent); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; min-width: 0; }
+.cmd-page .rol h3 { font-size: 26px; font-weight: 750; }
+.cmd-page .rol .para-que { color: var(--muted); margin-top: 6px; }
+.cmd-page .rol ul { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 10px; }
+.cmd-page .rol li { padding-left: 26px; position: relative; font-size: 15.5px; }
+.cmd-page .rol li::before { content: ''; position: absolute; left: 0; top: .55em; width: 11px; height: 11px; border-radius: 3px; background: var(--grad); box-shadow: 0 0 0 3px var(--tint); }
+.cmd-page .rol.cliente { grid-column: 1 / -1; background: linear-gradient(135deg, rgba(59,7,100,.6), rgba(30,27,75,.6)); border-color: #3B3F6B; }
+.cmd-page .rol.cliente ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
+@media (max-width: 860px) { .cmd-page .roles, .cmd-page .rol.cliente ul { grid-template-columns: 1fr; } }
+
+/* Rubros */
+.cmd-page .carta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 64px; border-top: 1px solid var(--band-line); }
+.cmd-page .plato { padding: 24px 0; border-bottom: 1px dashed var(--band-line); display: grid; gap: 6px; }
+.cmd-page .plato h3 { font-size: 28px; font-weight: 750; color: var(--accent-text); }
+.cmd-page .plato p { color: var(--band-muted); }
+@media (max-width: 860px) { .cmd-page .carta { grid-template-columns: 1fr; } }
+
+/* Planes */
+.cmd-page .planes-envoltura { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: color-mix(in srgb, var(--surface) 88%, transparent); }
+.cmd-page .planes-tabla { width: 100%; border-collapse: collapse; font-size: 16px; }
+.cmd-page .planes-tabla th, .cmd-page .planes-tabla td { padding: 15px 18px; text-align: left; border-bottom: 1px solid var(--line); color: var(--text); }
+.cmd-page .planes-tabla tbody th { font-weight: 500; }
+.cmd-page .planes-tabla thead th { vertical-align: bottom; background: rgba(255,255,255,.03); }
+.cmd-page .planes-tabla thead th:first-child { width: 40%; }
+.cmd-page .planes-tabla thead b { display: block; font: 800 28px/1 var(--font-display); color: var(--ink); }
+.cmd-page .planes-tabla thead small { display: block; font-weight: 400; color: var(--muted); margin-top: 6px; font-size: 14px; }
+.cmd-page .planes-tabla td:not(:first-child), .cmd-page .planes-tabla th:not(:first-child) { text-align: center; }
+.cmd-page .planes-tabla tbody tr:last-child th, .cmd-page .planes-tabla tbody tr:last-child td { border-bottom: 0; }
+.cmd-page .planes-tabla .si { color: var(--accent-text); font-weight: 700; font-size: 18px; }
+.cmd-page .planes-tabla .no { color: #4B5068; }
+.cmd-page .planes-tabla .destacado { background: rgba(129,140,248,.10); }
+.cmd-page .planes-tabla thead .destacado { background: var(--grad); }
+.cmd-page .planes-tabla thead .destacado small { color: #E0E7FF; }
+.cmd-page .planes-pie { margin-top: 20px; color: var(--muted); }
+@media (max-width: 640px) {
+  .cmd-page .planes-tabla thead tr, .cmd-page .planes-tabla tbody tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cmd-page .planes-tabla thead th:first-child { display: none; }
+  .cmd-page .planes-tabla thead th { padding: 14px 6px; }
+  .cmd-page .planes-tabla thead b { font-size: 22px; }
+  .cmd-page .planes-tabla tbody th { grid-column: 1 / -1; border-bottom: 0; padding: 14px 16px 2px; }
+  .cmd-page .planes-tabla tbody td { padding: 4px 6px 14px; }
+}
+.cmd-page .visualmente-oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Preguntas */
+.cmd-page .faq { display: grid; gap: 10px; max-width: 860px; }
+.cmd-page .faq details { background: color-mix(in srgb, var(--surface) 88%, transparent); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; }
+.cmd-page .faq summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.cmd-page .faq details p { margin-top: 10px; color: var(--muted); }
+
+/* Cierre */
+.cmd-page .cta .ticket { background: var(--papel); color: var(--tinta-ticket); font: 400 16px/1.5 var(--ticket); padding: 26px 22px; transform: rotate(2deg); box-shadow: 0 18px 40px rgba(7,7,11,.45); max-width: 360px; justify-self: center; }
+.cmd-page .cta .email { margin-top: 14px; font-size: 16px; }
+.cmd-page .cta .email a { color: #FFFFFF; font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block contacto %}{% endblock %}
+
+{% block content %}
+<div class="cmd-page">
+  <section class="hero" aria-labelledby="titulo">
+    <div class="wrap">
+      <div class="hero-texto">
+        <p class="eyebrow">Comanda Supreg · Pedidos online para gastronomía</p>
+        <h1 id="titulo">Tu propio sistema de pedidos, sin comisiones</h1>
+        <p class="bajada">
+          El cliente pide desde la web de tu local y paga con Mercado Pago. El pedido suena en el
+          mostrador, sale impreso en la cocina y le llega al repartidor. No le pagás un porcentaje
+          a ninguna app.
+        </p>
+        <div class="acciones">
+          <a class="btn btn-primary" href="https://wa.me/5491163589975?text=Hola%2C%20quiero%20una%20demo%20de%20Comanda%20Supreg%20para%20mi%20local." target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i> Pedir una demo por WhatsApp
+          </a>
+          <a class="btn btn-ghost" href="#como-funciona">Ver cómo funciona</a>
+        </div>
+        <div class="chips">
+          <span class="chip">Pizzerías</span>
+          <span class="chip">Hamburgueserías</span>
+          <span class="chip">Rotiserías</span>
+          <span class="chip">Casas de empanadas</span>
+        </div>
+      </div>
+
+      <div class="pase" aria-hidden="true">
+        <div class="riel"></div>
+
+        <div class="comanda atras">
+          <div class="comanda-papel"><pre><span class="grande">PEDIDO K-1907</span>
+RETIRA EN LOCAL
+==========================
+3 x EMPANADA DE CARNE
+1 x FAINÁ
+</pre></div>
+        </div>
+
+        <div class="comanda">
+          <span class="broche"></span>
+          <div class="comanda-papel"><pre>      *** COCINA ***
+==========================
+<span class="grande">PEDIDO A-4821
+DELIVERY</span>
+Hoy 21:14
+==========================
+
+<span class="grande">1 x MUZZARELLA (GRANDE)</span>
+    + Doble muzzarella
+
+<span class="grande">1 x MITAD Y MITAD (GRANDE)</span>
+    + Napolitana
+    + Calabresa
+    >> bien cocida
+
+<span class="grande">2 x EMPANADA DE CARNE</span>
+==========================
+<span class="sello">PAGADO · MERCADO PAGO</span>
+</pre></div>
+        </div>
+
+        <div class="aviso">
+          <span class="campana">🔔</span>
+          <b>Pedido nuevo A-4821</b>
+          <small>Envío, pagado online. Recién entrado.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" id="como-funciona" aria-labelledby="t-como">
+    <div class="wrap">
+      <div class="bloque-encabezado">
+        <p class="eyebrow">Cómo funciona</p>
+        <h2 id="t-como">Así viaja un pedido</h2>
+        <p class="bajada">
+          Cada pedido pasa por las mismas columnas que ve tu equipo en la pantalla. Nadie copia
+          nada a mano y nadie pregunta "¿ese ya salió?".
+        </p>
+      </div>
+
+      <ol class="tablero" role="list">
+        <li class="columna nuevo">
+          <h3><i>1</i>Nuevo</h3>
+          <p>El cliente arma el pedido en tu carta web: tamaños, extras, mitad y mitad. Paga con Mercado Pago o elige efectivo.</p>
+          <p class="quien">Suena en el mostrador</p>
+        </li>
+        <li class="columna">
+          <h3><i>2</i>Aceptado</h3>
+          <p>Caja lo acepta con un toque. Salen dos tickets: el de cocina, sin precios, y el de caja, con el vuelto calculado.</p>
+          <p class="quien">Sale impreso solo</p>
+        </li>
+        <li class="columna">
+          <h3><i>3</i>En el horno</h3>
+          <p>La cocina lo ve en su pantalla con letra grande y marca "Empezar" y "Listo". Si se demora, se pone en rojo.</p>
+          <p class="quien">Pantalla de cocina</p>
+        </li>
+        <li class="columna">
+          <h3><i>4</i>En camino</h3>
+          <p>El repartidor ve sus pedidos en el celular, con la dirección y cuánto cobrar. El cliente sigue el estado desde su link.</p>
+          <p class="quien">Celular del repartidor</p>
+        </li>
+        <li class="columna listo">
+          <h3><i>5</i>Entregado</h3>
+          <p>Queda cobrado y suma en la caja del día. Al cliente se le pide una reseña en Google, justo cuando está contento.</p>
+          <p class="quien">Entra a los reportes</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+
+  <section class="bloque" id="que-incluye" aria-labelledby="t-incluye">
+    <div class="wrap">
+      <div class="bloque-encabezado">
+        <p class="eyebrow">Qué incluye</p>
+        <h2 id="t-incluye">Una sola herramienta para todo el local</h2>
+        <p class="bajada">Cada persona entra con su usuario y ve solo lo que necesita para su trabajo.</p>
+      </div>
+
+      <div class="roles">
+        <div class="rol">
+          <h3>El dueño</h3>
+          <p class="para-que">Saber cómo viene el negocio sin estar en el local.</p>
+          <ul>
+            <li>Ventas por día y por hora, ticket promedio y productos más vendidos</li>
+            <li>Tiempos reales de cocina y de reparto</li>
+            <li>Cierres de caja con la diferencia de cada turno</li>
+            <li>Stock con conteo mensual, mermas y aviso de faltantes</li>
+            <li>Varias sucursales, cada una con su carta, precios y números</li>
+            <li>Permisos por empleado: quién cambia precios, quién cancela</li>
+          </ul>
+        </div>
+        <div class="rol">
+          <h3>La caja</h3>
+          <p class="para-que">Atender rápido, cobrar bien y cerrar sin diferencias.</p>
+          <ul>
+            <li>Tablero con todos los pedidos del día y alerta sonora</li>
+            <li>Carga de pedidos por teléfono, WhatsApp o mostrador</li>
+            <li>Apertura y cierre de caja con arqueo</li>
+            <li>Rendición del efectivo de cada repartidor</li>
+            <li>Efectivo, transferencia, tarjeta y Mercado Pago</li>
+            <li>Mesas, reservas y la cuenta de cada mesa</li>
+          </ul>
+        </div>
+        <div class="rol">
+          <h3>La cocina</h3>
+          <p class="para-que">Ver qué hay que hacer, de lejos y con las manos ocupadas.</p>
+          <ul>
+            <li>Pantalla grande con los pedidos en orden de llegada</li>
+            <li>Comanda impresa en la térmica, sin precios</li>
+            <li>Aclaraciones destacadas: "sin aceitunas", "bien cocida"</li>
+            <li>La segunda ronda de una mesa sale como agregado, sin repetir lo anterior</li>
+          </ul>
+        </div>
+        <div class="rol">
+          <h3>El reparto</h3>
+          <p class="para-que">Salir con lo justo y volver con la plata justa.</p>
+          <ul>
+            <li>Solo sus pedidos, en el celular</li>
+            <li>Dirección con link al mapa y teléfono del cliente</li>
+            <li>Cuánto cobrar y cuánto vuelto llevar</li>
+            <li>Marca "en camino" y "entregado" con un toque</li>
+          </ul>
+        </div>
+        <div class="rol cliente">
+          <h3>Tu cliente</h3>
+          <p class="para-que">Pedir fácil, desde el celular, sin descargar nada.</p>
+          <ul>
+            <li>Carta con fotos y precios siempre al día</li>
+            <li>Se ve lo que está agotado y las promos del día</li>
+            <li>Paga online con Mercado Pago o al recibir</li>
+            <li>Códigos de descuento y envío gratis</li>
+            <li>Sigue su pedido paso a paso desde un link</li>
+            <li>Reserva mesa, cumpleaños o evento desde la web</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque band" id="rubros" aria-labelledby="t-rubros">
+    <div class="wrap">
+      <div class="bloque-encabezado">
+        <p class="eyebrow">Rubros</p>
+        <h2 id="t-rubros">Se adapta a tu carta</h2>
+        <p class="bajada">Tamaños, extras con recargo y opciones obligatorias. Con eso se arma lo que vende cada rubro.</p>
+      </div>
+      <div class="carta">
+        <div class="plato">
+          <h3>Pizzería</h3>
+          <p>Chica y grande, doble muzza con recargo y mitad y mitad con un gusto obligatorio para cada mitad.</p>
+        </div>
+        <div class="plato">
+          <h3>Hamburguesería</h3>
+          <p>Combos con bebida y papas a elección, punto de la carne y extra cheddar o bacon.</p>
+        </div>
+        <div class="plato">
+          <h3>Rotisería</h3>
+          <p>Pollo entero o medio, guarniciones a elección y control de stock de lo que se cocina por tanda.</p>
+        </div>
+        <div class="plato">
+          <h3>Empanadas</h3>
+          <p>Por unidad o por docena, con promos automáticas: "los martes la docena con 20% off".</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" id="planes" aria-labelledby="t-planes">
+    <div class="wrap">
+      <div class="bloque-encabezado">
+        <p class="eyebrow">Planes</p>
+        <h2 id="t-planes">Elegí hasta dónde llegar</h2>
+        <p class="bajada">Arrancás con los pedidos online y sumás el resto cuando lo necesites.</p>
+      </div>
+
+      <div class="planes-envoltura">
+        <table class="planes-tabla">
+          <thead>
+            <tr>
+              <th scope="col"><span class="visualmente-oculto">Función</span></th>
+              <th scope="col"><b>Local</b><small>Pedidos online</small></th>
+              <th scope="col" class="destacado"><b>Completo</b><small>Todo el local</small></th>
+              <th scope="col"><b>Cadena</b><small>Varias sucursales</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Carta web propia con tu marca</th><td class="si" aria-label="Incluido">✓</td><td class="si destacado" aria-label="Incluido">✓</td><td class="si" aria-label="Incluido">✓</td></tr>
+            <tr><th scope="row">Pago online con Mercado Pago</th><td class="si" aria-label="Incluido">✓</td><td class="si destacado" aria-label="Incluido">✓</td><td class="si" aria-label="Incluido">✓</td></tr>
+            <tr><th scope="row">Tablero de pedidos con alerta</th><td class="si" aria-label="Incluido">✓</td><td class="si destacado" aria-label="Incluido">✓</td><td class="si" aria-label="Incluido">✓</td></tr>
+            <tr><th scope="row">Pantalla de cocina y comandas impresas</th><td class="si" aria-label="Incluido">✓</td><td class="si destacado" aria-label="Incluido">✓</td><td class="si" aria-label="Incluido">✓</td></tr>
+            <tr><th scope="row">Promos y códigos de descuento</th><td class="si" aria-label="Incluido">✓</td><td class="si destacado" aria-label="Incluido">✓</td><td class="si" aria-label="Incluido">✓</td></tr>
+            <tr><th scope="row">Caja con arqueo y rendición de repartidores</th><td class="no" aria-label="No incluido">—</td><td class="si destacado" aria-label="Incluido">✓</td><td class="si" aria-label="Incluido">✓</td></tr>
+            <tr><th scope="row">Stock, conteo y mermas</th><td class="no" aria-label="No incluido">—</td><td class="si destacado" aria-label="Incluido">✓</td><td class="si" aria-label="Incluido">✓</td></tr>
+            <tr><th scope="row">Mesas, reservas y cuenta de mesa</th><td class="no" aria-label="No incluido">—</td><td class="si destacado" aria-label="Incluido">✓</td><td class="si" aria-label="Incluido">✓</td></tr>
+            <tr><th scope="row">Reportes de ventas y tiempos</th><td class="no" aria-label="No incluido">—</td><td class="si destacado" aria-label="Incluido">✓</td><td class="si" aria-label="Incluido">✓</td></tr>
+            <tr><th scope="row">Varias sucursales, cada una con su carta</th><td class="no" aria-label="No incluido">—</td><td class="no destacado" aria-label="No incluido">—</td><td class="si" aria-label="Incluido">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="planes-pie">El precio depende de cuántos locales tenés y de qué necesitás. Escribinos y te pasamos una propuesta.</p>
+    </div>
+  </section>
+
+  <section class="bloque" id="preguntas" aria-labelledby="t-preguntas" style="padding-top:0">
+    <div class="wrap">
+      <div class="bloque-encabezado">
+        <p class="eyebrow">Preguntas frecuentes</p>
+        <h2 id="t-preguntas">Lo que suelen preguntar</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>¿Tengo que instalar algo?</summary>
+          <p>No. Funciona desde el navegador en el celular, la tablet o la PC del local. Para imprimir comandas en una impresora térmica se instala un pequeño programa en la PC del local, y lo dejamos andando nosotros.</p>
+        </details>
+        <details>
+          <summary>¿Qué impresora necesito?</summary>
+          <p>Cualquier térmica de 80 mm, conectada por red o por USB. Si tenés una para cocina y otra para caja, cada una recibe su ticket.</p>
+        </details>
+        <details>
+          <summary>¿Cómo me llega la plata de Mercado Pago?</summary>
+          <p>Directo a tu cuenta de Mercado Pago, no pasa por nosotros. Si cancelás un pedido que ya estaba pagado, el sistema le devuelve la plata al cliente automáticamente.</p>
+        </details>
+        <details>
+          <summary>¿Puedo seguir recibiendo pedidos por WhatsApp?</summary>
+          <p>Sí. Los cargás desde el mostrador y siguen el mismo camino: cocina, reparto y caja. Además, cuando un cliente pide desde la web, se le abre WhatsApp con el pedido armado para escribirte.</p>
+        </details>
+        <details>
+          <summary>¿Emite factura electrónica?</summary>
+          <p>Todavía no. Por ahora el sistema registra ventas y cobros, y la factura se sigue haciendo por tu medio habitual.</p>
+        </details>
+        <details>
+          <summary>¿Qué pasa si se corta internet?</summary>
+          <p>Las comandas que no se pudieron imprimir quedan en cola y salen apenas vuelve la conexión. Los datos se guardan en el servidor con una copia de seguridad diaria.</p>
+        </details>
+        <details>
+          <summary>¿Puedo usar mi propio dominio?</summary>
+          <p>Sí. La carta puede quedar en la dirección de tu local, por ejemplo pedidos.tupizzeria.com.ar, con tu logo y tus colores.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="contacto" aria-labelledby="t-cierre">
+    <div class="wrap">
+      <div>
+        <h2 id="t-cierre">Probalo con tu propia carta</h2>
+        <p>Te armamos una demo con tus productos y la probás en el local: hacés un pedido desde el celular y lo ves salir por la impresora.</p>
+        <a class="btn btn-light mt-8" href="https://wa.me/5491163589975?text=Hola%2C%20quiero%20una%20demo%20de%20Comanda%20Supreg%20para%20mi%20local." target="_blank" rel="noopener">
+          <i class="fab fa-whatsapp"></i> Pedir una demo por WhatsApp
+        </a>
+        <p class="email">O escribinos a <a href="mailto:contacto@supregsolutions.com">contacto@supregsolutions.com</a></p>
+      </div>
+      <div class="ticket" aria-hidden="true"><pre>   *** PEDIDO DE DEMO ***
+==========================
+1 x CARTA WEB CON TU MARCA
+1 x TABLERO DE PEDIDOS
+1 x PANTALLA DE COCINA
+    + Comandas impresas
+    + Pago con Mercado Pago
+    >> sin comisión por pedido
+==========================
+TOTAL A CONVERSAR</pre></div>
+    </div>
+  </section>
+</div>
+
+{% endblock %}

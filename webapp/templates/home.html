@@ -25,15 +25,15 @@
       <div class="stack-bar"><b>Lo que hacemos</b><span>SupReg Solutions</span></div>
       <a class="hl" href="{% url 'crm' %}">
         <span class="ico"><i class="fa fa-chart-line"></i></span>
-        <span><b>Supreg CRM · Nuevo</b><small>Leads, WhatsApp y llamadas en un solo tablero</small></span>
+        <span><b>Supreg CRM</b><small>Leads, WhatsApp y llamadas en un solo tablero</small></span>
+      </a>
+      <a class="hl" href="{% url 'comanda' %}">
+        <span class="ico"><i class="fa fa-receipt"></i></span>
+        <span><b>Comanda Supreg · Nuevo</b><small>Pedidos online para tu local, sin comisiones</small></span>
       </a>
       <a href="{% url 'servicios' %}">
         <span class="ico"><i class="fa fa-code"></i></span>
         <span><b>Desarrollo web y software</b><small>Aplicaciones modernas, seguras y escalables</small></span>
-      </a>
-      <a href="{% url 'servicios' %}">
-        <span class="ico"><i class="fa fa-robot"></i></span>
-        <span><b>Automatización</b><small>Bots, RPA e integración de IA</small></span>
       </a>
       <a href="{% url 'servicios' %}">
         <span class="ico"><i class="fa fa-headset"></i></span>
@@ -141,6 +141,27 @@
       <div><h3>Asignación automática</h3><p>Rotativa, por menor carga o solo entre los conectados.</p></div>
       <div><h3>WhatsApp y telefonía integrados</h3><p>Todas las líneas en una bandeja y llamadas con un clic.</p></div>
       <div><h3>Análisis de pautas</h3><p>Costo por lead y por venta de cada campaña.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Comanda Supreg -->
+<section class="section">
+  <div class="wrap grid md:grid-cols-2 gap-14 items-center">
+    <div class="rail fade-in md:order-2">
+      <div><h3>Carta web con tu marca</h3><p>El cliente pide desde el celular y paga con Mercado Pago.</p></div>
+      <div><h3>Comanda impresa en la cocina</h3><p>El pedido suena en el mostrador y sale solo por la térmica.</p></div>
+      <div><h3>Caja, reparto y stock</h3><p>Arqueo, rendición de repartidores, mermas y reportes.</p></div>
+      <div><h3>Sin comisión por pedido</h3><p>La plata va directo a tu cuenta, no a una app.</p></div>
+    </div>
+    <div class="head fade-in md:order-1" style="margin-bottom:0">
+      <p class="eyebrow">Nuevo · Comanda Supreg</p>
+      <h2>Tu propio sistema de pedidos, sin comisiones.</h2>
+      <p>Para pizzerías, hamburgueserías, rotiserías y casas de empanadas. El pedido llega solo a la cocina, la caja y el repartidor.</p>
+      <div class="flex flex-wrap gap-3 mt-4">
+        <a class="btn btn-primary" href="{% url 'comanda' %}">Conocer Comanda</a>
+        <a class="btn btn-ghost" href="{% url 'comanda' %}#contacto">Pedir una demo</a>
+      </div>
     </div>
   </div>
 </section>

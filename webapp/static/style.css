@@ -43,8 +43,8 @@ body.site { background: var(--bg); color: var(--text); font-family: var(--font-b
 #mobile-menu { border-top: 1px solid var(--line); padding: 8px 20px 18px; display: flex; flex-direction: column; }
 #mobile-menu a { color: var(--text); text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--line); }
 #mobile-menu.hidden { display: none; }
-@media (max-width: 767px) { .site-header .site-nav, .site-header .header-cta { display: none; } }
-@media (min-width: 768px) { #menu-toggle, #mobile-menu { display: none !important; } }
+@media (max-width: 1023px) { .site-header .site-nav, .site-header .header-cta { display: none; } }
+@media (min-width: 1024px) { #menu-toggle, #mobile-menu { display: none !important; } }
 
 /* Base de maquetación */
 .wrap { max-width: 1160px; margin: 0 auto; padding-inline: 20px; }

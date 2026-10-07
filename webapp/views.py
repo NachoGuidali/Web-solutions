@@ -80,6 +80,10 @@ def comanda(request):
     return render(request, 'comanda.html')
 
 
+def conector_whatsapp(request):
+    return render(request, 'conector_whatsapp.html')
+
+
 def about(request):
     return render(request, 'about.html')
 

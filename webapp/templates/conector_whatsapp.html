@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+
+{% block title %}Conector WhatsApp | Tu equipo de ventas, organizado en WhatsApp{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="Conector WhatsApp de SupReg: bandeja multiagente, pipeline de leads, bot 24/7 con n8n y métricas en tiempo real para tu equipo comercial.">
+<style>
+/* Página del Conector WhatsApp, encapsulada en .wa-page. Usa los tokens del sitio (style.css). */
+.wa-page { --ok: #4ADE80; --mal: #F87171; padding-top: 64px; font-size: 17px; line-height: 1.6; }
+.wa-page * { box-sizing: border-box; }
+.wa-page h1, .wa-page h2, .wa-page h3 { margin: 0; }
+.wa-page p { margin: 0; }
+.wa-page .bloque { padding-block: 88px; }
+.wa-page .bloque-encabezado { max-width: 760px; margin-bottom: 44px; display: grid; gap: 4px; }
+.wa-page .bloque-encabezado.centro { margin-inline: auto; text-align: center; }
+.wa-page h2 { font-size: clamp(30px, 3.8vw, 46px); font-weight: 750; line-height: 1.08; letter-spacing: -0.015em; }
+.wa-page .eyebrow { margin-bottom: 10px; }
+.wa-page .bajada { max-width: 58ch; color: var(--muted); font-size: 18px; margin-top: 14px; }
+.wa-page .centro .bajada { margin-inline: auto; }
+
+/* Hero */
+.wa-page .hero { padding-block: 72px 64px; }
+.wa-page .hero .wrap { display: grid; grid-template-columns: 1fr 1.05fr; gap: 56px; align-items: center; }
+.wa-page .hero h1 { font-size: clamp(40px, 5.4vw, 66px); font-weight: 800; line-height: 1.02; letter-spacing: -0.025em; margin-top: 14px; }
+.wa-page .hero .bajada { font-size: 20px; margin-top: 20px; }
+.wa-page .hero .acciones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.wa-page .hero .chips { margin-top: 28px; }
+@media (max-width: 900px) { .wa-page .hero .wrap { grid-template-columns: 1fr; } }
+
+/* Maqueta de la bandeja */
+.wa-page .mock { background: var(--surface); border: 1px solid #2A2F45; border-radius: 22px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(107,33,168,.6); min-width: 0; }
+.wa-page .mock-top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.03); }
+.wa-page .mock-top i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.wa-page .mock-top b { flex: 1; text-align: center; font: 600 13px/1 var(--font-display); color: var(--band-muted); margin-right: 39px; }
+.wa-page .mock-body { display: flex; height: 410px; }
+.wa-page .convs { width: 40%; max-width: 210px; flex: none; border-right: 1px solid var(--line); overflow: hidden; }
+.wa-page .buscar { margin: 10px; padding: 6px 10px; border-radius: 8px; background: rgba(255,255,255,.05); font-size: 12px; color: var(--muted); }
+.wa-page .conv { display: flex; align-items: center; gap: 9px; padding: 10px; border-top: 1px solid rgba(255,255,255,.04); }
+.wa-page .conv.activa { background: rgba(129,140,248,.12); }
+.wa-page .av { width: 30px; height: 30px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; background: var(--grad); }
+.wa-page .conv div { flex: 1; min-width: 0; }
+.wa-page .conv b, .wa-page .conv small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wa-page .conv b { font-size: 13px; color: var(--ink); font-weight: 600; }
+.wa-page .conv small { font-size: 11.5px; color: var(--muted); }
+.wa-page .conv em { font-style: normal; font-size: 10px; font-weight: 700; color: #fff; background: var(--accent); border-radius: 999px; padding: 1px 6px; }
+.wa-page .chat { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.wa-page .chat-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.wa-page .chat-head b { display: block; font-size: 13.5px; color: var(--ink); }
+.wa-page .chat-head small { font-size: 11.5px; color: var(--ok); }
+.wa-page .chat-head .asig { margin-left: auto; font-size: 11px; color: var(--accent-text); background: var(--tint); border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+.wa-page .msgs { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 7px; padding: 12px 14px; overflow: hidden; }
+.wa-page .msg { max-width: 82%; padding: 7px 11px; border-radius: 12px; font-size: 13px; line-height: 1.4; }
+.wa-page .msg.in { align-self: flex-start; background: rgba(255,255,255,.07); color: var(--text); border-bottom-left-radius: 3px; }
+.wa-page .msg.out { align-self: flex-end; background: rgba(55,48,163,.55); color: #E0E7FF; border-bottom-right-radius: 3px; }
+.wa-page .msg.origen { align-self: center; max-width: none; font-size: 11px; color: var(--accent-text); background: var(--tint); border-radius: 999px; padding: 3px 10px; }
+.wa-page .escribir { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--line); }
+.wa-page .escribir span { flex: 1; background: rgba(255,255,255,.05); border-radius: 999px; padding: 6px 12px; font-size: 12px; color: var(--muted); }
+.wa-page .escribir i { width: 28px; height: 28px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; color: #fff; font-size: 12px; }
+@media (max-width: 520px) { .wa-page .convs { display: none; } }
+
+/* El problema */
+.wa-page .dolores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.wa-page .dolor { background: rgba(248,113,113,.05); border: 1px solid rgba(248,113,113,.18); border-radius: var(--radius); padding: 26px; display: grid; gap: 8px; align-content: start; }
+.wa-page .dolor .x { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: rgba(248,113,113,.12); color: var(--mal); margin-bottom: 6px; }
+.wa-page .dolor h3 { font-size: 20px; font-weight: 700; }
+.wa-page .dolor p { color: var(--muted); font-size: 15.5px; }
+@media (max-width: 860px) { .wa-page .dolores { grid-template-columns: 1fr; } }
+
+/* Funcionalidades: reusa .feat del sitio */
+.wa-page .funciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.wa-page .feat .etiqueta { margin-top: auto; padding-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text); }
+@media (max-width: 900px) { .wa-page .funciones { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .wa-page .funciones { grid-template-columns: 1fr; } }
+
+/* Pasos */
+.wa-page .pasos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; counter-reset: paso; }
+.wa-page .paso { border-top: 3px solid var(--accent); padding-top: 16px; display: grid; gap: 6px; align-content: start; }
+.wa-page .paso::before { counter-increment: paso; content: counter(paso); font: 800 30px/1 var(--font-display); color: var(--accent-text); }
+.wa-page .paso h3 { font-size: 19px; font-family: var(--font-body); font-weight: 650; }
+.wa-page .paso p { color: var(--band-muted); font-size: 15.5px; }
+@media (max-width: 760px) { .wa-page .pasos { grid-template-columns: 1fr; } }
+
+/* Cierre */
+.wa-page .cta .nota { margin-top: 18px; font-size: 14px; color: #C7D2FE; }
+.wa-page .cta .acciones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.wa-page .cta .btn-ghost { border-color: rgba(255,255,255,.35); color: #fff; }
+</style>
+{% endblock %}
+
+{% block contacto %}{% endblock %}
+
+{% block content %}
+<div class="wa-page">
+  <section class="hero" aria-labelledby="titulo">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Conector WhatsApp · SupReg Solutions</p>
+        <h1 id="titulo">Tu equipo de ventas, <span class="grad-text">organizado en WhatsApp.</span></h1>
+        <p class="bajada">Centralizá todas las conversaciones de WhatsApp en una plataforma multiagente. Pipeline de leads, bot 24/7 y métricas en tiempo real, sin pagar comisiones a Meta.</p>
+        <div class="acciones">
+          <a class="btn btn-primary" href="https://wa.me/5491163589975?text=Hola%2C%20quiero%20una%20demo%20del%20Conector%20WhatsApp." target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i> Pedir demo gratis
+          </a>
+          <a class="btn btn-ghost" href="#funciones">Ver funcionalidades</a>
+        </div>
+        <div class="chips">
+          <span class="chip">Multiagente</span>
+          <span class="chip">Pipeline de leads</span>
+          <span class="chip">Bot 24/7</span>
+          <span class="chip">Origen de cada lead</span>
+        </div>
+      </div>
+
+      <div class="mock" role="img" aria-label="Ejemplo de la bandeja: lista de conversaciones y un chat abierto con una clienta que llegó desde un anuncio de Instagram">
+        <div class="mock-top">
+          <i style="background:#FF5F57"></i><i style="background:#FFBD2E"></i><i style="background:#28CA41"></i>
+          <b>Conector WhatsApp</b>
+        </div>
+        <div class="mock-body">
+          <div class="convs">
+            <div class="buscar">Buscar…</div>
+            <div class="conv activa"><span class="av">MG</span><div><b>María García</b><small>Hola, vengo por el anuncio</small></div><em>2</em></div>
+            <div class="conv"><span class="av" style="background:linear-gradient(135deg,#1E3A8A,#3730A3)">CR</span><div><b>Carlos R.</b><small>¿Tienen cobertura en…</small></div></div>
+            <div class="conv"><span class="av" style="background:linear-gradient(135deg,#6B21A8,#818CF8)">LP</span><div><b>Laura P.</b><small>Perfecto, muchas gracias</small></div></div>
+            <div class="conv"><span class="av" style="background:linear-gradient(135deg,#1E3A8A,#67E8F9)">JM</span><div><b>Juan M.</b><small>¿Cuánto cuesta el plan?</small></div><em>1</em></div>
+          </div>
+          <div class="chat">
+            <div class="chat-head">
+              <span class="av">MG</span>
+              <div><b>María García</b><small>● En línea</small></div>
+              <span class="asig">Asignado a Sofía</span>
+            </div>
+            <div class="msgs">
+              <span class="msg origen">Llegó desde: Instagram · Campaña octubre</span>
+              <div class="msg in">Hola, vengo por el anuncio de Instagram 👋</div>
+              <div class="msg in">Quiero información sobre los planes</div>
+              <div class="msg out">¡Hola María! Con gusto te ayudo 😊</div>
+              <div class="msg out">¿Para cuántos vendedores sería?</div>
+              <div class="msg in">Somos un equipo de 5 personas</div>
+            </div>
+            <div class="escribir"><span>Escribir mensaje…</span><i class="fa fa-paper-plane"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque band" aria-labelledby="t-problema">
+    <div class="wrap">
+      <div class="bloque-encabezado">
+        <p class="eyebrow">El problema</p>
+        <h2 id="t-problema">Así se ve el WhatsApp comercial sin las herramientas correctas</h2>
+      </div>
+      <div class="dolores">
+        <div class="dolor">
+          <span class="x"><i class="fa fa-xmark"></i></span>
+          <h3>Sin registro ni historial</h3>
+          <p>Los chats quedan en el celular de cada vendedor. Si se va, se lleva la información del cliente con él.</p>
+        </div>
+        <div class="dolor">
+          <span class="x"><i class="fa fa-xmark"></i></span>
+          <h3>Sin control del equipo</h3>
+          <p>No sabés quién atiende qué, cómo responde cada vendedor ni cuánto tiempo tarda en contestar.</p>
+        </div>
+        <div class="dolor">
+          <span class="x"><i class="fa fa-xmark"></i></span>
+          <h3>Sin métricas para mejorar</h3>
+          <p>Imposible medir tiempos de respuesta, tasa de cierre ni de dónde vienen los leads que realmente convierten.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" id="funciones" aria-labelledby="t-funciones">
+    <div class="wrap">
+      <div class="bloque-encabezado">
+        <p class="eyebrow">Funcionalidades</p>
+        <h2 id="t-funciones">Todo lo que necesita tu equipo comercial</h2>
+        <p class="bajada">Una plataforma completa, sin necesidad de contratar la API oficial de Meta.</p>
+      </div>
+      <div class="funciones">
+        <div class="feat">
+          <span class="ico"><i class="fa fa-users"></i></span>
+          <h3>Bandeja multiagente</h3>
+          <p>Múltiples vendedores atienden desde un solo número. Asignación automática por carga de trabajo.</p>
+          <span class="etiqueta">Trabajo en equipo</span>
+        </div>
+        <div class="feat">
+          <span class="ico"><i class="fa fa-table-columns"></i></span>
+          <h3>Pipeline de leads</h3>
+          <p>Etapas personalizadas (Nuevo → Contactado → Seguimiento → Cerrado) con avance automático.</p>
+          <span class="etiqueta">CRM integrado</span>
+        </div>
+        <div class="feat">
+          <span class="ico"><i class="fa fa-robot"></i></span>
+          <h3>Bot automático 24/7</h3>
+          <p>Integración con n8n para responder fuera del horario, calificar leads y entregar el hilo al asesor.</p>
+          <span class="etiqueta">Automatización</span>
+        </div>
+        <div class="feat">
+          <span class="ico"><i class="fa fa-bullhorn"></i></span>
+          <h3>Campañas de marketing</h3>
+          <p>Generá links para cada campaña de Meta. El conector detecta automáticamente de qué anuncio viene el lead.</p>
+          <span class="etiqueta">Origen de leads</span>
+        </div>
+        <div class="feat">
+          <span class="ico"><i class="fa fa-chart-line"></i></span>
+          <h3>Dashboard supervisor</h3>
+          <p>Métricas en tiempo real: conversaciones activas, tiempos de respuesta y rendimiento por agente.</p>
+          <span class="etiqueta">Control total</span>
+        </div>
+        <div class="feat">
+          <span class="ico"><i class="fa fa-link"></i></span>
+          <h3>Integración con tu CRM</h3>
+          <p>Cada lead nuevo se envía automáticamente a tu CRM externo vía webhook. Sin trabajo manual.</p>
+          <span class="etiqueta">Automatización</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque band" id="como" aria-labelledby="t-como">
+    <div class="wrap">
+      <div class="bloque-encabezado">
+        <p class="eyebrow">Cómo funciona</p>
+        <h2 id="t-como">En marcha en 48 horas</h2>
+        <p class="bajada">Sin cambiar de número de WhatsApp, sin trámites con Meta.</p>
+      </div>
+      <div class="pasos">
+        <div class="paso">
+          <h3>Conectás tu número</h3>
+          <p>Escaneás un QR igual que en WhatsApp Web. Sin trámites ni aprobaciones de Meta. El número sigue siendo el tuyo.</p>
+        </div>
+        <div class="paso">
+          <h3>Configuramos el equipo</h3>
+          <p>Creamos los agentes, definimos las etapas del pipeline y configuramos las campañas de tus anuncios.</p>
+        </div>
+        <div class="paso">
+          <h3>Tu equipo empieza a vender</h3>
+          <p>Cada vendedor ve solo sus conversaciones asignadas. El supervisor tiene visibilidad total desde el dashboard.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="contacto" aria-labelledby="t-cierre">
+    <div class="wrap">
+      <div>
+        <h2 id="t-cierre">¿Listo para ordenar tu equipo de ventas?</h2>
+        <p>Te mostramos cómo funciona en 20 minutos, adaptado a tu equipo y tu proceso comercial.</p>
+        <div class="acciones">
+          <a class="btn btn-light" href="https://wa.me/5491163589975?text=Hola%2C%20quiero%20una%20demo%20del%20Conector%20WhatsApp." target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i> Pedir demo gratis
+          </a>
+          <a class="btn btn-ghost" href="{% url 'servicios' %}">Ver más servicios</a>
+        </div>
+        <p class="nota">Sin compromiso · Configuración incluida · Soporte continuo</p>
+      </div>
+      <div class="contact">
+        <a class="row" href="mailto:contacto@supregsolutions.com"><i class="fa fa-envelope"></i>contacto@supregsolutions.com</a>
+        <a class="row" href="https://wa.me/5491163589975" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i>11 6358-9975</a>
+        <a class="row" href="{% url 'crm' %}"><i class="fa fa-chart-line"></i>¿También necesitás telefonía y todos los canales? Mirá Supreg CRM</a>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

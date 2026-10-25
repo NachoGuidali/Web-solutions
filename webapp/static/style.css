@@ -66,7 +66,7 @@ body.site { background: var(--bg); color: var(--text); font-family: var(--font-b
 .m-group { border-bottom: 1px solid var(--line); }
 .m-group summary { list-style: none; cursor: pointer; color: var(--text); padding: 10px 0; display: flex; align-items: center; justify-content: space-between; }
 .m-group summary::-webkit-details-marker { display: none; }
-#mobile-menu .m-group a { padding-left: 16px; color: var(--muted); }
+#mobile-menu .m-group a { display: block; padding-left: 16px; color: var(--muted); }
 #mobile-menu .m-group a:last-child { border-bottom: 0; }
 @media (max-width: 1023px) { .site-header .site-nav, .site-header .header-cta { display: none; } }
 @media (min-width: 1024px) { #menu-toggle, #mobile-menu { display: none !important; } }

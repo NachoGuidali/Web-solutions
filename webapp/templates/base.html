@@ -27,7 +27,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <!-- ?v= fuerza a Cloudflare a pedir el archivo nuevo: subirlo cada vez que cambie style.css -->
-  <link rel="stylesheet" href="{% static 'style.css' %}?v=3">
+  <link rel="stylesheet" href="{% static 'style.css' %}?v=4">
   <style>
     input, textarea, select { color: black !important; }
   </style>
@@ -48,10 +48,30 @@
       </a>
       <nav class="site-nav" aria-label="Principal">
         <a href="{% url 'home' %}" {% if url_name == 'home' %}aria-current="page"{% endif %}>Inicio</a>
-        <a href="{% url 'servicios' %}" {% if url_name == 'servicios' %}aria-current="page"{% endif %}>Servicios</a>
-        <a href="{% url 'crm' %}" {% if url_name == 'crm' %}aria-current="page"{% endif %}>CRM</a>
-        <a href="{% url 'comanda' %}" {% if url_name == 'comanda' %}aria-current="page"{% endif %}>Comanda</a>
-        <a href="{% url 'conector_whatsapp' %}" {% if url_name == 'conector_whatsapp' %}aria-current="page"{% endif %}>WhatsApp<span class="tag">Nuevo</span></a>
+        <div class="nav-drop{% if url_name in 'servicios crm comanda conector_whatsapp analytics' %} is-current{% endif %}">
+          <button type="button" aria-expanded="false" aria-controls="menu-servicios">Servicios <i class="fa fa-chevron-down chev" aria-hidden="true"></i></button>
+          <div class="drop-menu" id="menu-servicios">
+            <a href="{% url 'crm' %}" {% if url_name == 'crm' %}aria-current="page"{% endif %}>
+              <span class="ico"><i class="fa fa-chart-line"></i></span>
+              <span><b>Supreg CRM</b><small>Leads, WhatsApp y llamadas en un solo tablero</small></span>
+            </a>
+            <a href="{% url 'comanda' %}" {% if url_name == 'comanda' %}aria-current="page"{% endif %}>
+              <span class="ico"><i class="fa fa-receipt"></i></span>
+              <span><b>Comanda Supreg</b><small>Pedidos online para tu local, sin comisiones</small></span>
+            </a>
+            <a href="{% url 'conector_whatsapp' %}" {% if url_name == 'conector_whatsapp' %}aria-current="page"{% endif %}>
+              <span class="ico"><i class="fab fa-whatsapp"></i></span>
+              <span><b>Conector WhatsApp</b><small>Tu equipo de ventas en una bandeja multiagente</small></span>
+            </a>
+            <a href="{% url 'analytics' %}" {% if url_name == 'analytics' %}aria-current="page"{% endif %}>
+              <span class="ico"><i class="fa fa-chart-simple"></i></span>
+              <span><b>SupReg Analytics<span class="tag">Nuevo</span></b><small>Visitas, clicks y conversiones de tus webs</small></span>
+            </a>
+            <a class="all" href="{% url 'servicios' %}" {% if url_name == 'servicios' %}aria-current="page"{% endif %}>
+              Desarrollo, automatización y soporte · Ver todos los servicios <i class="fa fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
         <a href="{% url 'about' %}" {% if url_name == 'about' %}aria-current="page"{% endif %}>Nosotros</a>
       </nav>
       <a class="btn btn-primary btn-sm header-cta" href="#contacto">Contactanos</a>
@@ -61,10 +81,14 @@
     </div>
     <nav class="hidden" id="mobile-menu" aria-label="Principal móvil">
       <a href="{% url 'home' %}">Inicio</a>
-      <a href="{% url 'servicios' %}">Servicios</a>
-      <a href="{% url 'crm' %}">Supreg CRM</a>
-      <a href="{% url 'comanda' %}">Comanda Supreg</a>
-      <a href="{% url 'conector_whatsapp' %}">Conector WhatsApp</a>
+      <details class="m-group">
+        <summary>Servicios <i class="fa fa-chevron-down chev" aria-hidden="true"></i></summary>
+        <a href="{% url 'crm' %}">Supreg CRM</a>
+        <a href="{% url 'comanda' %}">Comanda Supreg</a>
+        <a href="{% url 'conector_whatsapp' %}">Conector WhatsApp</a>
+        <a href="{% url 'analytics' %}">SupReg Analytics</a>
+        <a href="{% url 'servicios' %}">Todos los servicios</a>
+      </details>
       <a href="{% url 'about' %}">Nosotros</a>
       <a href="#contacto">Contacto</a>
     </nav>
@@ -84,6 +108,7 @@
         <a href="{% url 'crm' %}">Supreg CRM</a>
         <a href="{% url 'comanda' %}">Comanda Supreg</a>
         <a href="{% url 'conector_whatsapp' %}">Conector WhatsApp</a>
+        <a href="{% url 'analytics' %}">SupReg Analytics</a>
         <a href="{% url 'privacidad' %}">Política de Privacidad</a>
         <a href="{% url 'terminos' %}">Términos y Condiciones</a>
         <a href="https://www.instagram.com/supregsolutions" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
@@ -117,6 +142,21 @@
       mobileMenu.classList.add("hidden");
       toggleBtn.setAttribute("aria-expanded", false);
     }));
+
+    // desplegable "Servicios" del menú de escritorio: el hover lo abre por CSS; el click (y el teclado) con .open
+    const drop = document.querySelector(".nav-drop");
+    const dropBtn = drop.querySelector("button");
+    const setDrop = (abierto) => {
+      drop.classList.toggle("open", abierto);
+      dropBtn.setAttribute("aria-expanded", abierto);
+    };
+    dropBtn.addEventListener("click", () => setDrop(!drop.classList.contains("open")));
+    drop.addEventListener("mouseleave", () => setDrop(false));
+    document.addEventListener("click", (e) => { if (!drop.contains(e.target)) setDrop(false); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && drop.classList.contains("open")) { setDrop(false); dropBtn.focus(); }
+    });
+    drop.addEventListener("focusout", (e) => { if (!drop.contains(e.relatedTarget)) setDrop(false); });
   </script>
 
   <!-- Swiper JS -->
@@ -145,7 +185,7 @@
   "logo": "https://www.supregsolutions.com/logo-og.jpg",
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+54-911-63589975",
+    "telephone": "+54-911-78220245",
     "contactType": "customer support",
     "areaServed": "AR",
     "availableLanguage": ["Spanish"]

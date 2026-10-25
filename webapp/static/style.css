@@ -35,7 +35,7 @@ body.site { background: var(--bg); color: var(--text); font-family: var(--font-b
 .site-header { position: fixed; inset: 0 0 auto 0; z-index: 50; background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
 .site-header .bar { max-width: 1160px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .site-header .bar img { height: 44px; }
-.site-nav { display: flex; gap: 26px; font-size: 15px; }
+.site-nav { display: flex; align-items: center; gap: 26px; font-size: 15px; }
 .site-nav a { color: var(--muted); text-decoration: none; transition: color .2s; }
 .site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--ink); }
 .site-nav .tag { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 999px; background: var(--tint); color: var(--accent-text); margin-left: 4px; vertical-align: 2px; }
@@ -43,6 +43,31 @@ body.site { background: var(--bg); color: var(--text); font-family: var(--font-b
 #mobile-menu { border-top: 1px solid var(--line); padding: 8px 20px 18px; display: flex; flex-direction: column; }
 #mobile-menu a { color: var(--text); text-decoration: none; padding: 10px 0; border-bottom: 1px solid var(--line); }
 #mobile-menu.hidden { display: none; }
+
+/* Desplegable "Servicios" (escritorio) */
+.nav-drop { position: relative; }
+.nav-drop > button { background: none; border: 0; padding: 0; font: inherit; color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: color .2s; }
+.nav-drop > button:hover, .nav-drop.open > button, .nav-drop.is-current > button { color: var(--ink); }
+.nav-drop .chev, .m-group .chev { font-size: 10px; transition: transform .2s; }
+.nav-drop.open .chev, .m-group[open] .chev { transform: rotate(180deg); }
+/* el ::before tapa el hueco entre el botón y el panel para que el hover no se corte */
+.drop-menu { position: absolute; top: calc(100% + 16px); left: 50%; transform: translateX(-50%); width: 340px; padding: 8px; display: none; gap: 2px; background: var(--surface); border: 1px solid #2A2F45; border-radius: 16px; box-shadow: 0 30px 60px -20px rgba(0,0,0,.7), 0 20px 50px -30px rgba(107,33,168,.6); }
+.drop-menu::before { content: ""; position: absolute; inset: -18px 0 auto 0; height: 18px; }
+.nav-drop.open .drop-menu { display: grid; }
+@media (hover: hover) { .nav-drop:hover .drop-menu { display: grid; } .nav-drop:hover > button { color: var(--ink); } .nav-drop:hover .chev { transform: rotate(180deg); } }
+.site-nav .drop-menu a { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 11px; color: var(--text); }
+.site-nav .drop-menu a:hover, .site-nav .drop-menu a[aria-current="page"] { background: rgba(255,255,255,.06); }
+.drop-menu .ico { width: 36px; height: 36px; font-size: 15px; }
+.drop-menu b { display: block; color: var(--ink); font-size: 14.5px; font-weight: 600; }
+.drop-menu small { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.35; }
+.site-nav .drop-menu a.all { margin-top: 4px; border-top: 1px solid var(--line); border-radius: 0 0 11px 11px; padding: 12px 10px 8px; font-size: 13px; color: var(--accent-text); justify-content: space-between; }
+
+/* Grupo "Servicios" (menú móvil) */
+.m-group { border-bottom: 1px solid var(--line); }
+.m-group summary { list-style: none; cursor: pointer; color: var(--text); padding: 10px 0; display: flex; align-items: center; justify-content: space-between; }
+.m-group summary::-webkit-details-marker { display: none; }
+#mobile-menu .m-group a { padding-left: 16px; color: var(--muted); }
+#mobile-menu .m-group a:last-child { border-bottom: 0; }
 @media (max-width: 1023px) { .site-header .site-nav, .site-header .header-cta { display: none; } }
 @media (min-width: 1024px) { #menu-toggle, #mobile-menu { display: none !important; } }
 

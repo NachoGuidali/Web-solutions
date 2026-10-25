@@ -84,6 +84,10 @@ def conector_whatsapp(request):
     return render(request, 'conector_whatsapp.html')
 
 
+def analytics(request):
+    return render(request, 'analytics.html')
+
+
 def about(request):
     return render(request, 'about.html')
 

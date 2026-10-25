@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+
+{% block title %}SupReg Analytics | Analítica web sin cookies para tus sitios{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="SupReg Analytics: visitas, clicks, scroll y conversiones de todas tus webs en un solo panel. Sin cookies, eventos sin código y mejoras automáticas.">
+<style>
+/* Página de SupReg Analytics, encapsulada en .an-page. Usa los tokens y componentes del sitio (style.css). */
+.an-page {
+  /* Colores propios del producto, sólo en la maqueta del panel. */
+  --app-rail: #16122B;
+  --app-surface: #1B1733;
+  --app-line: rgba(255, 255, 255, 0.08);
+  --app-amber: #FFB224;
+  --app-muted: #9A95B0;
+  padding-top: 64px; font-size: 17px; line-height: 1.6;
+}
+.an-page * { box-sizing: border-box; }
+.an-page h1, .an-page h2, .an-page h3 { margin: 0; }
+.an-page p { margin: 0; }
+.an-page section.bloque { padding-block: 88px; }
+
+/* Hero */
+.an-page .hero { padding-block: 72px 56px; }
+.an-page .hero .wrap { display: grid; grid-template-columns: 1fr 1.05fr; gap: 56px; align-items: center; }
+.an-page .hero .wrap > * { min-width: 0; }
+.an-page .hero h1 { font-size: clamp(40px, 5.4vw, 64px); }
+.an-page .hero .lead { margin-top: 20px; }
+.an-page .hero .acciones { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+.an-page .login { margin-top: 16px; font-size: 15px; color: var(--muted); }
+.an-page .login a { color: var(--accent-text); font-weight: 600; text-decoration: none; }
+.an-page .hero .chips { margin-top: 28px; }
+@media (max-width: 900px) { .an-page .hero .wrap { grid-template-columns: 1fr; } }
+
+/* Maqueta del panel */
+.an-page .mock { position: relative; display: grid; grid-template-columns: 112px 1fr; background: var(--app-surface); border: 1px solid #2A2F45; border-radius: 22px; box-shadow: 0 30px 80px -30px rgba(107,33,168,.55); min-width: 0; }
+.an-page .mock-rail { background: var(--app-rail); border-radius: 21px 0 0 21px; padding: 16px 12px; display: grid; align-content: start; gap: 6px; font-size: 11.5px; color: var(--app-muted); }
+.an-page .mock-rail .logo { display: flex; align-items: center; gap: 6px; color: #EFEDF6; font-family: var(--font-display); font-weight: 700; font-size: 13px; margin-bottom: 10px; }
+.an-page .mock-rail span { padding: 5px 8px; border-radius: 7px; }
+.an-page .mock-rail span.on { background: rgba(255,255,255,.07); color: #EFEDF6; box-shadow: inset 2px 0 0 var(--app-amber); }
+.an-page .mock-main { padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.an-page .mock-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--app-muted); }
+.an-page .mock-top b { color: #F4F3F8; font-family: var(--font-display); font-size: 15px; }
+.an-page .kpi { background: rgba(255,255,255,.04); border: 1px solid var(--app-line); border-radius: 12px; padding: 12px 14px; }
+.an-page .kpi small { color: var(--app-muted); font-size: 11.5px; display: block; }
+.an-page .kpi .num { font-family: var(--font-display); color: #F4F3F8; font-size: 34px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.an-page .kpi .up { color: #2ECC71; font-size: 12px; font-weight: 600; margin-left: 8px; }
+.an-page .kpi svg { display: block; width: 100%; height: 74px; margin-top: 6px; }
+.an-page .mini-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.an-page .mini-kpis div { background: rgba(255,255,255,.04); border: 1px solid var(--app-line); border-radius: 10px; padding: 8px 10px; min-width: 0; }
+.an-page .mini-kpis small { color: var(--app-muted); font-size: 10.5px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.an-page .mini-kpis b { color: #F4F3F8; font-family: var(--font-display); font-size: 17px; font-variant-numeric: tabular-nums; }
+.an-page .canales-mock { display: grid; gap: 6px; font-size: 11.5px; color: #C4C0D3; }
+.an-page .canales-mock div { display: grid; grid-template-columns: 82px 1fr 34px; align-items: center; gap: 8px; }
+.an-page .canales-mock i { display: block; height: 6px; border-radius: 3px; background: var(--app-amber); }
+.an-page .canales-mock em { font-style: normal; text-align: right; font-variant-numeric: tabular-nums; }
+.an-page .insight { position: absolute; right: -16px; bottom: -26px; max-width: 260px; background: #FCFCFA; color: #16131F; border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; box-shadow: 0 16px 40px -12px rgba(8,8,25,.6); border: 1px solid #E2DFEA; }
+.an-page .insight .spark { flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; font-size: 14px; }
+.an-page .insight small { display: block; color: #C2410C; font-size: 11px; font-weight: 700; }
+.an-page .insight b { display: block; font-size: 13.5px; line-height: 1.3; }
+@media (prefers-reduced-motion: no-preference) {
+  .an-page .insight .spark { animation: an-pulse 1.8s ease-out infinite; }
+  .an-page .kpi .line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: an-draw 2.2s cubic-bezier(.45,0,.2,1) .3s forwards; }
+}
+@keyframes an-pulse { 0% { box-shadow: 0 0 0 0 rgba(129,140,248,.6); } 100% { box-shadow: 0 0 0 14px rgba(129,140,248,0); } }
+@keyframes an-draw { to { stroke-dashoffset: 0; } }
+@media (max-width: 560px) {
+  .an-page .mock { grid-template-columns: 1fr; }
+  .an-page .mock-rail { display: none; }
+  .an-page .insight { right: 8px; }
+}
+
+/* Franja de lo que mide */
+.an-page .mide { border-block: 1px solid var(--line); padding-block: 22px; margin-top: 24px; background: color-mix(in srgb, var(--bg) 70%, transparent); }
+.an-page .mide .wrap { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center; justify-content: space-between; color: var(--muted); font-size: 15px; }
+.an-page .mide strong { color: var(--ink); font-weight: 600; }
+
+/* Grillas */
+.an-page .funciones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 900px) { .an-page .funciones { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .an-page .funciones { grid-template-columns: 1fr; } }
+
+.an-page .split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+/* Sin esto, una tabla ancha estira la columna de la grilla en vez de scrollear adentro. */
+.an-page .split > * { min-width: 0; }
+@media (max-width: 900px) { .an-page .split { grid-template-columns: 1fr; } }
+.an-page .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--band-line); }
+.an-page table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; min-width: 520px; }
+.an-page th, .an-page td { padding: 12px 16px; text-align: right; border-bottom: 1px solid var(--band-line); color: var(--ink); }
+.an-page th { font-weight: 600; color: var(--band-muted); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; background: rgba(255,255,255,.06); }
+.an-page th:first-child, .an-page td:first-child { text-align: left; }
+.an-page td small { display: block; color: var(--band-muted); font-size: 13px; }
+.an-page tr:last-child td { border-bottom: none; }
+.an-page .nota { font-size: 13px; color: var(--band-muted); margin-top: 12px; }
+
+.an-page .minis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 900px) { .an-page .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .an-page .minis { grid-template-columns: 1fr; } }
+.an-page .mini { border-top: 2px solid var(--line); padding-top: 14px; display: grid; gap: 4px; min-width: 0; }
+.an-page .mini h3 { font-family: var(--font-body); font-size: 17px; font-weight: 650; }
+.an-page .mini p { color: var(--muted); font-size: 15px; }
+
+.an-page .pasos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; counter-reset: paso; }
+@media (max-width: 900px) { .an-page .pasos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .an-page .pasos { grid-template-columns: 1fr; } }
+.an-page .paso { border-top: 3px solid var(--accent); padding-top: 16px; display: grid; gap: 6px; align-content: start; }
+.an-page .paso::before { counter-increment: paso; content: counter(paso); font: 800 30px/1 var(--font-display); color: var(--accent-text); }
+.an-page .paso h3 { font-size: 19px; font-family: var(--font-body); font-weight: 650; }
+.an-page .paso p { color: var(--muted); font-size: 15.5px; }
+
+.an-page .numbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.an-page .numbers div { display: grid; gap: 6px; }
+@media (max-width: 760px) { .an-page .numbers { grid-template-columns: 1fr; } }
+.an-page .pills { margin-top: 36px; }
+
+.an-page .faq { display: grid; gap: 10px; max-width: 860px; }
+.an-page .faq details { background: color-mix(in srgb, var(--surface) 88%, transparent); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; }
+.an-page .faq summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.an-page .faq details p { margin-top: 10px; color: var(--muted); }
+
+/* Cierre */
+.an-page .cta .acciones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.an-page .cta .btn-ghost { border-color: rgba(255,255,255,.35); color: #fff; }
+.an-page .contact .login-link { color: #E0E7FF; font-size: 15px; }
+.an-page .contact .login-link a { color: #FFFFFF; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+</style>
+{% endblock %}
+
+{% block contacto %}{% endblock %}
+
+{% block content %}
+<div class="an-page">
+  <section class="hero" aria-labelledby="titulo">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">SupReg Analytics · Analítica web</p>
+        <h1 id="titulo">Sabé de dónde llegan tus visitas <span class="grad-text">y qué hacen en tu web.</span></h1>
+        <p class="lead">SupReg Analytics mide visitas, clicks, scroll y conversiones de todas tus webs en un solo panel. Se instala con una línea de código y todo lo demás se configura desde la pantalla.</p>
+        <div class="acciones">
+          <a class="btn btn-primary" href="https://wa.me/5491178220245?text=Hola%2C%20quiero%20contratar%20SupReg%20Analytics" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i> Contratar
+          </a>
+          <a class="btn btn-ghost" href="#funciones">Ver funciones</a>
+        </div>
+        <p class="login">¿Ya tenés cuenta? <a href="https://analytics.supregsolutions.com" target="_blank" rel="noopener">Ingresar al panel</a></p>
+        <div class="chips">
+          <span class="chip">Sin cookies</span>
+          <span class="chip">Eventos sin código</span>
+          <span class="chip">Varias webs en una cuenta</span>
+          <span class="chip">Mejoras automáticas</span>
+        </div>
+      </div>
+
+      <div class="mock" role="img" aria-label="Ejemplo del panel: 1.861 visitantes únicos con una curva en subida, sesiones, rebote y conversiones, sesiones por canal y una mejora sugerida sobre la página de precios">
+        <div class="mock-rail" aria-hidden="true">
+          <div class="logo">
+            <svg width="18" height="18" viewBox="0 0 24 24"><rect width="24" height="24" rx="6.5" fill="rgba(255,255,255,.08)"/><path d="M4 14h3.5l2.5-6 3.5 10 2.5-6H20" fill="none" stroke="#FFB224" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            SupReg
+          </div>
+          <span class="on">Resumen</span><span>Adquisición</span><span>Comportamiento</span><span>Audiencia</span><span>Mejoras</span><span>Objetivos</span>
+        </div>
+        <div class="mock-main">
+          <div class="mock-top"><b>Tienda online</b><span>Últimos 30 días</span></div>
+          <div class="kpi">
+            <small>Visitantes únicos</small>
+            <span class="num">1.861</span><span class="up">▲ 18%</span>
+            <svg viewBox="0 0 300 74" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="an-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB224" stop-opacity=".28"/><stop offset="1" stop-color="#FFB224" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0 60 L15 54 L30 57 L45 46 L60 50 L75 42 L90 47 L105 38 L120 41 L135 33 L150 37 L165 28 L180 33 L195 25 L210 29 L225 20 L240 24 L255 15 L270 19 L285 10 L300 12 L300 74 L0 74 Z" fill="url(#an-fill)"/>
+              <path class="line" pathLength="1" d="M0 60 L15 54 L30 57 L45 46 L60 50 L75 42 L90 47 L105 38 L120 41 L135 33 L150 37 L165 28 L180 33 L195 25 L210 29 L225 20 L240 24 L255 15 L270 19 L285 10 L300 12" fill="none" stroke="#FFB224" stroke-width="2.2" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="mini-kpis">
+            <div><small>Sesiones</small><b>2.448</b></div>
+            <div><small>Rebote</small><b>29,9%</b></div>
+            <div><small>Conversiones</small><b>485</b></div>
+          </div>
+          <div class="canales-mock" aria-hidden="true">
+            <div><span>Redes sociales</span><i style="width:100%"></i><em>693</em></div>
+            <div><span>Buscadores</span><i style="width:88%"></i><em>648</em></div>
+            <div><span>Email</span><i style="width:50%"></i><em>347</em></div>
+            <div><span>Publicidad</span><i style="width:40%"></i><em>278</em></div>
+          </div>
+        </div>
+        <div class="insight" aria-hidden="true">
+          <span class="spark">✦</span>
+          <div><small>Para revisar</small><b>Clicks repetidos en «Calcular cuotas» en /precios</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="mide">
+    <div class="wrap">
+      <span>Mide sin programar</span>
+      <strong>Visitas</strong><strong>Clicks</strong><strong>Scroll</strong><strong>Tiempo en página</strong><strong>Descargas</strong><strong>Formularios</strong><strong>Videos</strong><strong>Campañas</strong>
+    </div>
+  </div>
+
+  <section class="bloque" id="funciones" aria-labelledby="t-funciones">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Funciones</p>
+        <h2 id="t-funciones">Todo lo que pasa en tu web, explicado en criollo</h2>
+        <p>Reportes listos para usar desde el primer día, con ayudas que explican cada número y recomendaciones sobre qué mejorar.</p>
+      </div>
+      <div class="funciones">
+        <article class="feat">
+          <span class="ico"><i class="fa fa-chart-line"></i></span>
+          <h3>Resumen en un vistazo</h3>
+          <p>Visitantes, sesiones, rebote y tiempo de visita, comparados con el período anterior.</p>
+        </article>
+        <article class="feat">
+          <span class="ico"><i class="fa fa-route"></i></span>
+          <h3>De dónde llegan</h3>
+          <p>Buscadores, redes, publicidad, email o directo. Cada campaña y cada fuente, con cuántos se quedan.</p>
+        </article>
+        <article class="feat">
+          <span class="ico"><i class="fa fa-arrow-pointer"></i></span>
+          <h3>Qué hacen en cada página</h3>
+          <ul>
+            <li>Hasta dónde scrollean y cuánto se quedan</li>
+            <li>Qué botones y links clickean</li>
+            <li>Descargas, formularios y videos</li>
+          </ul>
+        </article>
+        <article class="feat">
+          <span class="ico"><i class="fa fa-calendar-days"></i></span>
+          <h3>Quiénes y cuándo</h3>
+          <p>Celular o computadora, país, visitantes nuevos y los que vuelven, y un mapa de los días y horarios con más visitas.</p>
+        </article>
+        <article class="feat">
+          <span class="ico"><i class="fa fa-flag"></i></span>
+          <h3>Objetivos y conversiones</h3>
+          <p>Definí qué cuenta como venta: un WhatsApp, un formulario, llegar a la página de gracias. Mirá la tasa de conversión y desde qué canal convierten.</p>
+        </article>
+        <article class="feat">
+          <span class="ico"><i class="fa fa-lightbulb"></i></span>
+          <h3>Mejoras automáticas</h3>
+          <p>Avisa cuando algo cambia y qué conviene hacer: picos de visitas, páginas donde la gente se va, botones que frustran o una fuente que crece.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque band" id="sin-codigo" aria-labelledby="t-sin-codigo">
+    <div class="wrap split">
+      <div>
+        <div class="head">
+          <p class="eyebrow">Eventos sin código</p>
+          <h2 id="t-sin-codigo">Medí el botón que te importa sin tocar la web</h2>
+          <p>Elegís qué tiene que pasar y le ponés un nombre. El cambio llega solo a tu web en unos minutos, sin pedirle nada a un programador.</p>
+        </div>
+        <div class="rail">
+          <div><h3>Click en un elemento</h3><p>El botón de WhatsApp, el de comprar o cualquier link.</p></div>
+          <div><h3>Visita a una página</h3><p>Quién llega a /gracias después de comprar o pedir presupuesto.</p></div>
+          <div><h3>Scroll y tiempo</h3><p>Quién lee el 75% de un artículo o se queda más de un minuto.</p></div>
+          <div><h3>Formularios</h3><p>Cada envío de un formulario puntual, sin guardar lo que escriben.</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Evento</th><th>Últimos 30 días</th><th>Conversión</th></tr></thead>
+            <tbody>
+              <tr><td>Click en WhatsApp<small>Click en a[href*='wa.me']</small></td><td>617</td><td>26,1 %</td></tr>
+              <tr><td>Llegó a contacto<small>Visita a /contacto</small></td><td>934</td><td>39,2 %</td></tr>
+              <tr><td>Leyó el artículo<small>Scroll al 75% en /blog/</small></td><td>412</td><td>18,4 %</td></tr>
+              <tr><td>Pidió presupuesto<small>Envío de #presupuesto</small></td><td>243</td><td>13,1 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="nota">Datos de ejemplo. La conversión es el porcentaje de visitantes del período que hizo el evento.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" aria-labelledby="t-ademas">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Y además</p>
+        <h2 id="t-ademas">Para analizar a fondo y trabajar en equipo</h2>
+      </div>
+      <div class="minis">
+        <div class="mini"><h3>Dashboards propios</h3><p>Juntá los gráficos que más mirás en un tablero.</p></div>
+        <div class="mini"><h3>Embudos y retención</h3><p>Dónde se cae la gente antes de comprar y cuántos vuelven.</p></div>
+        <div class="mini"><h3>Eventos en vivo</h3><p>Lo que pasa en tu web en este momento, para verificar la instalación.</p></div>
+        <div class="mini"><h3>Equipo con roles</h3><p>Dueño, editor o lector: cada uno ve y cambia lo que le corresponde.</p></div>
+        <div class="mini"><h3>Varias webs</h3><p>Todos tus sitios en una cuenta. Ideal para agencias y marcas con varias tiendas.</p></div>
+        <div class="mini"><h3>Links con UTM</h3><p>Generá links de campaña para saber qué publicación trae más ventas.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" id="como-empezar" style="padding-top:0" aria-labelledby="t-empezar">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Cómo empezar</p>
+        <h2 id="t-empezar">En funcionamiento el mismo día</h2>
+      </div>
+      <div class="pasos">
+        <div class="paso"><h3>Escribinos</h3><p>Nos contás cuántas webs querés medir y coordinamos el plan.</p></div>
+        <div class="paso"><h3>Te damos acceso</h3><p>Recibís tu usuario para entrar a analytics.supregsolutions.com.</p></div>
+        <div class="paso"><h3>Pegás una línea</h3><p>Agregás tu web y pegás el código que te da el panel. Funciona con WordPress, Tiendanube, Shopify, Wix y cualquier web.</p></div>
+        <div class="paso"><h3>Mirás los datos</h3><p>Las visitas aparecen en segundos y una guía te lleva por el resto.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" style="padding-top:0" aria-labelledby="t-privacidad">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Privacidad y tecnología</p>
+        <h2 id="t-privacidad">Liviano para tu web, respetuoso con tus visitas</h2>
+      </div>
+      <div class="numbers">
+        <div><strong>9 kB</strong><span>pesa el script: no frena la carga de tu web.</span></div>
+        <div><strong>0</strong><span>cookies. Usa un identificador anónimo y nunca guarda la IP.</span></div>
+        <div><strong>24/7</strong><span>registra las visitas aunque nadie tenga el panel abierto.</span></div>
+      </div>
+      <div class="chips pills">
+        <span class="chip">Respeta “No rastrear”</span>
+        <span class="chip">Descarta bots</span>
+        <span class="chip">HTTPS</span>
+        <span class="chip">Backups diarios</span>
+        <span class="chip">Roles y permisos</span>
+        <span class="chip">Desde cualquier navegador</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque" id="faq" style="padding-top:0" aria-labelledby="t-faq">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Preguntas frecuentes</p>
+        <h2 id="t-faq">Lo que suelen preguntar</h2>
+      </div>
+      <div class="faq">
+        <details><summary>¿Cómo lo instalo en mi web?</summary><p>Pegás una línea de código antes de &lt;/head&gt;. En WordPress se hace con un plugin de encabezados; en Tiendanube, Shopify y Wix, en la sección de código personalizado. Si preferís, lo instalamos nosotros.</p></details>
+        <details><summary>¿Reemplaza a Google Analytics?</summary><p>Para la mayoría de los negocios, sí: tiene las métricas que se usan todos los días, explicadas de forma simple, más mejoras automáticas y eventos sin código. También pueden convivir.</p></details>
+        <details><summary>¿Necesito un aviso de cookies?</summary><p>El script no usa cookies ni guarda la IP de tus visitantes. Igual conviene mencionarlo en tu política de privacidad.</p></details>
+        <details><summary>¿Puedo medir varias webs o dar acceso a mi equipo?</summary><p>Sí. Una cuenta puede tener varias webs, y podés sumar personas con distintos permisos: dueño, editor o lector.</p></details>
+        <details><summary>¿Cómo se contrata?</summary><p>Escribinos por WhatsApp, te contamos los planes y en el día te damos acceso.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="contacto" aria-labelledby="t-cierre">
+    <div class="wrap">
+      <div>
+        <h2 id="t-cierre">Empezá a medir tu web esta semana.</h2>
+        <p>Escribinos y te damos acceso el mismo día. Te ayudamos a instalarlo y a definir qué medir.</p>
+        <div class="acciones">
+          <a class="btn btn-light" href="https://wa.me/5491178220245?text=Hola%2C%20quiero%20contratar%20SupReg%20Analytics" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i> Contratar por WhatsApp
+          </a>
+          <a class="btn btn-ghost" href="{% url 'servicios' %}">Ver más servicios</a>
+        </div>
+      </div>
+      <div class="contact">
+        <a class="row" href="mailto:contacto@supregsolutions.com"><i class="fa fa-envelope"></i>contacto@supregsolutions.com</a>
+        <a class="row" href="https://wa.me/5491178220245" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i>11 7822-0245</a>
+        <p class="login-link">¿Ya tenés cuenta? <a href="https://analytics.supregsolutions.com" target="_blank" rel="noopener">Ingresar al panel</a></p>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

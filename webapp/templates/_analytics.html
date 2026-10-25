@@ -1,0 +1,7 @@
+{% comment %}
+SupReg Analytics: mide las páginas públicas (base.html). El área interna usa crm_base.html y no se mide.
+No cuenta tus propias visitas cuando estás logueado como staff. La api_key es pública (va en el HTML de cualquier web).
+{% endcomment %}
+{% if not user.is_staff %}
+<script src="https://analytics.supregsolutions.com/static/analytics.js" data-api-key="8d12a598de7c5bbaf0e8e236bca7afd6" defer></script>
+{% endif %}

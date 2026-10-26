@@ -1,6 +1,8 @@
+from django.contrib.sitemaps.views import sitemap
 from django.urls import path
 
 from . import views
+from .sitemaps import PaginasPublicasSitemap
 
 urlpatterns = [
     # --- sitio público ---
@@ -13,6 +15,10 @@ urlpatterns = [
     path('about', views.about, name='about'),
     path('politica-de-privacidad', views.privacidad, name='privacidad'),
     path('terminos-y-condiciones', views.terminos, name='terminos'),
+
+    # --- SEO ---
+    path('sitemap.xml', sitemap, {'sitemaps': {'paginas': PaginasPublicasSitemap}}, name='sitemap'),
+    path('robots.txt', views.robots_txt, name='robots_txt'),
 
     # --- dashboard ---
     path('dashboard/', views.dashboard, name='dashboard'),

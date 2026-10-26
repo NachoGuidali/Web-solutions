@@ -100,6 +100,22 @@ def terminos(request):
     return render(request, 'terminos.html')
 
 
+def robots_txt(request):
+    lineas = [
+        "User-agent: *",
+        "Disallow: /admin/",
+        "Disallow: /login/",
+        "Disallow: /logout/",
+        "Disallow: /dashboard/",
+        "Disallow: /clientes/",
+        "Disallow: /interacciones/",
+        "Disallow: /proyectos/",
+        "",
+        f"Sitemap: {settings.SITIO_URL}/sitemap.xml",
+    ]
+    return HttpResponse("\n".join(lineas) + "\n", content_type="text/plain")
+
+
 # ---------------------------------------------------------------- dashboard
 
 def _suma_usd(facturas, cotizaciones):

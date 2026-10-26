@@ -28,6 +28,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['nachogakd.pythonanywhere.com', '127.0.0.1', 'supregsolutions.com', 'www.supregsolutions.com']
 
+# Dominio público con el que se arman el canonical, og:url y el sitemap (sin barra final).
+SITIO_URL = 'https://supregsolutions.com'
+
 
 # Application definition
 
@@ -38,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
     'webapp',
 ]
 
@@ -65,6 +69,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'webapp.context_processors.crm_badges',
+                'webapp.context_processors.sitio',
             ],
         },
     },

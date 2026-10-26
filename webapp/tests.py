@@ -1059,3 +1059,33 @@ class KanbanTests(BaseCRM):
         for ruta in ["/dashboard/kanban/", "/dashboard/tareas/"]:
             with self.subTest(ruta=ruta):
                 self.assertEqual(anonimo.get(ruta).status_code, 302)
+
+
+class SEOTests(TestCase):
+    def test_sitemap_lista_solo_paginas_publicas_con_dominio_fijo(self):
+        r = self.client.get("/sitemap.xml", HTTP_HOST="www.supregsolutions.com")
+        self.assertEqual(r.status_code, 200)
+        xml = r.content.decode()
+        for ruta in ["/", "/servicios", "/crm", "/comanda", "/conector-whatsapp",
+                     "/analytics", "/about", "/politica-de-privacidad", "/terminos-y-condiciones"]:
+            with self.subTest(ruta=ruta):
+                self.assertIn(f"<loc>https://supregsolutions.com{ruta}</loc>", xml)
+        self.assertNotIn("www.supregsolutions.com", xml)
+        self.assertNotIn("dashboard", xml)
+
+    def test_robots_bloquea_el_crm_y_apunta_al_sitemap(self):
+        r = self.client.get("/robots.txt")
+        self.assertEqual(r["Content-Type"], "text/plain")
+        texto = r.content.decode()
+        self.assertIn("Disallow: /dashboard/", texto)
+        self.assertIn("Sitemap: https://supregsolutions.com/sitemap.xml", texto)
+
+    def test_cada_pagina_tiene_canonical_y_descripcion_propios(self):
+        r = self.client.get("/crm")
+        self.assertContains(r, '<link rel="canonical" href="https://supregsolutions.com/crm">', html=False)
+        self.assertContains(r, 'property="og:url" content="https://supregsolutions.com/crm"')
+        self.assertContains(r, 'name="description" content="Supreg CRM:', count=1)
+        self.assertNotContains(r, 'name="robots"')
+
+    def test_login_no_se_indexa(self):
+        self.assertContains(self.client.get("/login/"), 'name="robots" content="noindex, nofollow"')

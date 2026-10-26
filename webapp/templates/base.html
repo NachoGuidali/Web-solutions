@@ -6,15 +6,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}SupReg Solutions | Desarrollo Web, Automatizaciones e Integraciones IT{% endblock %}</title>
-  <!-- Open Graph -->
-  <meta content="SupReg Solutions | Soluciones IT a Medida" property="og:title" />
-  <meta content="Automatización, desarrollo web, soporte técnico y más." property="og:description" />
-  <meta content="https://www.supregsolutions.com/logo-og.jpg" property="og:image" />
-  <meta content="https://www.supregsolutions.com/" property="og:url" />
-  <meta content="website" property="og:type" />
-  <meta
-    content="Soluciones tecnológicas a medida: desarrollo web, automatización, soporte y consultoría IT para empresas. SupReg Solutions impulsa tu negocio con tecnología."
-    name="description" />
+  <meta name="description" content="{% block description %}Soluciones tecnológicas a medida: desarrollo web, automatización, soporte y consultoría IT para empresas. SupReg Solutions impulsa tu negocio con tecnología.{% endblock %}">
+  {% block robots %}{% endblock %}
+  <link rel="canonical" href="{{ sitio_url }}{{ request.path }}">
+  <!-- Open Graph: og:title y og:description repiten el title y la description de cada página -->
+  <meta property="og:title" content="{% block og_title %}SupReg Solutions | Soluciones IT a Medida{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Automatización, desarrollo web, soporte técnico y más.{% endblock %}">
+  <meta property="og:image" content="{{ sitio_url }}{% static 'imagenes/og-supreg.jpg' %}">
+  <meta property="og:url" content="{{ sitio_url }}{{ request.path }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SupReg Solutions">
+  <meta property="og:locale" content="es_AR">
+  <meta name="twitter:card" content="summary_large_image">
   <meta
     content="desarrollo web, automatización, consultoría IT, soporte técnico, soluciones tecnológicas, CRM, sistema de pedidos online, SupReg Solutions"
     name="keywords" />

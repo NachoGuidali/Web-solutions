@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils import timezone
 
 from .models import Tarea
@@ -14,3 +15,8 @@ def crm_badges(request):
         "tareas_pendientes_nav": pendientes.count(),
         "tareas_vencidas_nav": pendientes.filter(vence__lt=timezone.localdate()).count(),
     }
+
+
+def sitio(request):
+    """Dominio público para el canonical y las etiquetas Open Graph."""
+    return {"sitio_url": settings.SITIO_URL}
